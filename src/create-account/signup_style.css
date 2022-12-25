@@ -1,0 +1,140 @@
+#signup-boxes {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.signup-box {
+    border-radius: 5px;
+    width: 30vw;
+    margin: 10px 10px;
+    padding: 10px;
+    background: none;
+    cursor: pointer;
+    color: white;
+    font-family: 'Roboto', sans-serif, Arial;
+}
+
+#candidate-button {
+    border: 3px solid #E87461;
+    background-color: #E87461;
+}
+
+#company-button {
+    border: 3px solid #A443DA;
+    background-color: #A443DA;
+}
+
+#choose-text {
+    display: block;
+}
+
+#signup-form {
+    display: none;
+    background-color: white;
+    border-radius: 10px;
+    border-width: 4px;
+    margin: auto;
+    max-width: 100%;
+    width: 60vw;
+    padding: 25px 15px;
+}
+
+#signup-form form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 30px;
+}
+
+#signup-form input {
+    width: 100%;
+    padding: 12px 20px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#signup-form label {
+    font-size: large;
+    font-weight: bold;
+    text-align: left;
+}
+
+#button-container {
+    text-align: center;  
+}
+
+.candidate-button {
+    min-height: 8vh;
+    min-width: 10vw;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #E87461;
+    color: white;
+}
+
+.candidate-button:hover {
+    background-color: #ea5f4a;
+}
+
+.company-button {
+    background-color: #A443DA;
+}
+
+.company-button:hover {
+    background-color: #9c1de0;
+}
+
+#return-button {
+    display: none;
+    min-height: 8vh;
+    min-width: 10vw;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    margin-bottom: 3vh;
+}
+
+.button-container p {
+    margin-top: 30px;
+}
+
+.warning-text {
+    display: inline;
+    color: red;
+    font-size: medium;
+    font-weight: normal;
+}
+
+#result-text {
+    display: none;
+}
+
+/* responsiveness */
+@media screen and (max-width: 600px) {
+    #signup-boxes {
+        flex-direction: column;
+    }
+    .signup-box {
+        min-width: 60vw;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    #main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    #signup-form form {
+        padding: 15px;
+    }
+}
