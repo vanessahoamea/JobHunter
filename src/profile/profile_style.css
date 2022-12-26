@@ -24,21 +24,31 @@
 
 .profile-picture {
     height: 25vh;
+    width: 25vh;
     border-radius: 50%;
 }
 
 .profile-information {
     text-align: left;
     margin-left: 20px;
+    min-width: 35vw;
 }
 
 .profile-information h1 {
     font-size: 30px;
 }
 
+.information-list {
+    list-style-type: none;
+}
+
+.information-list li {
+    margin-bottom: 5px;
+}
+
 .lower-container h1 {
     font-size: 30px;
-    margin-top: 20px;
+    margin-top: 5px;
     margin-left: 20px;
 }
 
@@ -68,6 +78,7 @@
     flex-direction: column;
     border: 3px solid #E87461;
     margin-top: 15px;
+    padding: 15px 0 15px 0;
     border-radius: 10px;
     justify-content: space-between;
 }
@@ -82,24 +93,63 @@
     flex-direction: column;
 }
 
+.section-content {
+    margin: 0 20px 0 20px;
+}
+
 .add-button {
     margin: 20px;
 }
 
-.warning-text {
-    display: none;
-    color: red;
+.data-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 10px;
 }
 
-form {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-textarea {
-    resize: none;
+.left-data, .right-data {
     width: 100%;
-    height: auto;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 10px 0 10px;
+}
+
+.right-data {
+    justify-content: flex-start;
+}
+
+.right-data-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.right-data-container p {
+    margin: 0;
+    text-align: left;
+}
+
+.bigger-text {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.company-theme {
+    border: 3px solid #A443DA;
+}
+
+.company-button {
+    background-color: #A443DA !important;
+}
+
+.company-button:hover {
+    background-color: #9c1de0 !important;
+}
+
+.job-postings {
+    margin-top: 30px;
 }
 
 /* modal */
@@ -121,6 +171,7 @@ textarea {
     padding: 20px;
     border: 1px solid #888;
     width: 45vw;
+    border-radius: 10px;
 }
 
 .modal-wrapper {
@@ -134,9 +185,15 @@ textarea {
 
 .close {
     cursor: pointer;
+    float: right;
 }
 
-.input, .select {
+form {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.input, .select, .listing {
     width: 100%;
     padding: 12px 20px;
     margin-top: 8px;
@@ -145,6 +202,38 @@ textarea {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+textarea {
+    resize: none;
+    width: 100%;
+    height: auto;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.input, .listing, .dates, textarea {
+    width: 42vw;
+}
+
+.listing {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    background-color: white;
+}
+
+.listing:hover {
+    background-color: #e8e8e8;
+    cursor: pointer;
+}
+
+#listing-container {
+    display: none;
+    position: absolute;
+    z-index: 100;
+}
+
+.select {
+    max-width: 42vw;
 }
 
 .select-fields
@@ -159,25 +248,8 @@ textarea {
     justify-content: space-between;
 }
 
-.listing {
-    width: 100%;
-    display: block;
-    padding: 12px 20px;
-    margin-bottom: 0px;
-    margin-top: 0px;
-    box-sizing: border-box;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.listing:hover {
-    background-color: #e8e8e8;
-    cursor: pointer;
-}
-
-#listing-container {
-    display: none;
+.disabled {
+    opacity: 0.7;
 }
 
 .modal {
@@ -189,7 +261,24 @@ textarea {
     display: none;
 }
 
+.warning-text {
+    display: none;
+    color: red;
+}
+
 /* responsiveness */
+@media screen and (max-width: 740px) {
+    .modal-content {
+        width: 70vw;
+    }
+    .input, .listing, .dates, textarea {
+        width: 65vw;
+    }
+    .select {
+        max-width: 100%;
+    }
+}
+
 @media screen and (max-width: 620px) {
     .upper-container {
         flex-direction: column;
@@ -203,9 +292,17 @@ textarea {
     }
     .profile-picture {
         height: 20vh;
+        width: 20vh;
     }
     .profile-information {
         text-align: center;
         margin-left: 0;
+        min-width: 60vw;
+    }
+    .data-container {
+        flex-direction: column;
+    }
+    .left-data {
+        justify-content: flex-start;
     }
 }

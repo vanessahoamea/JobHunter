@@ -33,7 +33,7 @@ else
         if($data == null)
         {
             http_response_code(400);
-            echo json_encode(array("message" => "Fields 'title', 'company_name', 'type', 'start_month', 'start_year', 'end_month' and 'end_year' are required."));
+            echo json_encode(array("message" => "Fields 'title', 'company_name', 'type', 'start_month', 'start_year' are required."));
             return;
         }
 
@@ -63,7 +63,7 @@ else
         else
         {
             http_response_code(400);
-            echo json_encode(array("message" => "Fields 'title', 'company_name', 'type', 'start_month', 'start_year', 'end_month' and 'end_year' are required."));
+            echo json_encode(array("message" => "Fields 'title', 'company_name', 'type', 'start_month', 'start_year' are required."));
         }
     }
 }

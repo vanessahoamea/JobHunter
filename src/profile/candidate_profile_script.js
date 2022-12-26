@@ -1,8 +1,72 @@
 $(document).ready(function() {
+    //replace placeholder skeleton with text and images
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+    const id = params.id;
+    
+    //profile section
+    $.ajax({
+        url: "../api/get_candidate.php",
+        method: "GET",
+        data: {"id": id},
+        contentType: "application/x-www-form-urlencoded",
+        dataType: "json",
+        success: function(response) {
+            $("#full-name").text(response["first_name"] + " " + response["last_name"]);
+
+            $(".information-list").empty();
+            $(".information-list").append("<li><i class='fa-solid fa-envelope'></i> " + response["email"] + "</li>");
+            if(response["phone"] != null)
+                $(".information-list").append("<li><i class='fa-solid fa-phone'></i> " + response["phone"] + "</li>");
+        }
+    });
+
+    //about section
+    fillSection("#about-content", null, null);
+
+    //experience section
+    $.ajax({
+        url: "../api/get_experience.php",
+        method: "GET",
+        data: {"id": id},
+        contentType: "application/x-www-form-urlencoded",
+        dataType: "json",
+        success: function(response) {            
+            let workPeriods = [];
+            let jobDatas = [];
+            for(let i=0; i<response.length; i++)
+            {
+                const jobStart = response[i]["start_month"] + " " + response[i]["start_year"];
+                const jobEnd = response[i]["end_month"] != null ? response[i]["end_month"] + " " + response[i]["end_year"] : "Present";
+                const workPeriod = jobStart + " - " + jobEnd;
+
+                const company = response[i]["company_id"] ? "<a href='companies.php?id=" + response[i]["company_id"] + "'>" + response[i]["company_name"] + "</a>" : response[i]["company_name"];
+                let jobData = "<p class='bigger-text'>" + response[i]["title"] + "</p>";
+                jobData += "<p>" + response[i]["type"] + " @ " + company + "</p>";
+                if(response[i]["description"] != null)
+                    jobData += "<p>" + response[i]["description"] + "</p>";
+                
+                workPeriods.push(workPeriod);
+                jobDatas.push(jobData);
+            }
+
+            fillSection("#experience-content", workPeriods, jobDatas);
+        },
+        error: function() {
+            fillSection("#experience-content", null, null);
+        }
+    });
+
+    //education section
+    fillSection("#education-content", null, null);
+
+    //projects section
+    fillSection("#projects-content", null, null);
+
     //populate date dropdown
     const yearList = $(".year-list");
-
-    for(index=0; index<yearList.length; index++)
+    for(let index=0; index<yearList.length; index++)
     {
         let currentYear = new Date().getFullYear();
         let earliestYear = 1970;
@@ -11,11 +75,13 @@ $(document).ready(function() {
             yearList.eq(index).append("<option value='" + currentYear + "'>" + currentYear + "</option>");
             currentYear -= 1;
         }
+
+        yearList.eq(index).css("margin-top", "0");
+        yearList.eq(index).prev().css("margin-bottom", "0");
     }
 
     //autocomplete company name search
     let selectedName = null;
-
     $("#company-name").keyup(function() {
         let query = $(this).val();
 
@@ -30,7 +96,7 @@ $(document).ready(function() {
         else
         {
             $.ajax({
-                url: "../api/find_company_names.php",
+                url: "../api/get_company_names.php",
                 method: "POST",
                 data: JSON.stringify({"company_name": query}),
                 contentType: "application/x-www-form-urlencoded",
@@ -91,6 +157,26 @@ function hideModal() {
     $(".warning-text").hide();
 }
 
+//hide end date selects if job is ongoing
+function toggleEndDate()
+{
+    let month = $("#job-end-month");
+    let year = $(".year-list").eq(1);
+
+    $("div[name='job-end-date']").toggleClass("disabled");
+
+    if($("#ongoing").is(":checked"))
+    {
+        month.prop("disabled", true);
+        year.prop("disabled", true);
+    }
+    else
+    {
+        month.prop("disabled", false);
+        year.prop("disabled", false);
+    }
+}
+
 //add new experience
 function getCookie(name)
 {
@@ -135,11 +221,12 @@ function addExperience()
     const companyId = $("#company-id").val();
     const companyName = $("#company-name").val();
     const jobType = $("#job-type").val();
-    const startMonth = $("#job-start-month").val();
+    const startMonth = $("#job-start-month").val().slice(0, 3);
     const startYear = $(".year-list")[0].value;
-    const endMonth = $("#job-end-month").val();
+    const endMonth = $("#job-end-month").val().slice(0, 3);
     const endYear =  $(".year-list")[1].value;
     const description = $("#job-description").val();
+    const ongoing = $("#ongoing").is(":checked");
 
     if(checkEmtpyValues(title, companyName))
         return;
@@ -152,8 +239,8 @@ function addExperience()
         "type": jobType,
         "start_month": startMonth,
         "start_year": startYear,
-        "end_month": endMonth,
-        "end_year": endYear,
+        "end_month": ongoing == true ? null : endMonth,
+        "end_year": ongoing == true ? null : endYear,
         "description": description
     };
 
@@ -165,40 +252,30 @@ function addExperience()
         beforeSend: function(xmlhttp) {
             xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
         },        
-        success: function(response) {
+        success: function() {
             hideModal();
             location.reload();
         }
     });
 }
 
-//TODO: move to company page
-function show_data()
+//helper function
+function fillSection(target, leftContent, rightContent)
 {
-    let bearerToken = getCookie("jwt");
+    $(target).empty();
 
-    let xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", "../api/experience_data.php", true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
-    xmlhttp.responseType = "json";
-
-    xmlhttp.onload = function(e)
+    if(leftContent != null && rightContent != null)
     {
-        if(this.status == 200)
+        for(let i=0; i<leftContent.length; i++)
         {
-            string = "Has a total of " + Math.floor(this.response["total_months"] / 12) + " years and " + (this.response["total_months"] % 12) + " months of work experience<br>";
-            if(this.response["average_employment_period"] >= 6)
-                string += "Is likely to stay at one workplace for a longer period of time<br>";
-            else
-                string += "Not likely to stay at one workplace for long periods of time, might be a job hopper<br>";
-            if(this.response["adds_descriptions"])
-                string += "Provides descriptions for most of their previous roles<br>";
-            else
-                string += "Doesn't provide descriptions for most of their previous roles<br>";
-
-            $("#result-text").innerHTML = string;
+            const div = $("<div class='data-container'></div>");
+            div.append("<div class='left-data bigger-text'>" + leftContent[i] + "</div>");
+            div.append("<div class='right-data'><div class='right-data-container'>" + rightContent[i] + "</div></div>");
+            $(target).append(div);
         }
-    };
-    xmlhttp.send();
+    }
+    else
+    {
+        $(target).append("<p><i>This section is empty.</i></p>");
+    }
 }

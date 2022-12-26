@@ -1,9 +1,39 @@
+<?php
+if(!isset($_GET["id"]))
+{
+    header("location: ..");
+    exit();
+}
+
+require_once("../models/database.php");
+require_once("../models/candidate_model.php");
+require_once("../controllers/candidate_controller.php");
+
+$candidate = new CandidateController($_GET["id"], '', '', '', '', '', '', '', '', '');
+$response = $candidate->getCandidateData();
+if($response == -1 || $response == 0)
+{
+    include("page_not_found.php");
+    exit();
+}
+
+require_once("../controllers/jwt_controller.php");
+
+$selfView = false;
+if(isset($_COOKIE["jwt"]))
+{
+    $data = JWTController::getPayload($_COOKIE["jwt"]);
+    if(isset($data["id"]) && isset($data["account_type"]) && $data["id"] == $_GET["id"] && $data["account_type"] == "candidate")
+        $selfView = true;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <title>Profile</title>
         <link rel="stylesheet" type="text/css" href="../style.css" />
-        <link rel="stylesheet" type="text/css" href="profile_style.css" />
+        <link rel="stylesheet" type="text/css" href="../profile/profile_style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +41,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
         <script src="../script.js" async></script>
-        <script src="profile_script.js" async></script>
+        <script src="../profile/candidate_profile_script.js" async></script>
         <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
         <!-- fontawesome icons -->
@@ -23,8 +53,17 @@
             <a href="../" id="logo">Job Hunter</a>
             <a href="#" class="nav-tab">Recent jobs</a>
             <div class="right">
-                <a href="#" class="current-page">Profile</a>
-                <a href="javascript:void(0)" class="nav-tab" onclick="logout()">Log out</a>
+                <?php if(isset($_COOKIE["jwt"])): ?>
+                    <?php if($selfView): ?>
+                        <a href="#" class="current-page">Profile</a>
+                    <?php else: ?>
+                        <a href="../profile">Profile</a>
+                    <?php endif; ?>
+                    <a href="javascript:void(0)" class="nav-tab" onclick="logout()">Log out</a>
+                <?php else: ?>
+                    <a href="../login" class="nav-tab">Login</a>
+                    <a href="../create-account" class="nav-tab">Create account</a>
+                <?php endif; ?>
             </div>
             <a href="javascript:void(0);" class="icon" onclick="expand()">
                 <i class="fa fa-bars"></i>
@@ -34,16 +73,21 @@
         <div id="profile">
             <div class="upper-container">
                 <div class="left-side">
-                    <div class="profile-picture"><img class="profile-picture" src="https://media-exp1.licdn.com/dms/image/C5603AQGgdMYQ-shP6w/profile-displayphoto-shrink_800_800/0/1617036394074?e=1673481600&v=beta&t=iNCbXWWd3XzH5t31swNhBSTBUSHG-rHtCGmnG7RSc4g" alt="Profile picture."></img></div>
+                <div class="profile-picture">
+                    <img class="profile-picture skeleton" src="../default.jpg" alt="Profile picture."></img>
+                </div>
                     <div class="profile-information">
-                        <h1><?php echo $data["first_name"] . " " . $data["last_name"]; ?></h1>
-                        <p><i class="fa-solid fa-envelope"></i> <?php echo $data["email"]; ?></p>
-                        <?php if(isset($data["phone"])): ?>
-                            <p><i class="fa-solid fa-phone"></i> <?php echo $data["phone"]; ?></p>
-                        <?php endif; ?>
+                        <h1 id="full-name"><div class="skeleton skeleton-text-single" style="height: 30px;"></div></h1>
+                        <div class="information-list">
+                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-text"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="edit-button"><button>Edit profile</button></div>
+                <?php if($selfView): ?>
+                    <div class="edit-button"><button>Edit profile</button></div>
+                <?php endif; ?>
             </div>
 
             <div class="lower-container">
@@ -51,7 +95,15 @@
                     <h1>About</h1>
                 </div>
                 <div class="section-info">
-                    <button id="about-button" class="add-button" onclick="showModal(0)">Edit about</button>
+                    <div id="about-content" class="section-content">
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                    </div>
+
+                    <?php if($selfView): ?>
+                        <button id="about-button" class="add-button" onclick="showModal(0)">Edit about</button>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -60,7 +112,15 @@
                     <h1>Experience</h1>
                 </div>
                 <div class="section-info">
-                    <button id="experience-button" class="add-button" onclick="showModal(1)">Add new experience</button>
+                    <div id="experience-content" class="section-content">
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                    </div>
+
+                    <?php if($selfView): ?>
+                        <button id="experience-button" class="add-button" onclick="showModal(1)">Add new experience</button>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -69,7 +129,15 @@
                     <h1>Education</h1>
                 </div>
                 <div class="section-info">
-                    <button id="education-button" class="add-button">Add new education</button>
+                    <div id="education-content" class="section-content">
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                    </div>
+
+                    <?php if($selfView): ?>
+                        <button id="education-button" class="add-button">Add new education</button>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -78,7 +146,15 @@
                     <h1>Projects</h1>
                 </div>
                 <div class="section-info">
-                    <button id="projects-button" class="add-button">Add new project</button>
+                    <div id="projects-content" class="section-content">
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                    </div>
+
+                    <?php if($selfView): ?>
+                        <button id="projects-button" class="add-button">Add new project</button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -162,6 +238,11 @@
                                     <select class="year-list select"></select>
                                 </div>
                             </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <input type="checkbox" id="ongoing" name="ongoing" onclick="toggleEndDate()">
+                            <label for="ongoing">Ongoing</label>
                         </div>
 
                         <label for="job-description">Description (optional)</label>

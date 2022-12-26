@@ -29,3 +29,16 @@ CREATE TABLE candidate_experience (
     FOREIGN KEY (id) REFERENCES candidates(id),
     FOREIGN KEY (company_id) REFERENCES companies(id)
 );
+
+CREATE TABLE jobs (
+    id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    company_id int(11) NOT NULL,
+    title varchar(100) NOT NULL,
+    skills json NOT NULL,
+    type varchar(30) NOT NULL,
+    level varchar(30) NOT NULL,
+    location varchar(100) NOT NULL,
+    physical varchar(10) NOT NULL,
+    date_posted date NOT NULL,
+    FOREIGN KEY (company_id) REFERENCES companies(id)
+);

@@ -8,24 +8,29 @@ class CandidateController extends CandidateModel
     private $company_id;
     private $company_name;
     private $type;
-    private $startMonth;
-    private $startYear;
-    private $endMonth;
-    private $endYear;
+    private $start_month;
+    private $start_year;
+    private $end_month;
+    private $end_year;
     private $description;
 
-    public function __construct($id, $title, $company_id, $company_name, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
+    public function __construct($id, $title, $company_id, $company_name, $type, $start_month, $start_year, $end_month, $end_year, $description)
     {
         $this->id = $id;
         $this->title = $title;
         $this->company_id = $company_id;
         $this->company_name = $company_name;
         $this->type = $type;
-        $this->startMonth = $startMonth;
-        $this->startYear = $startYear;
-        $this->endMonth = $endMonth;
-        $this->endYear = $endYear;
+        $this->start_month = $start_month;
+        $this->start_year = $start_year;
+        $this->end_month = $end_month;
+        $this->end_year = $end_year;
         $this->description = $description;
+    }
+
+    public function getCandidateData()
+    {
+        return $this->getAllData($this->id);
     }
 
     public function addExperience()
@@ -33,14 +38,30 @@ class CandidateController extends CandidateModel
         if($this->emptyInput())
             return -1;
 
-        return $this->createExperience($this->id, $this->title, $this->company_id, $this->company_name, $this->type, $this->startMonth, $this->startYear, $this->endMonth, $this->endYear, $this->description);
+        return $this->createExperience($this->id, $this->title, $this->company_id, $this->company_name, $this->type, $this->start_month, $this->start_year, $this->end_month, $this->end_year, $this->description);
     }
 
     private function emptyInput()
     {
-        if(empty($this->id) || empty($this->title) || empty($this->company_name) || empty($this->type) || empty($this->startMonth) || empty($this->startYear) || empty($this->endMonth) || empty($this->endYear))
+        if(empty($this->id) || empty($this->title) || empty($this->company_name) || empty($this->type) || empty($this->start_month) || empty($this->start_year))
             return true;
         return false;
+    }
+
+    public function getExperience()
+    {
+        $experience = $this->getAllExperience($this->id);
+        $months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
+        //sorting the array by most recent job
+        usort($experience, function($a, $b) use ($months) {
+            $years = $b["start_year"] - $a["start_year"];
+            if($years != 0)
+                return $years;
+            return array_search($b["start_month"], $months) - array_search($a["start_month"], $months);
+        });
+
+        return $experience;
     }
 
     public function getExperienceData()

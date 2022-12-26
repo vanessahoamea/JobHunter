@@ -10,6 +10,11 @@ class CompanyController extends CompanyModel
         $this->id = $id;
     }
 
+    public function getCompanyData()
+    {
+        return $this->getAllData($this->id);
+    }
+
     public function getNames($company_name)
     {
         return $this->getAllCompanyNames($company_name);

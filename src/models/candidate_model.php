@@ -3,10 +3,30 @@ include_once("../controllers/candidate_controller.php");
 
 class CandidateModel extends DBHandler
 {
-    protected function createExperience($id, $title, $company_id, $company_name, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
+    protected function getAllData($id)
     {
-        $params = array($id, $title, $company_name, $type, $startMonth, $startYear, $endMonth, $endYear);
-        $params_string = array("id", "title", "company_name", "type", "start_month", "start_year", "end_month", "end_year");
+        $stmt = $this->connect()->prepare("SELECT first_name, last_name, email, phone FROM candidates WHERE id = ?;");
+
+        if(!$stmt->execute(array($id)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() > 0)
+        {
+            $user = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+            return $user;
+        }
+
+        $stmt = null;
+        return -1;
+    }
+
+    protected function createExperience($id, $title, $company_id, $company_name, $type, $start_month, $start_year, $end_month, $end_year, $description)
+    {
+        $params = array($id, $title, $company_name, $type, $start_month, $start_year);
+        $params_string = array("id", "title", "company_name", "type", "start_month", "start_year");
 
         if(!empty($company_id))
         {
@@ -17,6 +37,16 @@ class CandidateModel extends DBHandler
         {
             array_push($params, $description);
             array_push($params_string, "description");
+        }
+        if(!empty($end_month))
+        {
+            array_push($params, $end_month);
+            array_push($params_string, "end_month");
+        }
+        if(!empty($end_year))
+        {
+            array_push($params, $end_year);
+            array_push($params_string, "end_year");
         }
 
         $query_params = implode(", ", $params_string);
@@ -46,8 +76,8 @@ class CandidateModel extends DBHandler
 
         if($stmt->rowCount() > 0)
         {
-            $exp = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $exp;
+            $experience = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $experience;
         }
 
         $stmt = null;

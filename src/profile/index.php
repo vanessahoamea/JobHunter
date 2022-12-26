@@ -9,9 +9,10 @@ if(!isset($_COOKIE["jwt"]))
 else
 {
     $data = JWTController::getPayload($_COOKIE["jwt"]);
+    $id = $data["id"];
     if($data["account_type"] == "candidate")
-        include("../views/candidates.php");
+        header("location: ../views/candidates.php?id=$id");
     else
-        include("../views/companies.php?");
+        header("location: ../views/companies.php?id=$id");
 }
 ?>
