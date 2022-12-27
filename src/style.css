@@ -110,6 +110,9 @@ a.current-page:hover {
 
 /* responsive navbar */
 @media screen and (max-width: 620px) {
+    .topnav a {
+        margin: 0 10px;
+    }
     .topnav a:not(:first-child) {
         display: none;
     }
@@ -120,9 +123,6 @@ a.current-page:hover {
         float: right;
         display: block;
     }
-}
-
-@media screen and (max-width: 620px) {
     .topnav.responsive {
         position: relative;
     }

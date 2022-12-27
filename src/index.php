@@ -16,7 +16,7 @@
 
     <body>
         <nav id="navbar" class="topnav">
-            <a href="#" id="logo">Job Hunter</a>
+            <a href="#" id="logo">JobHunter</a>
             <a href="#" class="nav-tab">Recent jobs</a>
             <?php if(!isset($_COOKIE["jwt"])): ?>
                 <div class="right">

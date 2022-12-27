@@ -16,6 +16,7 @@ class CandidateModel extends DBHandler
         if($stmt->rowCount() > 0)
         {
             $user = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+            $stmt = null;
             return $user;
         }
 
@@ -23,14 +24,14 @@ class CandidateModel extends DBHandler
         return -1;
     }
 
-    protected function createExperience($id, $title, $company_id, $company_name, $type, $start_month, $start_year, $end_month, $end_year, $description)
+    protected function createExperience($id, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
     {
-        $params = array($id, $title, $company_name, $type, $start_month, $start_year);
+        $params = array($id, $title, $companyName, $type, $startMonth, $startYear);
         $params_string = array("id", "title", "company_name", "type", "start_month", "start_year");
 
-        if(!empty($company_id))
+        if(!empty($companyId))
         {
-            array_push($params, $company_id);
+            array_push($params, $companyId);
             array_push($params_string, "company_id");
         }
         if(!empty($description))
@@ -38,14 +39,14 @@ class CandidateModel extends DBHandler
             array_push($params, $description);
             array_push($params_string, "description");
         }
-        if(!empty($end_month))
+        if(!empty($endMonth))
         {
-            array_push($params, $end_month);
+            array_push($params, $endMonth);
             array_push($params_string, "end_month");
         }
-        if(!empty($end_year))
+        if(!empty($endYear))
         {
-            array_push($params, $end_year);
+            array_push($params, $endYear);
             array_push($params_string, "end_year");
         }
 
@@ -77,6 +78,7 @@ class CandidateModel extends DBHandler
         if($stmt->rowCount() > 0)
         {
             $experience = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = null;
             return $experience;
         }
 

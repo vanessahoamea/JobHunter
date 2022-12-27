@@ -33,7 +33,7 @@ if(isset($_COOKIE["jwt"]))
     <head>
         <title>Profile</title>
         <link rel="stylesheet" type="text/css" href="../style.css" />
-        <link rel="stylesheet" type="text/css" href="../profile/profile_style.css" />
+        <link rel="stylesheet" type="text/css" href="../profile/company_profile_style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,9 +48,9 @@ if(isset($_COOKIE["jwt"]))
         <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </head>
 
-    <body>
+    <body>        
         <nav id="navbar" class="topnav">
-            <a href="../" id="logo">Job Hunter</a>
+            <a href="../" id="logo">JobHunter</a>
             <a href="#" class="nav-tab">Recent jobs</a>
             <div class="right">
                 <?php if(isset($_COOKIE["jwt"])): ?>
@@ -71,41 +71,53 @@ if(isset($_COOKIE["jwt"]))
         </nav>
 
         <div id="profile">
-            <div class="upper-container company-theme">
-                <div class="left-side">
+            <div id="company-information">
                 <div class="profile-picture">
                     <img class="profile-picture skeleton" src="../default.jpg" alt="Profile picture."></img>
                 </div>
-                    <div class="profile-information">
-                        <h1 id="company-name"><div class="skeleton skeleton-text-single" style="height: 30px;"></div></h1>
-                        <div class="information-list">
-                            <div class="skeleton skeleton-text"></div>
-                            <div class="skeleton skeleton-text"></div>
-                            <div class="skeleton skeleton-text"></div>
-                        </div>
-                    </div>
+                <h1 id="company-name"><div class="skeleton skeleton-text-single name"></div></h1>
+                <div class="information-list">
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text"></div>
                 </div>
+
                 <?php if($selfView): ?>
-                    <div class="edit-button"><button class="company-button">Edit profile</button></div>
+                    <button class="edit-button">Edit profile</button>
                 <?php endif; ?>
             </div>
 
-            <div class="lower-container company-theme">
-                <div class="section-title">
-                    <h1>Description</h1>
+            <div id="job-postings">
+                <div class="upper-part">
+                    <h1>Job postings</h1>
+                    <?php if($selfView): ?>
+                        <button class="skill-tag"><i class="fa-solid fa-plus fa-fw"></i>Add new</button>
+                    <?php endif; ?>
                 </div>
-                <div class="section-info">
-                    <div id="description-content" class="section-content">
+
+                <div class="card">
+                    <div class="top-row">
+                        <h2 class="skeleton skeleton-text-single"></h2>
+                    </div>
+                    <div class="card-information">
                         <div class="skeleton skeleton-text"></div>
                         <div class="skeleton skeleton-text"></div>
                         <div class="skeleton skeleton-text"></div>
                     </div>
+                </div>
 
-                    <?php if($selfView): ?>
-                        <button id="description-button" class="add-button company-button">Edit description</button>
-                    <?php endif; ?>
+                <div class="card">
+                    <div class="top-row">
+                        <h2 class="skeleton skeleton-text-single"></h2>
+                    </div>
+                    <div class="card-information">
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                    </div>
                 </div>
             </div>
+
+            <div id="pagination"></div>
         </div>
     </body>
 </html>

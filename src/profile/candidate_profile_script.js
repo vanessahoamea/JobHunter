@@ -16,9 +16,9 @@ $(document).ready(function() {
             $("#full-name").text(response["first_name"] + " " + response["last_name"]);
 
             $(".information-list").empty();
-            $(".information-list").append("<li><i class='fa-solid fa-envelope'></i> " + response["email"] + "</li>");
+            $(".information-list").append("<li><i class='fa-solid fa-envelope fa-fw'></i>" + response["email"] + "</li>");
             if(response["phone"] != null)
-                $(".information-list").append("<li><i class='fa-solid fa-phone'></i> " + response["phone"] + "</li>");
+                $(".information-list").append("<li><i class='fa-solid fa-phone fa-fw'></i>" + response["phone"] + "</li>");
         }
     });
 
@@ -97,8 +97,8 @@ $(document).ready(function() {
         {
             $.ajax({
                 url: "../api/get_company_names.php",
-                method: "POST",
-                data: JSON.stringify({"company_name": query}),
+                method: "GET",
+                data: {"company_name": query},
                 contentType: "application/x-www-form-urlencoded",
                 dataType: "json",
                 success: function(response) {

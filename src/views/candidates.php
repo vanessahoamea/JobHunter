@@ -33,7 +33,7 @@ if(isset($_COOKIE["jwt"]))
     <head>
         <title>Profile</title>
         <link rel="stylesheet" type="text/css" href="../style.css" />
-        <link rel="stylesheet" type="text/css" href="../profile/profile_style.css" />
+        <link rel="stylesheet" type="text/css" href="../profile/candidate_profile_style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -50,7 +50,7 @@ if(isset($_COOKIE["jwt"]))
 
     <body>
         <nav id="navbar" class="topnav">
-            <a href="../" id="logo">Job Hunter</a>
+            <a href="../" id="logo">JobHunter</a>
             <a href="#" class="nav-tab">Recent jobs</a>
             <div class="right">
                 <?php if(isset($_COOKIE["jwt"])): ?>

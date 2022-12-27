@@ -28,7 +28,7 @@ if(isset($_COOKIE["jwt"]))
 
     <body>
         <nav id="navbar" class="topnav">
-            <a href=".." id="logo">Job Hunter</a>
+            <a href=".." id="logo">JobHunter</a>
             <a href="#" class="nav-tab">Recent jobs</a>
             <div class="right">
                 <a href="#" class="current-page">Login</a>

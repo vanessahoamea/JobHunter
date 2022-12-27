@@ -23,8 +23,6 @@ class LoginModel extends DBHandler
                 $stmt = null;
                 return -3;
             }
-
-            $stmt = null;
             
             $params = array(
                 "id" => $user["id"],
@@ -37,6 +35,7 @@ class LoginModel extends DBHandler
             $jwt = new JWTController($params);
             $jwtToken = $jwt->generateToken();
 
+            $stmt = null;
             return $jwtToken;
         }
         else
@@ -63,8 +62,6 @@ class LoginModel extends DBHandler
                 $stmt = null;
                 return -3;
             }
-
-            $stmt = null;
             
             $params = array(
                 "id" => $user["id"],
@@ -76,6 +73,7 @@ class LoginModel extends DBHandler
             $jwt = new JWTController($params);
             $jwtToken = $jwt->generateToken();
 
+            $stmt = null;
             return $jwtToken;
         }
     }

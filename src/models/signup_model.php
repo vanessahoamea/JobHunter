@@ -12,7 +12,12 @@ class SignupModel extends DBHandler
         }
 
         if($stmt->rowCount() > 0)
+        {
+            $stmt = null;
             return -1;
+        }
+
+        $stmt = null;
         return 1;
     }
 

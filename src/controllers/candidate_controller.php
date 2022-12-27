@@ -5,26 +5,26 @@ class CandidateController extends CandidateModel
 {
     private $id;
     private $title;
-    private $company_id;
-    private $company_name;
+    private $companyId;
+    private $companyName;
     private $type;
-    private $start_month;
-    private $start_year;
-    private $end_month;
-    private $end_year;
+    private $startMonth;
+    private $startYear;
+    private $endMonth;
+    private $endYear;
     private $description;
 
-    public function __construct($id, $title, $company_id, $company_name, $type, $start_month, $start_year, $end_month, $end_year, $description)
+    public function __construct($id, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
     {
         $this->id = $id;
         $this->title = $title;
-        $this->company_id = $company_id;
-        $this->company_name = $company_name;
+        $this->companyId = $companyId;
+        $this->companyName = $companyName;
         $this->type = $type;
-        $this->start_month = $start_month;
-        $this->start_year = $start_year;
-        $this->end_month = $end_month;
-        $this->end_year = $end_year;
+        $this->startMonth = $startMonth;
+        $this->startYear = $startYear;
+        $this->endMonth = $endMonth;
+        $this->endYear = $endYear;
         $this->description = $description;
     }
 
@@ -38,12 +38,12 @@ class CandidateController extends CandidateModel
         if($this->emptyInput())
             return -1;
 
-        return $this->createExperience($this->id, $this->title, $this->company_id, $this->company_name, $this->type, $this->start_month, $this->start_year, $this->end_month, $this->end_year, $this->description);
+        return $this->createExperience($this->id, $this->title, $this->companyId, $this->companyName, $this->type, $this->startMonth, $this->startYear, $this->endMonth, $this->endYear, $this->description);
     }
 
     private function emptyInput()
     {
-        if(empty($this->id) || empty($this->title) || empty($this->company_name) || empty($this->type) || empty($this->start_month) || empty($this->start_year))
+        if(empty($this->id) || empty($this->title) || empty($this->companyName) || empty($this->type) || empty($this->startMonth) || empty($this->startYear))
             return true;
         return false;
     }

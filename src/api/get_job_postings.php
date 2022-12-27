@@ -9,18 +9,18 @@ include_once("../models/database.php");
 include_once("../models/company_model.php");
 include_once("../controllers/company_controller.php");
 
-if(!isset($_GET["company_name"]))
+if(!isset($_GET["page"]) || !isset($_GET["limit"]))
 {
     http_response_code(400);
-    echo json_encode(array("message" => "Field 'company_name' is required."));
+    echo json_encode(array("message" => "Fields 'page', 'limit' are required."));
     return;
 }
 else
 {
-    $companyName = strtolower(trim($_GET["company_name"]));
-
-    $company = new CompanyController(0);
-    $response = $company->getNames($companyName);
+    $company_id = isset($_GET["company_id"]) ? $_GET["company_id"] : 0;
+    
+    $company = new CompanyController($company_id);
+    $response = $company->getJobs($_GET["page"], $_GET["limit"]);
 
     if($response == 0)
     {
