@@ -16,8 +16,9 @@ CREATE TABLE companies (
 );
 
 CREATE TABLE candidate_experience (
-    id int(11),
+    id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
     title varchar(100) NOT NULL,
+    candidate_id int(11) NOT NULL,
     company_id int(11),
     company_name varchar(100) NOT NULL,
     type varchar(30),
@@ -26,7 +27,7 @@ CREATE TABLE candidate_experience (
     end_month varchar(10),
     end_year int(11),
     description varchar(1500),
-    FOREIGN KEY (id) REFERENCES candidates(id),
+    FOREIGN KEY (candidate_id) REFERENCES candidates(id),
     FOREIGN KEY (company_id) REFERENCES companies(id)
 );
 

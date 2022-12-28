@@ -41,14 +41,17 @@ if(isset($_COOKIE["jwt"]))
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
         <script src="../script.js" async></script>
-        <script src="../profile/company_profile_script.js" async></script>
-        <!-- jQuery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+        <script src="../profile/company_profile_script.js" defer></script>
         <!-- fontawesome icons -->
         <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </head>
 
-    <body>        
+    <body>
+        <!-- to help the script -->
+        <?php if($selfView): ?>
+            <div id="self-view" style="display: none;"></div>
+        <?php endif; ?>
+
         <nav id="navbar" class="topnav">
             <a href="../" id="logo">JobHunter</a>
             <a href="#" class="nav-tab">Recent jobs</a>
@@ -90,7 +93,10 @@ if(isset($_COOKIE["jwt"]))
                 <div class="upper-part">
                     <h1>Job postings</h1>
                     <?php if($selfView): ?>
-                        <button class="skill-tag"><i class="fa-solid fa-plus fa-fw"></i>Add new</button>
+                        <div>
+                            <button class="edit-button"><i class="fa-solid fa-plus fa-fw"></i>Add new</button>
+                            <!-- <button class="edit-button"><i class="fa-solid fa-pen-to-square"></i>Edit</button> -->
+                        </div>
                     <?php endif; ?>
                 </div>
 
@@ -115,9 +121,12 @@ if(isset($_COOKIE["jwt"]))
                         <div class="skeleton skeleton-text"></div>
                     </div>
                 </div>
+                
+                <div id="pagination"></div>
             </div>
-
-            <div id="pagination"></div>
         </div>
+
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
     </body>
 </html>

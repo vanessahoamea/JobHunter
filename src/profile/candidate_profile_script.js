@@ -259,7 +259,7 @@ function addExperience()
     });
 }
 
-//helper function
+//helper functions
 function fillSection(target, leftContent, rightContent)
 {
     $(target).empty();
@@ -269,13 +269,27 @@ function fillSection(target, leftContent, rightContent)
         for(let i=0; i<leftContent.length; i++)
         {
             const div = $("<div class='data-container'></div>");
+            div.append("<div class='experience-id' style='display: none;'></div>"); //for editing/deleting
             div.append("<div class='left-data bigger-text'>" + leftContent[i] + "</div>");
             div.append("<div class='right-data'><div class='right-data-container'>" + rightContent[i] + "</div></div>");
             $(target).append(div);
         }
+
+        addSectionButtons(target);
     }
     else
-    {
         $(target).append("<p><i>This section is empty.</i></p>");
+
+}
+
+function addSectionButtons(target)
+{
+    if($("#self-view").length != 0)
+    {
+        const containers = $(target).children(".data-container");
+        const buttons = $("<div class='buttons'></div>");
+        buttons.append("<button class='section-button'><i class='fa-solid fa-pen-to-square'></i>edit</button>");
+        buttons.append("<button class='section-button'><i class='fa-solid fa-trash'></i>delete</button>");
+        buttons.insertAfter(containers);
     }
 }

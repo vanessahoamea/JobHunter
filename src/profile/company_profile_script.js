@@ -44,7 +44,10 @@ $(document).ready(function() {
             $("#pagination").append(`<div id='quick-last' class='page' onclick='displayJobs(${pageCount}, ${limit}, ${interval}, ${pageCount}, ${id}, null)' style='display: none;'>last</div>`);
             
             $(".card").remove();
-            displayJobs(1, limit, interval, pageCount, id, response["jobs"]);
+            if(response["jobs"].length == 0)
+                $("<p><i>This company has no job postings.</i></p>").insertBefore("#pagination");
+            else
+                displayJobs(1, limit, interval, pageCount, id, response["jobs"]);
         }
     });
 });
@@ -69,8 +72,18 @@ function buildJobCard(data)
     cardInformation.append("<p><i class='fa-solid fa-location-dot fa-fw'></i>in " + data["location"] + "</p>");
     cardInformation.append(jobRequirements);
 
+    card.append("<div class='job-id' style='display: none;'></div>"); //for editing/deleting
     card.append(topRow);
     card.append(cardInformation);
+
+    //edit/delete buttons for each job
+    if($("#self-view").length != 0)
+    {
+        const buttons = $("<div class='buttons'></div>");
+        buttons.append("<button class='section-button'><i class='fa-solid fa-pen-to-square'></i>edit</button>");
+        buttons.append("<button class='section-button'><i class='fa-solid fa-trash'></i>delete</button>");
+        card.append(buttons);
+    }
 
     return card;
 }
@@ -166,7 +179,7 @@ function displayJobs(currentPage, limit, interval, pageCount, id, jobsArray)
     }
     //otherwise, we can just display the fully-loaded page and hide the others
     else
-        $("#page" + currentPage).css("display", "flex");
+        $("#page" + currentPage).css("display", "block");
 }
 
 // function show_data()

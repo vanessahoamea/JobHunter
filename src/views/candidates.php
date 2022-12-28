@@ -41,14 +41,17 @@ if(isset($_COOKIE["jwt"]))
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
         <script src="../script.js" async></script>
-        <script src="../profile/candidate_profile_script.js" async></script>
-        <!-- jQuery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+        <script src="../profile/candidate_profile_script.js" defer></script>
         <!-- fontawesome icons -->
         <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </head>
 
     <body>
+        <!-- to help the script -->
+        <?php if($selfView): ?>
+            <div id="self-view" style="display: none;"></div>
+        <?php endif; ?>
+
         <nav id="navbar" class="topnav">
             <a href="../" id="logo">JobHunter</a>
             <a href="#" class="nav-tab">Recent jobs</a>
@@ -253,5 +256,8 @@ if(isset($_COOKIE["jwt"]))
                 </div>
             </div>
         </div>
+
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
     </body>
 </html>
