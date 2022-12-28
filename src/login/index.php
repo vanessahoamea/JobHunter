@@ -19,9 +19,7 @@ if(isset($_COOKIE["jwt"]))
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
         <script src="../script.js" async></script>
-        <script src="login_script.js" async></script>
-        <!-- jQuery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+        <script src="login_script.js" defer></script>
         <!-- fontawesome icons -->
         <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </head>
@@ -62,5 +60,8 @@ if(isset($_COOKIE["jwt"]))
                 </div>
             </div>
         </div>
+
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
     </body>
 </html>

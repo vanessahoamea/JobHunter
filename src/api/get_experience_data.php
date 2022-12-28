@@ -29,7 +29,7 @@ else
         $jwt = JWTController::getPayload($token);
         $id = $jwt["id"];
 
-        $candidate = new CandidateController($id, '', '', '', '', '', '', '', '', '');
+        $candidate = new CandidateController($id);
         $response = $candidate->getExperienceData();
 
         if($response == -1)

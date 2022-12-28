@@ -16,7 +16,7 @@ if(!isset($_GET["id"]))
 }
 else
 {
-    $candidate = new CandidateController($_GET["id"], '', '', '', '', '', '', '', '', '');
+    $candidate = new CandidateController($_GET["id"]);
     $response = $candidate->getCandidateData();
 
     if($response == -1)

@@ -9,15 +9,15 @@ let submitButton = $("#submit-button");
 
 let resultText = $("#result-text");
 
+let currentType = -1;
+
 function showForm(type)
 {
     formContainer.css("display", "block");
     headerText.css("display", "none");
     boxes.css("display", "none");
     returnButton.css("display", "inline");
-    submitButton.on("click", function() {
-        checkValues(type);
-    });
+    currentType = type;
 
     if(type == 0)
     {
@@ -36,7 +36,7 @@ function showForm(type)
 function showBoxes()
 {
     headerText.css("display", "block");
-    boxes.css("display", "block");
+    boxes.css("display", "flex");
 
     formContainer.css("display", "none");
     returnButton.css("display", "none");
@@ -48,13 +48,13 @@ function showBoxes()
     $(".warning-text").remove();
 }
 
-function checkValues(type)
-{
+function checkValues()
+{    
     let params = null;
     let notNullValues = [];
-    let endpoint = type == 0 ? "candidate_signup.php" : "company_signup.php";
+    let endpoint = currentType == 0 ? "candidate_signup.php" : "company_signup.php";
 
-    if(type == 0)
+    if(currentType == 0)
     {
         const fname = $("#fname").val().trim();
         const lname = $("#lname").val().trim();
@@ -111,9 +111,12 @@ function checkValues(type)
             complete: function(xmlhttp) {
                 response = JSON.parse(xmlhttp.responseText);
                 
-                resultText.text(response["message"]);
-                resultText.css("display", "block");
-                returnButton[0].scrollIntoView({behavior: "smooth"});
+                if(!response["message"].startsWith("Fields"))
+                {
+                    resultText.text(response["message"]);
+                    resultText.css("display", "block");
+                    returnButton[0].scrollIntoView({behavior: "smooth"});
+                }
             }
         });
     }

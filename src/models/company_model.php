@@ -39,6 +39,32 @@ class CompanyModel extends DBHandler
         return $names;
     }
 
+    protected function createJob($id, $title, $skills, $type, $level, $locationId, $locationName, $physical, $salary, $datePosted)
+    {
+        $params = array($id, $title, $skills, $type, $level, $locationId, $locationName, $physical, $datePosted);
+        $params_string = array("company_id", "title", "skills", "type", "level", "location_id", "location_name", "physical", "date_posted");
+
+        if(!empty($salary))
+        {
+            array_push($params, $salary);
+            array_push($params_string, "salary");
+        }
+
+        $query_params = implode(", ", $params_string);
+        $placeholders = implode(", ", array_fill(0, count($params), "?"));
+
+        $stmt = $this->connect()->prepare("INSERT INTO jobs (" . $query_params . ") VALUES (" . $placeholders .");");
+
+        if(!$stmt->execute($params))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $stmt = null;
+        return 1;
+    }
+
     protected function getRecentJobs($id, $page, $limit)
     {
         $result = array();

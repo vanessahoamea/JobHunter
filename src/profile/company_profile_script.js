@@ -33,8 +33,6 @@ $(document).ready(function() {
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
         success: function(response) {
-            response = response[0];
-
             const pageCount = Math.ceil(response["total_count"] / limit);
             for(let page=1; page<=pageCount; page++)
                 $("#pagination").append(`<div class='page' onclick='displayJobs(${page}, ${limit}, ${interval}, ${pageCount}, ${id}, null)'>${page}</div>`);
@@ -69,7 +67,7 @@ function buildJobCard(data)
     cardInformation.append("<p><i class='fa-solid fa-suitcase fa-fw'></i>" + data["type"] + " (" + data["physical"] + ") &#x2022; " + data["level"] + "</p>");
     if(data["salary"] != null)
         cardInformation.append("<p><i class='fa-solid fa-money-bill-wave fa-fw'></i>" + data["salary"] + " (per month)</p>");
-    cardInformation.append("<p><i class='fa-solid fa-location-dot fa-fw'></i>in " + data["location"] + "</p>");
+    cardInformation.append("<p><i class='fa-solid fa-location-dot fa-fw'></i>in " + data["location_name"] + "</p>");
     cardInformation.append(jobRequirements);
 
     card.append("<div class='job-id' style='display: none;'></div>"); //for editing/deleting
@@ -160,8 +158,6 @@ function displayJobs(currentPage, limit, interval, pageCount, id, jobsArray)
                     dataType: "json",
                     success: function(response) {
                         jobsPage.empty();
-                        response = response[0]["jobs"];
-
                         for(let i=0; i<response.length; i++)
                         {
                             card = buildJobCard(response[i]);

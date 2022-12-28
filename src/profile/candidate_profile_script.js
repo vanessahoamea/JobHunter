@@ -32,11 +32,14 @@ $(document).ready(function() {
         data: {"id": id},
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
-        success: function(response) {            
+        success: function(response) {
+            response = response["data"];
+
             let workPeriods = [];
             let jobDatas = [];
             for(let i=0; i<response.length; i++)
             {
+                //TODO: extract job id
                 const jobStart = response[i]["start_month"] + " " + response[i]["start_year"];
                 const jobEnd = response[i]["end_month"] != null ? response[i]["end_month"] + " " + response[i]["end_year"] : "Present";
                 const workPeriod = jobStart + " - " + jobEnd;
@@ -75,20 +78,17 @@ $(document).ready(function() {
             yearList.eq(index).append("<option value='" + currentYear + "'>" + currentYear + "</option>");
             currentYear -= 1;
         }
-
-        yearList.eq(index).css("margin-top", "0");
-        yearList.eq(index).prev().css("margin-bottom", "0");
     }
 
     //autocomplete company name search
     let selectedName = null;
-    $("#company-name").keyup(function() {
+    $("#company-name").on("input", function() {
         let query = $(this).val();
+        let container = $("#listing-container");
 
         if(selectedName != null && selectedName != query)
             $("#company-id").val("-1");
 
-        container = $("#listing-container");
         container.empty();
 
         if(query == "")
@@ -102,9 +102,9 @@ $(document).ready(function() {
                 contentType: "application/x-www-form-urlencoded",
                 dataType: "json",
                 success: function(response) {
-                    response = response[0];
+                    response = response["data"];
+
                     container.css("display", "block");
-                    
                     for(let i=0; i<response.length; i++)
                     {
                         container.append("<li class='listing'>" + response[i]["company_name"] + "</li>");
@@ -259,7 +259,7 @@ function addExperience()
     });
 }
 
-//helper functions
+//render data on page
 function fillSection(target, leftContent, rightContent)
 {
     $(target).empty();

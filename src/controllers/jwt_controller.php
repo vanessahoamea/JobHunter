@@ -32,24 +32,12 @@ class JWTController
     {
         $jwt = self::getPayload($token);
 
-        if(!isset($jwt["account_type"]))
+        if(!isset($jwt["id"]) || !isset($jwt["account_type"]))
             return false;
-        else
-            $accountType = $jwt["account_type"];
-        
-        if($accountType == "candidate")
-        {
-            if(!isset($jwt["id"]) || !isset($jwt["first_name"]) || !isset($jwt["last_name"]) || !isset($jwt["email"]) || !isset($jwt["iat"]) || !isset($jwt["exp"]))
-                return false;
-        }
-        else
-        {
-            if(!isset($jwt["id"]) || !isset($jwt["company_name"]) || !isset($jwt["email"]) || !isset($jwt["iat"]) || !isset($jwt["exp"]))
-                return false;
-        }
 
         if(time() <= $jwt["exp"])
             return true;
+
         return false;
     }
 

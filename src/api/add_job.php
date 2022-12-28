@@ -6,8 +6,8 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once("../models/database.php");
-include_once("../models/candidate_model.php");
-include_once("../controllers/candidate_controller.php");
+include_once("../models/company_model.php");
+include_once("../controllers/company_controller.php");
 include_once("../controllers/jwt_controller.php");
 
 $headers = apache_request_headers();
@@ -33,27 +33,27 @@ else
         if($data == null)
         {
             http_response_code(400);
-            echo json_encode(array("message" => "Fields 'title', 'company_name', 'type', 'start_month', 'start_year' are required."));
+            echo json_encode(array("message" => "Fields 'title', 'skills', 'type', 'level', 'location_id', 'location_name', 'physical', 'date_posted' are required."));
             return;
         }
 
         $title = isset($data->title) ? trim($data->title) : '';
-        $companyId = isset($data->company_id) ? trim($data->company_id) : '';
-        $companyName = isset($data->company_name) ? trim($data->company_name) : '';
+        $skills = isset($data->skills) ? trim($data->skills) : '';
         $type = isset($data->type) ? trim($data->type) : '';
-        $startMonth = isset($data->start_month) ? trim($data->start_month) : '';
-        $startYear = isset($data->start_year) ? trim($data->start_year) : '';
-        $endMonth = isset($data->end_month) ? trim($data->end_month) : '';
-        $endYear = isset($data->end_year) ? trim($data->end_year) : '';
-        $description = isset($data->description) ? trim($data->description) : '';
+        $level = isset($data->level) ? trim($data->level) : '';
+        $locationId = isset($data->location_id) ? trim($data->location_id) : '';
+        $locationName = isset($data->location_name) ? trim($data->location_name) : '';
+        $physical = isset($data->physical) ? trim($data->physical) : '';
+        $salary = isset($data->salary) ? trim($data->salary) : '';
+        $datePosted = isset($data->date_posted) ? trim($data->date_posted) : '';
 
-        $candidate = new CandidateController($id);
-        $response = $candidate->addExperience($title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description);
+        $candidate = new CompanyController($id);
+        $response = $candidate->addJob($title, $skills, $type, $level, $locationId, $locationName, $physical, $salary, $datePosted);
 
         if($response == 1)
         {
             http_response_code(201);
-            echo json_encode(array("message" => "Added experience to resume."));
+            echo json_encode(array("message" => "Posted job."));
         }
         else if($response == 0)
         {
@@ -63,7 +63,7 @@ else
         else
         {
             http_response_code(400);
-            echo json_encode(array("message" => "Fields 'title', 'company_name', 'type', 'start_month', 'start_year' are required."));
+            echo json_encode(array("message" => "Fields 'title', 'skills', 'type', 'level', 'location_id', 'location_name', 'physical', 'date_posted' are required."));
         }
     }
 }

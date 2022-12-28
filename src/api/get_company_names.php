@@ -30,7 +30,7 @@ else
     else
     {
         http_response_code(200);
-        echo json_encode(array($response));
+        echo json_encode(array("data" => $response));
     }
 }
 ?>

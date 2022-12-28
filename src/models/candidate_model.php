@@ -26,8 +26,8 @@ class CandidateModel extends DBHandler
 
     protected function createExperience($id, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
     {
-        $params = array($id, $title, $companyName, $type, $startMonth, $startYear);
-        $params_string = array("id", "title", "company_name", "type", "start_month", "start_year");
+        $params = array($title, $id, $companyName, $type, $startMonth, $startYear);
+        $params_string = array("title", "candidate_id", "company_name", "type", "start_month", "start_year");
 
         if(!empty($companyId))
         {
@@ -67,7 +67,7 @@ class CandidateModel extends DBHandler
 
     protected function getAllExperience($id)
     {
-        $stmt = $this->connect()->prepare("SELECT * FROM candidate_experience WHERE id = ?;");
+        $stmt = $this->connect()->prepare("SELECT * FROM candidate_experience WHERE candidate_id = ?;");
 
         if(!$stmt->execute(array($id)))
         {

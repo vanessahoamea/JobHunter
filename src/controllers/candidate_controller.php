@@ -4,28 +4,10 @@ include_once("../models/candidate_model.php");
 class CandidateController extends CandidateModel
 {
     private $id;
-    private $title;
-    private $companyId;
-    private $companyName;
-    private $type;
-    private $startMonth;
-    private $startYear;
-    private $endMonth;
-    private $endYear;
-    private $description;
 
-    public function __construct($id, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
+    public function __construct($id)
     {
         $this->id = $id;
-        $this->title = $title;
-        $this->companyId = $companyId;
-        $this->companyName = $companyName;
-        $this->type = $type;
-        $this->startMonth = $startMonth;
-        $this->startYear = $startYear;
-        $this->endMonth = $endMonth;
-        $this->endYear = $endYear;
-        $this->description = $description;
     }
 
     public function getCandidateData()
@@ -33,19 +15,12 @@ class CandidateController extends CandidateModel
         return $this->getAllData($this->id);
     }
 
-    public function addExperience()
+    public function addExperience($title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
     {
-        if($this->emptyInput())
+        if($this->emptyInput(array($title, $companyName, $type, $startMonth, $startYear)))
             return -1;
 
-        return $this->createExperience($this->id, $this->title, $this->companyId, $this->companyName, $this->type, $this->startMonth, $this->startYear, $this->endMonth, $this->endYear, $this->description);
-    }
-
-    private function emptyInput()
-    {
-        if(empty($this->id) || empty($this->title) || empty($this->companyName) || empty($this->type) || empty($this->startMonth) || empty($this->startYear))
-            return true;
-        return false;
+        return $this->createExperience($this->id, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description);
     }
 
     public function getExperience()
@@ -102,6 +77,18 @@ class CandidateController extends CandidateModel
         );
 
         return $result;
+    }
+
+    private function emptyInput($params)
+    {
+        if(empty($this->id))
+            return true;
+        
+        foreach($params as $param)
+            if(empty($param))
+                return true;
+
+        return false;
     }
 }
 ?>

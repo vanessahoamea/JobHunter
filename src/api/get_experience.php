@@ -16,7 +16,7 @@ if(!isset($_GET["id"]))
 }
 else
 {
-    $candidate = new CandidateController($_GET["id"], '', '', '', '', '', '', '', '', '');
+    $candidate = new CandidateController($_GET["id"]);
     $response = $candidate->getExperience();
 
     if($response == -1)
@@ -32,7 +32,7 @@ else
     else
     {
         http_response_code(200);
-        echo json_encode($response);
+        echo json_encode(array("data" => $response));
     }
 }
 ?>

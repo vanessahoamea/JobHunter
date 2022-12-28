@@ -17,7 +17,7 @@ if($data == null)
     return;
 }
 
-$email = $data->email;
+$email = isset($data->email) ? strtolower(trim($data->email)) : '';
 $password = $data->password;
 
 $login = new LoginController($email, $password);

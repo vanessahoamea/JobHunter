@@ -38,9 +38,10 @@ CREATE TABLE jobs (
     skills json NOT NULL,
     type varchar(20) NOT NULL,
     level varchar(20) NOT NULL,
-    location varchar(100) NOT NULL,
+    location_name varchar(100) NOT NULL,
+    location_id varchar(100) NOT NULL,
     physical varchar(10) NOT NULL,
-    salary varchar(10),
+    salary varchar(30),
     date_posted date NOT NULL,
     FOREIGN KEY (company_id) REFERENCES companies(id)
 );

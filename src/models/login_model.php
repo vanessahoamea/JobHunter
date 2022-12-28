@@ -26,10 +26,6 @@ class LoginModel extends DBHandler
             
             $params = array(
                 "id" => $user["id"],
-                "first_name" => $user["first_name"],
-                "last_name" => $user["last_name"],
-                "email" => $user["email"],
-                "phone" => $user["phone"],
                 "account_type" => "candidate"
             );
             $jwt = new JWTController($params);
@@ -65,9 +61,6 @@ class LoginModel extends DBHandler
             
             $params = array(
                 "id" => $user["id"],
-                "company_name" => $user["company_name"],
-                "email" => $user["email"],
-                "address" => $user["address"],
                 "account_type" => "company"
             );
             $jwt = new JWTController($params);

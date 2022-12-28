@@ -255,6 +255,14 @@ textarea {
     flex-direction: column;
 }
 
+#job-start-month, #job-end-month {
+    margin-bottom: 0;
+}
+
+.year-list {
+    margin-top: 0;
+}
+
 .dates {
     display: flex;
     flex-direction: row;
