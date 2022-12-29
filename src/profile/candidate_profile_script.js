@@ -95,23 +95,19 @@ $(document).ready(function() {
             container.css("display", "none");
         else
         {
-            $.ajax({
-                url: "../api/get_company_names.php",
-                method: "GET",
-                data: {"company_name": query},
-                contentType: "application/x-www-form-urlencoded",
-                dataType: "json",
-                success: function(response) {
-                    response = response["data"];
+            fetch(`../api/get_company_names.php?company_name=${query}`)
+            .then(response => response.json())
+            .then(response => {
+                response = response["data"];
 
-                    container.css("display", "block");
-                    for(let i=0; i<response.length; i++)
-                    {
-                        container.append("<li class='listing'>" + response[i]["company_name"] + "</li>");
-                        container.append("<p style='display: none;'>" + response[i]["id"] + "</p>");
-                    }
+                container.css("display", "block");
+                for(let i=0; i<response.length; i++)
+                {
+                    container.append("<li class='listing'>" + response[i]["company_name"] + "</li>");
+                    container.append("<p style='display: none;'>" + response[i]["id"] + "</p>");
                 }
-            });
+            })
+            .catch();
         }
     });
 

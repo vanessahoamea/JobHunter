@@ -1,0 +1,145 @@
+#wrapper {
+    background-color: #fefefe;
+    margin: 0 auto;
+    padding: 20px;
+    width: 60vw;
+    border-radius: 10px;
+}
+
+#form {
+    padding: 25px 15px 0 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pair {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.pair label {
+    text-align: left;
+    font-size: 18px;
+}
+
+.input, .select, .listing {
+    width: 57vw;
+    padding: 12px 20px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+textarea {
+    resize: none;
+    width: 57vw;
+    height: auto;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+}
+
+.radio-buttons {
+    width: 57vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.listing {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 0;
+}
+
+.listing:hover {
+    background-color: #e8e8e8;
+    cursor: pointer;
+}
+
+#listing-container {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    text-align: left;
+}
+
+.skill-box {
+    width: 57vw;
+    margin-top: 8px;
+    margin-bottom: 15px;
+}
+
+.skill-box ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 12px 18px;
+    box-sizing: border-box;
+}
+
+.skill-box li {
+    background-color: #A443DA;
+    color: white;
+    margin: 0 5px 5px 0;
+    padding: 7px;
+    border-radius: 5px;
+    text-align: left;
+}
+
+.skill-box input {
+    flex: 1;
+    outline: none;
+    border: none;
+    font-size: 16px;
+    min-width: 20vw;
+    width: 100%;
+}
+
+.submit-button {
+    background-color: #A443DA;
+    border: none;
+    border-radius: 3px;
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.submit-button:hover {
+    background-color: #9c1de0;
+}
+
+i.fa-fw {
+    margin-right: 6px;
+}
+
+i.fa-xmark {
+    height: 12px;
+    width: 12px;
+    padding: 5px;
+    font-size: 12px;
+    background: #700ea4;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.warning-text {
+    display: none;
+    color: red;
+}

@@ -1,3 +1,3 @@
 <?php
-$secretKey = "jobhunter_secret_key"
+$secretKey = "jobhunter_encryption_key"
 ?>

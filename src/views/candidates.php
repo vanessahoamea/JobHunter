@@ -9,12 +9,16 @@ require_once("../models/database.php");
 require_once("../models/candidate_model.php");
 require_once("../controllers/candidate_controller.php");
 
-$candidate = new CandidateController($_GET["id"], '', '', '', '', '', '', '', '', '');
+$candidate = new CandidateController($_GET["id"]);
 $response = $candidate->getCandidateData();
 if($response == -1 || $response == 0)
 {
     include("page_not_found.php");
     exit();
+}
+else
+{
+    $title = $response["first_name"] . " " . $response["last_name"];
 }
 
 require_once("../controllers/jwt_controller.php");
@@ -31,7 +35,7 @@ if(isset($_COOKIE["jwt"]))
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Profile</title>
+        <title><?php echo $title; ?></title>
         <link rel="stylesheet" type="text/css" href="../style.css" />
         <link rel="stylesheet" type="text/css" href="../profile/candidate_profile_style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">

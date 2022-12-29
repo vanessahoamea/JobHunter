@@ -157,20 +157,20 @@ function displayJobs(currentPage, limit, interval, pageCount, id, jobsArray)
                     contentType: "application/x-www-form-urlencoded",
                     dataType: "json",
                     success: function(response) {
-                        jobsPage.empty();
-                        for(let i=0; i<response.length; i++)
-                        {
-                            card = buildJobCard(response[i]);
-                            jobsPage.append(card);
-                        }
-                        
-                        resolve();
+                        resolve(response["jobs"]);
                     },
                     error: function() {
                         reject();
                     }
                 });
-            }).then(() => {}).catch(() => {});
+            }).then((response) => {
+                jobsPage.empty();
+                for(let i=0; i<response.length; i++)
+                {
+                    card = buildJobCard(response[i]);
+                    jobsPage.append(card);
+                }
+            }).catch(() => {});
         }
     }
     //otherwise, we can just display the fully-loaded page and hide the others
