@@ -189,7 +189,7 @@ if(isset($_COOKIE["jwt"]))
 
                         <label for="company-name">Company name</label> <span class="warning-text">(this field is required)</span>
                         <input type="text" id="company-name" name="company-name" class="input" style="margin-bottom: 0px;">
-                        <input type="number" id="company-id" value="-1" style="display: none;">
+                        <input type="number" id="company-id" style="display: none;">
                         <div id="listing-container"></div>
 
                         <div class="select-fields">

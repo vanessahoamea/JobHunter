@@ -37,12 +37,12 @@
     font-size: 16px;
 }
 
-textarea {
-    resize: none;
+#description {
     width: 57vw;
-    height: auto;
-    font-family: Arial, Helvetica, sans-serif;
+    min-height: 300px;
     font-size: 16px;
+    margin-top: 5px !important;
+    text-align: left;
 }
 
 .radio-buttons {
@@ -142,4 +142,22 @@ i.fa-xmark {
 .warning-text {
     display: none;
     color: red;
+}
+
+.text-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.text-options button {
+    height: 28px;
+    width: 28px;
+    border-radius: 3px;
+    border: none;
+    background-color: white;
+    color: #020929;
+    cursor: pointer;
 }

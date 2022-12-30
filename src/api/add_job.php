@@ -33,27 +33,28 @@ else
         if($data == null)
         {
             http_response_code(400);
-            echo json_encode(array("message" => "Fields 'title', 'skills', 'type', 'level', 'location_id', 'location_name', 'physical', 'date_posted' are required."));
+            echo json_encode(array("message" => "Fields 'title', 'type', 'level', 'location_name', 'location_coords', 'physical', 'description', 'date_posted' are required."));
             return;
         }
 
         $title = isset($data->title) ? trim($data->title) : '';
-        $skills = isset($data->skills) ? trim($data->skills) : '';
+        $skills = isset($data->skills) ? json_encode($data->skills) : '';
         $type = isset($data->type) ? trim($data->type) : '';
         $level = isset($data->level) ? trim($data->level) : '';
-        $locationId = isset($data->location_id) ? trim($data->location_id) : '';
         $locationName = isset($data->location_name) ? trim($data->location_name) : '';
+        $locationCoords = isset($data->location_coords) ? json_encode($data->location_coords) : '';
         $physical = isset($data->physical) ? trim($data->physical) : '';
         $salary = isset($data->salary) ? trim($data->salary) : '';
-        $datePosted = isset($data->date_posted) ? trim($data->date_posted) : '';
+        $description = isset($data->description) ? urldecode($data->description) : '';
+        $datePosted = date('Y-m-d');
 
-        $candidate = new CompanyController($id);
-        $response = $candidate->addJob($title, $skills, $type, $level, $locationId, $locationName, $physical, $salary, $datePosted);
+        $company = new CompanyController($id);
+        $response = $company->addJob($title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $description, $datePosted);
 
-        if($response == 1)
+        if($response == -1)
         {
-            http_response_code(201);
-            echo json_encode(array("message" => "Posted job."));
+            http_response_code(400);
+            echo json_encode(array("message" => "Fields 'title', 'type', 'level', 'location_name', 'location_coords', 'physical', 'description', 'date_posted' are required."));
         }
         else if($response == 0)
         {
@@ -62,8 +63,16 @@ else
         }
         else
         {
-            http_response_code(400);
-            echo json_encode(array("message" => "Fields 'title', 'skills', 'type', 'level', 'location_id', 'location_name', 'physical', 'date_posted' are required."));
+            http_response_code(201);
+            echo json_encode(array(
+                "message" => "Posted job.",
+                "id" => $response
+            ));
+
+            //store job description on the server
+            $file = fopen("../assets/jobs/description_" . $response . ".html", "w");
+            fwrite($file, $description);
+            fclose($file);
         }
     }
 }

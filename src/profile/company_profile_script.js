@@ -60,9 +60,12 @@ function buildJobCard(data)
     topRow.append("<h2>" + data["title"] + "</h2>");
     topRow.append("<p class='date-posted'>" + data["date_posted"] + "</p>");
 
-    data["skills"] = JSON.parse(data["skills"]);
-    for(let i=0; i<data["skills"].length; i++)
-        jobRequirements.append("<div class='skill-tag'>" + data["skills"][i] + "</div>");
+    if(data["skills"] != null)
+    {
+        data["skills"] = JSON.parse(data["skills"]);
+        for(let i=0; i<data["skills"].length; i++)
+            jobRequirements.append("<div class='skill-tag'>" + data["skills"][i] + "</div>");
+    }
 
     cardInformation.append("<p><i class='fa-solid fa-suitcase fa-fw'></i>" + data["type"] + " (" + data["physical"] + ") &#x2022; " + data["level"] + "</p>");
     if(data["salary"] != null)

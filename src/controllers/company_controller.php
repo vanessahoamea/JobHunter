@@ -20,12 +20,12 @@ class CompanyController extends CompanyModel
         return $this->getAllCompanyNames($companyName);
     }
 
-    public function addJob($title, $skills, $type, $level, $locationId, $locationName, $physical, $salary, $datePosted)
+    public function addJob($title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $description, $datePosted)
     {
-        if($this->emptyInput(array($title, $skills, $type, $level, $locationId, $locationName, $physical, $datePosted)))
+        if($this->emptyInput(array($title, $type, $level, $locationName, $locationCoords, $physical, $description, $datePosted)))
             return -1;
             
-        return $this->createJob($this->id, $title, $skills, $type, $level, $locationId, $locationName, $physical, $salary, $datePosted);
+        return $this->createJob($this->id, $title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $datePosted);
     }
 
     public function getJobs($page, $limit)

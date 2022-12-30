@@ -35,7 +35,7 @@ CREATE TABLE jobs (
     id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
     company_id int(11) NOT NULL,
     title varchar(100) NOT NULL,
-    skills json NOT NULL,
+    skills json,
     type varchar(20) NOT NULL,
     level varchar(20) NOT NULL,
     location_name VARCHAR(200) CHARSET utf8 NOT NULL,

@@ -22,6 +22,7 @@ if(!isset($data["account_type"]) || $data["account_type"] != "company")
         <link rel="stylesheet" type="text/css" href="../style.css" />
         <link rel="stylesheet" type="text/css" href="post_job_style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,7 +51,7 @@ if(!isset($data["account_type"]) || $data["account_type"] != "company")
             <div id="wrapper">
                 <form id="form" action="#" method="post">
                     <div class="pair">
-                        <div>
+                        <div style="text-align: left;">
                             <label for="title">Job title</label>
                             <span class="warning-text">(this field is required)</span>
                         </div>
@@ -84,18 +85,19 @@ if(!isset($data["account_type"]) || $data["account_type"] != "company")
                             <option value="Intermediate">Intermediate</option>
                             <option value="Mid-level">Mid-level</option>
                             <option value="Senior-level">Senior-level</option>
+                            <option value="Internship">Internship</option>
                         </select>
                     </div>
 
                     <div class="pair">
-                        <div>
+                        <div style="text-align: left;">
                             <label for="location">Location</label>
                             <span class="warning-text">(select a location from the list)</span>
                         </div>
                         <div>
                             <input type="text" id="location" name="location" class="input" style="margin-bottom: 0;">
-                            <div id="location-lat" style="display: none;"></div>
-                            <div id="location-lon" style="display: none;"></div>
+                            <input type="number" id="location-lat" style="display: none;"></input>
+                            <input type="number" id="location-lon" style="display: none;"></input>
                             <div id="listing-container"></div>
                         </div>
                     </div>
@@ -123,8 +125,38 @@ if(!isset($data["account_type"]) || $data["account_type"] != "company")
                     </div>
 
                     <div class="pair">
-                        <label for="description">Job description</label>
-                        <textarea id="description" name="description" class="input" rows=15></textarea>
+                        <div style="text-align: left;">
+                            <label for="description">Job description</label>
+                            <span class="warning-text">(this field is required)</span>
+                        </div>
+                        <div>
+                            <div class="text-options">
+                                <button type="button" id="bold" class="option-button">
+                                    <i class="fa-solid fa-bold"></i>
+                                </button>
+
+                                <button type="button" id="italic" class="option-button">
+                                    <i class="fa-solid fa-italic"></i>
+                                </button>
+
+                                <button type="button" id="underline" class="option-button">
+                                    <i class="fa-solid fa-underline"></i>
+                                </button>
+
+                                <button type="button" id="strikethrough" class="option-button">
+                                    <i class="fa-solid fa-strikethrough"></i>
+                                </button>
+
+                                <button type="button" id="insertUnorderedList" class="option-button list-option">
+                                    <i class="fa-solid fa-list-ul"></i>
+                                </button>
+
+                                <button type="button" id="insertOrderedList" class="option-button list-option">
+                                    <i class="fa-solid fa-list-ol"></i>
+                                </button>
+                            </div>
+                            <div id="description" name="description" class="input" contenteditable="true"></div>
+                        </div>
                     </div>
                 </form>
 

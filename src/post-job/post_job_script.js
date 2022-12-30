@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
     //create skill tags
     $("#skills").on("keyup", function(e) {
         if(e.key == "," || e.key == "Enter")
@@ -68,8 +67,13 @@ $(document).ready(function() {
         selectedLocation = $(this).text();
     });
 
-    $(document).on("click", "#main", function () {
+    $(document).on("click", "#main", function() {
         $("#listing-container").css("display", "none");
+    });
+
+    //description text options
+    $(".option-button").on("click", function() {
+        document.execCommand(this.id, false, null);
     });
 });
 
@@ -86,7 +90,84 @@ function removeSkill(skill)
 }
 
 //add new job to the database
+function getCookie(name)
+{
+    name += "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let cookies = decodedCookie.split(";");
+
+    for(let i=0; i<cookies.length; i++)
+    {
+        let cookie = cookies[i];
+        while(cookie.charAt(0) == " ")
+            cookie = cookie.substring(1);
+
+        if(cookie.indexOf(name) == 0)
+            return cookie.substring(name.length, cookie.length);
+    }
+
+    return "";
+}
+
+function checkEmtpyValues(title, locationCoords, description)
+{
+    const values = [title, locationCoords, description];
+    const warnings = $(".warning-text");
+    let returnValue = false;
+
+    for(let i=0; i<values.length; i++)
+        if(values[i] == "" || (values[i][0] == "" || values[i][1] == ""))
+        {
+            warnings.eq(i).css("display", "inline");
+            returnValue = true;
+        }
+        else
+            warnings.eq(i).css("display", "none");
+
+    return returnValue;
+}
+
 function checkValues()
-{    
-    console.log($("#location-lat").val(), $("#location-lon").val());
+{
+    const title = $("#title").val();
+    const skills = skillsArray;
+    const type = $("#type").val();
+    const level = $("#level").val();
+    const locationName = $("#location").val();
+    const locationCoords = [$("#location-lat").val(), $("#location-lon").val()];
+    const salary = $("#salary").val();
+    const physical = $("input[name=physical]:checked").eq(0).val();
+    const description = $("#description").html();
+
+    if(checkEmtpyValues(title, locationCoords, description))
+        return;
+    
+    let bearerToken = getCookie("jwt");
+    let params = {
+        "title": title,
+        "skills": skills,
+        "type": type,
+        "level": level,
+        "location_name": locationName,
+        "location_coords": locationCoords,
+        "salary": salary,
+        "physical": physical,
+        "description": encodeURIComponent(description).replace(/%20/g, "+")
+    };
+
+    $.ajax({
+        url: "../api/add_job.php",
+        method: "POST",
+        data: JSON.stringify(params),
+        contentType: "application/x-www-form-urlencoded",
+        beforeSend: function(xmlhttp) {
+            xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
+        },        
+        success: function() {
+            location.reload();
+        },
+        error: function(xmlhttp) {
+            console.log(xmlhttp.responseText);
+        }
+    });
 }

@@ -39,11 +39,16 @@ class CompanyModel extends DBHandler
         return $names;
     }
 
-    protected function createJob($id, $title, $skills, $type, $level, $locationId, $locationName, $physical, $salary, $datePosted)
+    protected function createJob($id, $title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $datePosted)
     {
-        $params = array($id, $title, $skills, $type, $level, $locationId, $locationName, $physical, $datePosted);
-        $params_string = array("company_id", "title", "skills", "type", "level", "location_id", "location_name", "physical", "date_posted");
+        $params = array($id, $title, $type, $level, $locationName, $locationCoords, $physical, $datePosted);
+        $params_string = array("company_id", "title", "type", "level", "location_name", "location_coords", "physical", "date_posted");
 
+        if(!empty($skills))
+        {
+            array_push($params, $skills);
+            array_push($params_string, "skills");
+        }
         if(!empty($salary))
         {
             array_push($params, $salary);
@@ -53,16 +58,18 @@ class CompanyModel extends DBHandler
         $query_params = implode(", ", $params_string);
         $placeholders = implode(", ", array_fill(0, count($params), "?"));
 
-        $stmt = $this->connect()->prepare("INSERT INTO jobs (" . $query_params . ") VALUES (" . $placeholders .");");
+        $conn = $this->connect();
+        $stmt = $conn->prepare("INSERT INTO jobs (" . $query_params . ") VALUES (" . $placeholders .");");
 
         if(!$stmt->execute($params))
         {
-            $stmt = null;
+            $conn = null;
             return 0;
         }
 
-        $stmt = null;
-        return 1;
+        $id = $conn->lastInsertId();
+        $conn = null;
+        return $id;
     }
 
     protected function getRecentJobs($id, $page, $limit)

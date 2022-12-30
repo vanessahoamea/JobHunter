@@ -87,7 +87,7 @@ $(document).ready(function() {
         let container = $("#listing-container");
 
         if(selectedName != null && selectedName != query)
-            $("#company-id").val("-1");
+            $("#company-id").val("");
 
         container.empty();
 
@@ -230,7 +230,7 @@ function addExperience()
     let bearerToken = getCookie("jwt");
     let params = {
         "title": title,
-        "company_id": companyId == "-1" ? null : companyId,
+        "company_id": companyId == "" ? null : companyId,
         "company_name": companyName,
         "type": jobType,
         "start_month": startMonth,
