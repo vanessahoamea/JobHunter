@@ -284,8 +284,8 @@ function addSectionButtons(target)
     {
         const containers = $(target).children(".data-container");
         const buttons = $("<div class='buttons'></div>");
-        buttons.append("<button class='section-button'><i class='fa-solid fa-pen-to-square'></i>edit</button>");
-        buttons.append("<button class='section-button'><i class='fa-solid fa-trash'></i>delete</button>");
+        buttons.append("<button class='section-button'><i class='fa-solid fa-pen-to-square fa-fw'></i>edit</button>");
+        buttons.append("<button class='section-button'><i class='fa-solid fa-trash fa-fw'></i>delete</button>");
         buttons.insertAfter(containers);
     }
 }

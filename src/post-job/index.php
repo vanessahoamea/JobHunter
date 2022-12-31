@@ -48,6 +48,8 @@ if(!isset($data["account_type"]) || $data["account_type"] != "company")
         </nav>
 
         <div id="main">
+            <h1 id="top-text">Let people know you are hiring.</h1>
+
             <div id="wrapper">
                 <form id="form" action="#" method="post">
                     <div class="pair">
@@ -163,6 +165,11 @@ if(!isset($data["account_type"]) || $data["account_type"] != "company")
                 <div class="button-container">
                     <button class="submit-button" onclick="checkValues()">Post</button>
                 </div>
+            </div>
+
+            <div id="success">
+                <h1>Job posted.</h1>
+                <a href="#" onclick="location.reload()">Post another one?</a>
             </div>
         </div>
         

@@ -79,6 +79,16 @@ class CandidateController extends CandidateModel
         return $result;
     }
 
+    public function editExperience($experienceId, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
+    {
+        return $this->updateExperience($this->id, $experienceId, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description);
+    }
+
+    public function removeExperience($experienceId)
+    {
+        return $this->deleteExperience($this->id, $experienceId);
+    }
+
     private function emptyInput($params)
     {
         if(empty($this->id))

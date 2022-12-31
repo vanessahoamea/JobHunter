@@ -161,3 +161,11 @@ i.fa-xmark {
     color: #020929;
     cursor: pointer;
 }
+
+#success {
+    display: none;
+}
+
+#success h1 {
+    margin-bottom: 0;
+}

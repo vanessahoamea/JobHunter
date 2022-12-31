@@ -15,7 +15,7 @@ class LoginModel extends DBHandler
 
         if($stmt->rowCount() > 0)
         {
-            $user = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+            $user = $stmt->fetch();
             $checkPassword = password_verify($password, $user["password"]);
 
             if(!$checkPassword)
@@ -50,7 +50,7 @@ class LoginModel extends DBHandler
                 return -2;
             }
 
-            $user = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+            $user = $stmt->fetch();
             $checkPassword = password_verify($password, $user["password"]);
 
             if(!$checkPassword)

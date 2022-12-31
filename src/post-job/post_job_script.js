@@ -164,10 +164,9 @@ function checkValues()
             xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
         },        
         success: function() {
-            location.reload();
-        },
-        error: function(xmlhttp) {
-            console.log(xmlhttp.responseText);
+            $("#top-text").css("display", "none");
+            $("#wrapper").css("display", "none");
+            $("#success").css("display", "block");
         }
     });
 }

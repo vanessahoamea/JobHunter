@@ -15,7 +15,7 @@ class CandidateModel extends DBHandler
 
         if($stmt->rowCount() > 0)
         {
-            $user = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+            $user = $stmt->fetch();
             $stmt = null;
             return $user;
         }
@@ -27,33 +27,33 @@ class CandidateModel extends DBHandler
     protected function createExperience($id, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
     {
         $params = array($title, $id, $companyName, $type, $startMonth, $startYear);
-        $params_string = array("title", "candidate_id", "company_name", "type", "start_month", "start_year");
+        $paramsString = array("title", "candidate_id", "company_name", "type", "start_month", "start_year");
 
         if(!empty($companyId))
         {
             array_push($params, $companyId);
-            array_push($params_string, "company_id");
+            array_push($paramsString, "company_id");
         }
         if(!empty($description))
         {
             array_push($params, $description);
-            array_push($params_string, "description");
+            array_push($paramsString, "description");
         }
         if(!empty($endMonth))
         {
             array_push($params, $endMonth);
-            array_push($params_string, "end_month");
+            array_push($paramsString, "end_month");
         }
         if(!empty($endYear))
         {
             array_push($params, $endYear);
-            array_push($params_string, "end_year");
+            array_push($paramsString, "end_year");
         }
 
-        $query_params = implode(", ", $params_string);
+        $queryParams = implode(", ", $paramsString);
         $placeholders = implode(", ", array_fill(0, count($params), "?"));
         
-        $stmt = $this->connect()->prepare("INSERT INTO candidate_experience (" . $query_params . ") VALUES (" . $placeholders .");");
+        $stmt = $this->connect()->prepare("INSERT INTO candidate_experience (" . $queryParams . ") VALUES (" . $placeholders .");");
 
         if(!$stmt->execute($params))
         {
@@ -84,6 +84,163 @@ class CandidateModel extends DBHandler
 
         $stmt = null;
         return -1;
+    }
+
+    protected function updateExperience($candidateId, $experienceId, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
+    {
+        $stmt = $this->connect()->prepare("SELECT * FROM candidate_experience WHERE id = ?;");
+        
+        if(!$stmt->execute(array($experienceId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return -1;
+        }
+        
+        //validating user
+        $experience = $stmt->fetch();
+        if($experience["candidate_id"] != $candidateId)
+        {
+            $stmt = null;
+            return -2;
+        }
+
+        //validating dates
+        if(is_null($experience["end_month"]) && is_null($experience["end_year"]))
+        {
+            if((empty($endMonth) && !empty($endYear)) || (!empty($endMonth) && empty($endYear)))
+            {
+                $stmt = null;
+                return -3;
+            }
+        }
+
+        $stmt = null;
+        
+        $ongoing = false;
+        if($endMonth == "ongoing" || $endYear == "ongoing")
+        {
+            $endMonth = "";
+            $endYear = "";
+            $ongoing = true;
+        }
+
+        if(strlen($startMonth) > 3)
+            $startMonth = substr($startMonth, 0, 3);
+        if(strlen($endMonth) > 3)
+            $endMonth = substr($endMonth, 0, 3);
+
+        //handling parameters
+        $params = array($title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description);
+        $paramsString = array("title", "company_id", "company_name", "type", "start_month", "start_year", "end_month", "end_year", "description");
+        $emptyArray = array('', '', '', '', '', '', '', '', '');
+        
+        $params = array_diff($params, $emptyArray);
+        $paramsString = array_diff_key($paramsString, array_diff_key($paramsString, $params));
+
+        //validating company
+        if(!empty($companyId))
+        {
+            $stmt = $this->connect()->prepare("SELECT company_name FROM companies WHERE id = ?;");
+
+            if(!$stmt->execute(array($companyId)))
+            {
+                $stmt = null;
+                return 0;
+            }
+
+            if($stmt->rowCount() == 0 || (!empty($companyName) && $stmt->fetch()["company_name"] != $companyName))
+            {
+                $stmt = null;
+                return -4;
+            }
+
+            if($stmt->rowCount() > 0 && empty($companyName))
+            {
+                array_push($params, $stmt->fetch()["company_name"]);
+                array_push($paramsString, "company_name");
+            }
+        }
+        else if(!empty($companyName))
+        {
+            array_push($params, null);
+            array_push($paramsString, "company_id");
+        }
+
+        //updating the database entry
+        $queryParams = implode(", ", array_map(fn($item) => $item . " = ?", $paramsString));
+        array_push($params, $experienceId);
+        $params = array_values($params);
+        
+        if(count($params) > 1)
+        {
+            $stmt = $this->connect()->prepare("UPDATE candidate_experience SET " . $queryParams . " WHERE id = ?;");
+
+            if(!$stmt->execute($params))
+            {
+                $stmt = null;
+                return 0;
+            }
+
+            $stmt = null;
+        }
+
+        if($ongoing)
+        {
+            $stmt = $this->connect()->prepare("UPDATE candidate_experience SET end_month = ?, end_year = ? WHERE id = ?;");
+            $stmt->bindValue(1, null, PDO::PARAM_NULL);
+            $stmt->bindValue(2, null, PDO::PARAM_NULL);
+            $stmt->bindValue(3, $experienceId, PDO::PARAM_INT);
+
+            if(!$stmt->execute())
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+
+        $stmt = null;
+        return 1;
+    }
+
+    protected function deleteExperience($candidateId, $experienceId)
+    {
+        $stmt = $this->connect()->prepare("SELECT candidate_id FROM candidate_experience WHERE id = ?;");
+        
+        if(!$stmt->execute(array($experienceId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return -1;
+        }
+        
+        if($stmt->fetch()["candidate_id"] != $candidateId)
+        {
+            $stmt = null;
+            return -2;
+        }
+
+        $stmt = null;
+        $stmt = $this->connect()->prepare("DELETE FROM candidate_experience WHERE id = ?;");
+
+        if(!$stmt->execute(array($experienceId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $stmt = null;
+        return 1;
     }
 }
 ?>

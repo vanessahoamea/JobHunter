@@ -81,8 +81,9 @@ function buildJobCard(data)
     if($("#self-view").length != 0)
     {
         const buttons = $("<div class='buttons'></div>");
-        buttons.append("<button class='section-button'><i class='fa-solid fa-pen-to-square'></i>edit</button>");
-        buttons.append("<button class='section-button'><i class='fa-solid fa-trash'></i>delete</button>");
+        buttons.append("<button class='section-button'><i class='fa-solid fa-users fa-fw'></i>applicants</button>");
+        buttons.append("<button class='section-button'><i class='fa-solid fa-pen-to-square fa-fw'></i>edit</button>");
+        buttons.append("<button class='section-button'><i class='fa-solid fa-trash fa-fw'></i>delete</button>");
         card.append(buttons);
     }
 
