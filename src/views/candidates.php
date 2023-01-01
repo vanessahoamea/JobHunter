@@ -143,7 +143,7 @@ if(isset($_COOKIE["jwt"]))
                     </div>
 
                     <?php if($selfView): ?>
-                        <button id="education-button" class="add-button">Add new education</button>
+                        <button id="education-button" class="add-button" onclick="showModal(2)">Add new education</button>
                     <?php endif; ?>
                 </div>
             </div>
@@ -160,7 +160,7 @@ if(isset($_COOKIE["jwt"]))
                     </div>
 
                     <?php if($selfView): ?>
-                        <button id="projects-button" class="add-button">Add new project</button>
+                        <button id="projects-button" class="add-button" onclick="showModal(3)">Add new project</button>
                     <?php endif; ?>
                 </div>
             </div>
@@ -257,6 +257,22 @@ if(isset($_COOKIE["jwt"]))
                     </form>
 
                     <button class="add-button" onclick="addExperience()">Add experience</button>
+                </div>
+
+                <!-- education modal -->
+                <div class="modal-wrapper">
+                    <form></form>
+                </div>
+
+                <!-- projects modal -->
+                <div class="modal-wrapper">
+                    <form></form>
+                </div>
+
+                <!-- delete experience modal -->
+                <div class="modal-wrapper" style="text-align: center;">
+                    <p>Are you sure you want to delete this entry?</p>
+                    <button class="add-button" onclick="deleteItem()">Delete</button>
                 </div>
             </div>
         </div>

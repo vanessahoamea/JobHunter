@@ -46,10 +46,11 @@ else
         $startYear = isset($data->start_year) ? trim($data->start_year) : '';
         $endMonth = isset($data->end_month) ? trim($data->end_month) : '';
         $endYear = isset($data->end_year) ? trim($data->end_year) : '';
-        $description = isset($data->description) ? trim($data->description) : '';
+        $ongoing = isset($data->ongoing) ? trim($data->ongoing) : false;
+        $description = isset($data->description) ? trim($data->description) : null;
 
         $candidate = new CandidateController($id);
-        $response = $candidate->editExperience($experienceId, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description);
+        $response = $candidate->editExperience($experienceId, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $ongoing, $description);
 
         if($response == 1)
         {

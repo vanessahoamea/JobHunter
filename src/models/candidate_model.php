@@ -86,7 +86,7 @@ class CandidateModel extends DBHandler
         return -1;
     }
 
-    protected function updateExperience($candidateId, $experienceId, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
+    protected function updateExperience($candidateId, $experienceId, $title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $ongoing, $description)
     {
         $stmt = $this->connect()->prepare("SELECT * FROM candidate_experience WHERE id = ?;");
         
@@ -113,7 +113,7 @@ class CandidateModel extends DBHandler
         //validating dates
         if(is_null($experience["end_month"]) && is_null($experience["end_year"]))
         {
-            if((empty($endMonth) && !empty($endYear)) || (!empty($endMonth) && empty($endYear)))
+            if(((empty($endMonth) && !empty($endYear)) || (!empty($endMonth) && empty($endYear))) && !$ongoing)
             {
                 $stmt = null;
                 return -3;
@@ -121,14 +121,6 @@ class CandidateModel extends DBHandler
         }
 
         $stmt = null;
-        
-        $ongoing = false;
-        if($endMonth == "ongoing" || $endYear == "ongoing")
-        {
-            $endMonth = "";
-            $endYear = "";
-            $ongoing = true;
-        }
 
         if(strlen($startMonth) > 3)
             $startMonth = substr($startMonth, 0, 3);
@@ -196,6 +188,19 @@ class CandidateModel extends DBHandler
             $stmt->bindValue(1, null, PDO::PARAM_NULL);
             $stmt->bindValue(2, null, PDO::PARAM_NULL);
             $stmt->bindValue(3, $experienceId, PDO::PARAM_INT);
+
+            if(!$stmt->execute())
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+
+        if($description == "")
+        {
+            $stmt = $this->connect()->prepare("UPDATE candidate_experience SET description = ? WHERE id = ?;");
+            $stmt->bindValue(1, null, PDO::PARAM_NULL);
+            $stmt->bindValue(2, $experienceId, PDO::PARAM_INT);
 
             if(!$stmt->execute())
             {
