@@ -8,7 +8,7 @@ if(!isset($_COOKIE["jwt"]))
 require_once("../controllers/jwt_controller.php");
 
 $data = JWTController::getPayload($_COOKIE["jwt"]);
-if(!isset($data["account_type"]) || $data["account_type"] != "company")
+if(!JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "company")
 {
     header("location: ../");
     exit();

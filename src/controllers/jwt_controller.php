@@ -30,6 +30,21 @@ class JWTController
 
     public static function validateToken($token)
     {
+        //validating signature
+        include("../util/config.php");
+
+        $tokenParts = explode(".", $token);
+        $header = $tokenParts[0];
+        $payload = $tokenParts[1];
+        $signatureProvided = $tokenParts[2];
+
+        $correctSignature = hash_hmac("sha256", $header . "." . $payload, $secretKey, true);
+        $correctSignature = str_replace(["+", "/", "="], ["-", "_", ""], base64_encode($correctSignature));
+
+        if($signatureProvided != $correctSignature)
+            return false;
+
+        //validating content
         $jwt = self::getPayload($token);
 
         if(!isset($jwt["id"]) || !isset($jwt["account_type"]))

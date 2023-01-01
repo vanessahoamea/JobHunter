@@ -27,7 +27,7 @@ $selfView = false;
 if(isset($_COOKIE["jwt"]))
 {
     $data = JWTController::getPayload($_COOKIE["jwt"]);
-    if(isset($data["id"]) && isset($data["account_type"]) && $data["id"] == $_GET["id"] && $data["account_type"] == "candidate")
+    if(JWTController::validateToken($_COOKIE["jwt"]) && $data["id"] == $_GET["id"] && $data["account_type"] == "candidate")
         $selfView = true;
 }
 ?>
@@ -81,7 +81,7 @@ if(isset($_COOKIE["jwt"]))
             <div class="upper-container">
                 <div class="left-side">
                 <div class="profile-picture">
-                    <img class="profile-picture skeleton" src="../default.jpg" alt="Profile picture."></img>
+                    <img class="profile-picture skeleton" src="../assets/default.jpg" alt="Profile picture."></img>
                 </div>
                     <div class="profile-information">
                         <h1 id="full-name"><div class="skeleton skeleton-text-single" style="height: 30px;"></div></h1>
