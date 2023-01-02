@@ -72,6 +72,27 @@ class CompanyModel extends DBHandler
         return $id;
     }
 
+    public function getSingleJob($jobId)
+    {
+        $stmt = $this->connect()->prepare("SELECT * FROM jobs WHERE id = ?;");
+
+        if(!$stmt->execute(array($jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return -1;
+        }
+
+        $job = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+        $stmt = null;
+        return $job;
+    }
+
     protected function getRecentJobs($id, $page, $limit)
     {
         $result = array();
@@ -108,6 +129,143 @@ class CompanyModel extends DBHandler
 
         $stmt = null;
         return $result;
+    }
+
+    protected function updateJob($companyId, $jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical)
+    {
+        $stmt = $this->connect()->prepare("SELECT company_id FROM jobs WHERE id = ?;");
+
+        if(!$stmt->execute(array($jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return -1;
+        }
+
+        if($stmt->fetch()["company_id"] != $companyId)
+        {
+            $stmt = null;
+            return -2;
+        }
+        
+        if((!empty($locationName) && empty($locationCoords)) || (empty($locationName) && !empty($locationCoords)))
+            return -3;
+
+        //handling parameters
+        $params = array($title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical);
+        $paramsString = array("title", "skills", "type", "level", "location_name", "location_coords", "salary", "physical");
+        $emptyArray = array('', '', '', '', '', '', '', '');
+        
+        $params = array_diff($params, $emptyArray);
+        $paramsString = array_diff_key($paramsString, array_diff_key($paramsString, $params));
+
+        //updating the database entry
+        $queryParams = implode(", ", array_map(fn($item) => $item . " = ?", $paramsString));
+        array_push($params, $jobId);
+        $params = array_values($params);
+
+        if(count($params) > 1)
+        {
+            $stmt = null;
+            $stmt = $this->connect()->prepare("UPDATE jobs SET " . $queryParams . " WHERE id = ?;");
+
+            if(!$stmt->execute($params))
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+
+        if($skills != null && $skills == "")
+        {
+            $stmt = null;
+            $stmt = $this->connect()->prepare("UPDATE jobs SET skills = ? WHERE id = ?;");
+            $stmt->bindValue(1, null, PDO::PARAM_NULL);
+            $stmt->bindValue(2, $jobId, PDO::PARAM_INT);
+
+            if(!$stmt->execute())
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+
+        if($salary == "")
+        {
+            $stmt = null;
+            $stmt = $this->connect()->prepare("UPDATE jobs SET salary = ? WHERE id = ?;");
+            $stmt->bindValue(1, null, PDO::PARAM_NULL);
+            $stmt->bindValue(2, $jobId, PDO::PARAM_INT);
+
+            if(!$stmt->execute())
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+
+        $stmt = null;
+        return 1;
+    }
+
+    protected function deleteJob($companyId, $jobId)
+    {
+        $stmt = $this->connect()->prepare("SELECT company_id FROM jobs WHERE id = ?;");
+
+        if(!$stmt->execute(array($jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return -1;
+        }
+
+        if($stmt->fetch()["company_id"] != $companyId)
+        {
+            $stmt = null;
+            return -2;
+        }
+
+        $stmt = null;
+        $stmt = $this->connect()->prepare("DELETE FROM jobs WHERE id = ?;");
+
+        if(!$stmt->execute(array($jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $stmt = null;
+        return 1;
+    }
+
+    protected function validateJob($companyId, $jobId)
+    {
+        $stmt = $this->connect()->prepare("SELECT company_id FROM jobs WHERE id = ?;");
+
+        if(!$stmt->execute(array($jobId)) || $stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return false;
+        }
+
+        if($stmt->fetch()["company_id"] != $companyId)
+        {
+            $stmt = null;
+            return false;
+        }
+
+        $stmt = null;
+        return true;
     }
 }
 ?>

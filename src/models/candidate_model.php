@@ -120,8 +120,6 @@ class CandidateModel extends DBHandler
             }
         }
 
-        $stmt = null;
-
         if(strlen($startMonth) > 3)
             $startMonth = substr($startMonth, 0, 3);
         if(strlen($endMonth) > 3)
@@ -138,6 +136,7 @@ class CandidateModel extends DBHandler
         //validating company
         if(!empty($companyId))
         {
+            $stmt = null;
             $stmt = $this->connect()->prepare("SELECT company_name FROM companies WHERE id = ?;");
 
             if(!$stmt->execute(array($companyId)))
@@ -171,6 +170,7 @@ class CandidateModel extends DBHandler
         
         if(count($params) > 1)
         {
+            $stmt = null;
             $stmt = $this->connect()->prepare("UPDATE candidate_experience SET " . $queryParams . " WHERE id = ?;");
 
             if(!$stmt->execute($params))
@@ -178,12 +178,11 @@ class CandidateModel extends DBHandler
                 $stmt = null;
                 return 0;
             }
-
-            $stmt = null;
         }
 
         if($ongoing)
         {
+            $stmt = null;
             $stmt = $this->connect()->prepare("UPDATE candidate_experience SET end_month = ?, end_year = ? WHERE id = ?;");
             $stmt->bindValue(1, null, PDO::PARAM_NULL);
             $stmt->bindValue(2, null, PDO::PARAM_NULL);
@@ -198,6 +197,7 @@ class CandidateModel extends DBHandler
 
         if($description == "")
         {
+            $stmt = null;
             $stmt = $this->connect()->prepare("UPDATE candidate_experience SET description = ? WHERE id = ?;");
             $stmt->bindValue(1, null, PDO::PARAM_NULL);
             $stmt->bindValue(2, $experienceId, PDO::PARAM_INT);

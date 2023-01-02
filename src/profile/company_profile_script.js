@@ -50,6 +50,81 @@ $(document).ready(function() {
     });
 });
 
+let currentItemId = -1;
+
+//edit + delete jobs
+$(window).click(function(event) {
+    if(event.target == $(".modal")[0])
+        toggleModal();
+});
+
+function toggleModal()
+{
+    if($(".modal").eq(0).css("display") == "none")
+    {
+        $(".modal").eq(0).css("display", "block");
+        $(".modal-wrapper").css("display", "block");
+    }
+    else
+    {
+        $(".modal").eq(0).css("display", "none");
+        $(".modal-wrapper").css("display", "none");
+    }
+}
+
+function getCookie(name)
+{
+    name += "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let cookies = decodedCookie.split(";");
+
+    for(let i=0; i<cookies.length; i++)
+    {
+        let cookie = cookies[i];
+        while(cookie.charAt(0) == " ")
+            cookie = cookie.substring(1);
+
+        if(cookie.indexOf(name) == 0)
+            return cookie.substring(name.length, cookie.length);
+    }
+
+    return "";
+}
+
+function getId(target, action)
+{
+    currentItemId = $(target).parent().parent().children().eq(0).text();
+    const hashedId = btoa(btoa(currentItemId) + "." + Math.round(Date.now() / 1000) + "." + getCookie("jwt").split(".")[2]);
+
+    if(action == 0)
+        window.location.href = "../post-job?item=" + encodeURIComponent(hashedId);
+    else if(action == 1)
+        toggleModal();
+    else
+    {
+        //
+    }
+}
+
+function deleteJob()
+{
+    let bearerToken = getCookie("jwt");
+    $.ajax({
+        url: "../api/remove_job.php",
+        method: "DELETE",
+        data: JSON.stringify({"job_id": currentItemId}),
+        contentType: "application/x-www-form-urlencoded",
+        beforeSend: function(xmlhttp) {
+            xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
+        },        
+        success: function() {
+            toggleModal();
+            location.reload();
+        }
+    });
+}
+
+//render data on page
 function buildJobCard(data)
 {
     let card = $("<div class='card'></div>");
@@ -73,7 +148,7 @@ function buildJobCard(data)
     cardInformation.append("<p><i class='fa-solid fa-location-dot fa-fw'></i>in " + data["location_name"] + "</p>");
     cardInformation.append(jobRequirements);
 
-    card.append("<div class='job-id' style='display: none;'></div>"); //for editing/deleting
+    card.append("<div class='job-id' style='display: none;'>" + data["id"] + "</div>");
     card.append(topRow);
     card.append(cardInformation);
 
@@ -82,8 +157,8 @@ function buildJobCard(data)
     {
         const buttons = $("<div class='buttons'></div>");
         buttons.append("<button class='section-button'><i class='fa-solid fa-users fa-fw'></i>applicants</button>");
-        buttons.append("<button class='section-button'><i class='fa-solid fa-pen-to-square fa-fw'></i>edit</button>");
-        buttons.append("<button class='section-button'><i class='fa-solid fa-trash fa-fw'></i>delete</button>");
+        buttons.append("<button class='section-button' onclick='getId(this, 0)'><i class='fa-solid fa-pen-to-square fa-fw'></i>edit</button>");
+        buttons.append("<button class='section-button' onclick='getId(this, 1)'><i class='fa-solid fa-trash fa-fw'></i>delete</button>");
         card.append(buttons);
     }
 

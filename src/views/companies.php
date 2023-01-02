@@ -46,8 +46,6 @@ if(isset($_COOKIE["jwt"]))
 
         <script src="../script.js" async></script>
         <script src="../profile/company_profile_script.js" defer></script>
-        <!-- fontawesome icons -->
-        <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </head>
 
     <body>
@@ -131,7 +129,21 @@ if(isset($_COOKIE["jwt"]))
             </div>
         </div>
 
+        <!-- delete item modal -->
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="toggleModal()">&times;</span>
+
+                <div class="modal-wrapper">
+                    <p>Are you sure you want to delete this job posting?</p>
+                    <button class="edit-button" onclick="deleteJob()">Delete</button>
+                </div>
+            </div>
+        </div>
+
         <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+        <!-- fontawesome icons -->
+        <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </body>
 </html>

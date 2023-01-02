@@ -28,9 +28,29 @@ class CompanyController extends CompanyModel
         return $this->createJob($this->id, $title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $datePosted);
     }
 
+    public function getJob($jobId)
+    {
+        return $this->getSingleJob($jobId);
+    }
+
     public function getJobs($page, $limit)
     {
         return $this->getRecentJobs($this->id, $page, $limit);
+    }
+
+    public function editJob($jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical)
+    {
+        return $this->updateJob($this->id, $jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical);
+    }
+
+    public function removeJob($jobId)
+    {
+        return $this->deleteJob($this->id, $jobId);
+    }
+
+    public function validate($jobId)
+    {
+        return $this->validateJob($this->id, $jobId);
     }
 
     private function emptyInput($params)

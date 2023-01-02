@@ -1,4 +1,16 @@
 $(document).ready(function() {
+    //fill in job data if in edit mode
+    if($("#edit-mode").length > 0)
+    {
+        const params = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop),
+        });
+        jobId = atob(atob(params.item).split(".")[0]);
+
+        fillData();
+        $(".submit-button").text("Submit changes");
+    }
+
     //create skill tags
     $("#skills").on("keyup", function(e) {
         if(e.key == "," || e.key == "Enter")
@@ -15,7 +27,7 @@ $(document).ready(function() {
                     $(listItem).insertBefore("#skills");
                 });
             
-            e.target.value = ""; //reset input
+            e.target.value = "";
         }
     });
 
@@ -76,6 +88,8 @@ $(document).ready(function() {
         document.execCommand(this.id, false, null);
     });
 });
+
+let jobId = -1;
 
 //handle skills
 let skillsArray = [];
@@ -142,6 +156,7 @@ function checkValues()
     if(checkEmtpyValues(title, locationCoords, description))
         return;
     
+    let endpoint = "../api/add_job.php";
     let bearerToken = getCookie("jwt");
     let params = {
         "title": title,
@@ -155,8 +170,14 @@ function checkValues()
         "description": encodeURIComponent(description).replace(/%20/g, "+")
     };
 
+    if($("#edit-mode").length > 0)
+    {
+        params["job_id"] = jobId;
+        endpoint = "../api/edit_job.php";
+    }
+
     $.ajax({
-        url: "../api/add_job.php",
+        url: endpoint,
         method: "POST",
         data: JSON.stringify(params),
         contentType: "application/x-www-form-urlencoded",
@@ -164,9 +185,37 @@ function checkValues()
             xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
         },        
         success: function() {
-            $("#top-text").css("display", "none");
-            $("#wrapper").css("display", "none");
-            $("#success").css("display", "block");
+            window.location.href = "../profile";
+        }
+    });
+}
+
+//edit job
+function fillData()
+{
+    $.ajax({
+        url: "../api/get_job.php",
+        method: "GET",
+        data: {"id": jobId},
+        contentType: "application/x-www-form-urlencoded",      
+        success: function(response) {
+            $("#title").val(response["title"]);
+            $("#type").val(response["type"]);
+            $("#level").val(response["level"]);
+            $("#location").val(response["location_name"]);
+            $("#location-lat").val(JSON.parse(response["location_coords"])[0]);
+            $("#location-lon").val(JSON.parse(response["location_coords"])[1]);
+            $("input[name=physical][value=" + response["physical"] + "]").prop("checked", true);
+            $("#description").html(response["description"]);
+
+            skillsArray = JSON.parse(response["skills"]);
+            skillsArray.forEach(skill => {
+                const listItem = $("<li><i class='fa-solid fa-xmark fa-fw' onclick='removeSkill(this)'></i>" + skill + "</li>");
+                $(listItem).insertBefore("#skills");
+            });
+
+            if(response["salary"] != null)
+                $("#salary").val(response["salary"]);
         }
     });
 }

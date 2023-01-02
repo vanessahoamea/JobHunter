@@ -13,6 +13,28 @@ if(!JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "c
     header("location: ../");
     exit();
 }
+
+$editMode = false;
+if(isset($_GET["item"]))
+{
+    require_once("../models/database.php");
+    require_once("../models/company_model.php");
+    require_once("../controllers/company_controller.php");
+
+    $company = new CompanyController($data["id"]);
+    $unhashedId = explode(".", base64_decode(rawurldecode($_GET["item"])));
+    $jobId = base64_decode($unhashedId[0]);
+    $time = $unhashedId[1];
+    $signature = $unhashedId[2];
+
+    if($time <= time() - (2 * 60 * 60) || $signature != explode(".", $_COOKIE["jwt"])[2] || !$company->validate($jobId))
+    {
+        header("location: ../");
+        exit();
+    }
+    else
+        $editMode = true;
+}
 ?>
 
 <!DOCTYPE html>
@@ -30,8 +52,6 @@ if(!JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "c
 
         <script src="../script.js" async></script>
         <script src="post_job_script.js" defer></script>
-        <!-- fontawesome icons -->
-        <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </head>
 
     <body>
@@ -50,6 +70,10 @@ if(!JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "c
         <div id="main">
             <h1 id="top-text">Let people know you are hiring.</h1>
 
+            <?php if($editMode): ?>
+                <div id="edit-mode" style="display: none;"></div>
+            <?php endif; ?>
+
             <div id="wrapper">
                 <form id="form" action="#" method="post">
                     <div class="pair">
@@ -61,7 +85,7 @@ if(!JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "c
                     </div>
 
                     <div class="pair">
-                        <label for="skills">Skills required (separated by commas)</label>
+                        <label for="skills">Skills required (optional, separated by commas)</label>
                         <div class="skill-box">
                             <ul id="skill-list">
                                 <input type="text" id="skills" name="skills">
@@ -105,7 +129,7 @@ if(!JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "c
                     </div>
 
                     <div class="pair">
-                        <label for="salary" style="margin-top: 15px;">Salary</label>
+                        <label for="salary" style="margin-top: 15px;">Salary (optional)</label>
                         <input type="text" id="salary" name="salary" class="input">
                     </div>
 
@@ -166,14 +190,11 @@ if(!JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "c
                     <button class="submit-button" onclick="checkValues()">Post</button>
                 </div>
             </div>
-
-            <div id="success">
-                <h1>Job posted.</h1>
-                <a href="#" onclick="location.reload()">Post another one?</a>
-            </div>
         </div>
         
         <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+        <!-- fontawesome icons -->
+        <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </body>
 </html>
