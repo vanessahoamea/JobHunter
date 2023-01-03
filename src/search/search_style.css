@@ -1,0 +1,263 @@
+#main {
+    max-width: 90vw;
+}
+
+#wrapper {
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.upper-searchbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.lower-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.filters {
+    width: 30vw;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.filters h3, h2 {
+    margin-left: 4px;
+    margin-bottom: 5px;
+    margin-top: 0;
+}
+
+.filters h2 {
+    margin-bottom: 15px;
+}
+
+.job-postings {
+    width: 50vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.input, .select, .listing {
+    width: 25vw;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.listing {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 0;
+    text-align: left;
+}
+
+.listing:hover {
+    background-color: #e8e8e8;
+    cursor: pointer;
+}
+
+#listing-container {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    z-index: 100;
+}
+
+.skill-box {
+    width: 25vw;
+    margin-bottom: 15px;
+}
+
+.skill-box ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 12px 18px;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.skill-box li {
+    background-color: #A443DA;
+    color: white;
+    margin: 0 5px 5px 0;
+    padding: 7px;
+    border-radius: 5px;
+    text-align: left;
+}
+
+.skill-box input {
+    flex: 1;
+    outline: none;
+    border: none;
+    min-width: 10vw;
+    width: 100%;
+}
+
+.checkboxes {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 5px 25px 5px 25px;
+    margin-bottom: 10px;
+    margin-right: 0;
+    box-sizing: border-box;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 10px 0 10px 0;
+    min-height: 1.5em;
+}
+
+.top-row h2, .top-row p, .card-information > p {
+    margin: 0;
+}
+
+.card-information {
+    margin-bottom: 5px;
+}
+
+.card-information .skeleton-text:last-child {
+    margin-bottom: 10px;
+}
+
+.job-requirements {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.skill-tag, .page {
+    background-color: #A443DA;
+    color: white;
+    margin: 0 5px 5px 0;
+    padding: 7px;
+    border-radius: 5px;
+}
+
+.date-posted {
+    color: rgb(77, 77, 77);
+}
+
+h2 a, h2 a:visited {
+    color: black;
+}
+
+.buttons {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+#pagination {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.page {
+    padding: 10px 13px;
+    cursor: pointer;
+}
+
+.page:hover {
+    background-color: #9c1de0;
+}
+
+.page.active {
+    background-color: #700ea4;
+}
+
+i.fa-fw {
+    margin-right: 6px;
+}
+
+i.fa-xmark {
+    height: 12px;
+    width: 12px;
+    padding: 5px;
+    font-size: 12px;
+    background: #700ea4;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* responsiveness */
+@media screen and (max-width: 1140px) {
+    .lower-content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    .filters {
+        width: 65vw;
+        align-items: center;
+    }
+    .job-postings {
+        width: 65vw;
+    }
+    .checkboxes {
+        justify-content: center;
+    }
+    .input, .select, .listing, .skill-box {
+        width: 50vw;
+    }
+    .total-jobs {
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    .search-button {
+        width: 57vw;
+        margin-top: 5px;
+    }
+    .upper-searchbar {
+        flex-direction: column;
+        gap: 0;
+    }
+}

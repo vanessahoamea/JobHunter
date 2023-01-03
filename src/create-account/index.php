@@ -20,14 +20,12 @@ if(isset($_COOKIE["jwt"]))
 
         <script src="../script.js" async></script>
         <script src="signup_script.js" defer></script>
-        <!-- fontawesome icons -->
-        <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </head>
 
     <body>
         <nav id="navbar" class="topnav">
             <a href=".." id="logo">JobHunter</a>
-            <a href="#" class="nav-tab">Recent jobs</a>
+            <a href="../search" class="nav-tab">Recent jobs</a>
             <div class="right">
                 <a href="../login" class="nav-tab">Login</a>
                 <a href="#" class="current-page">Create account</a>
@@ -113,5 +111,7 @@ if(isset($_COOKIE["jwt"]))
 
         <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+        <!-- fontawesome icons -->
+        <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </body>
 </html>

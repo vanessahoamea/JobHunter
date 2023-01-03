@@ -86,16 +86,17 @@ a.current-page:hover {
     padding: 15vmin;
 }
 
-#main #search {
+#main .search {
     background-image: url("https://www.w3schools.com/css/searchicon.png");
-    background-position: 10px 12px;
+    background-position: 10px 10px;
     background-repeat: no-repeat;
-    min-width: 40vw;
-    max-width: 80vw;
-    font-size: 16px;
     padding: 12px 20px 12px 40px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    width: 57vw;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
 }
 
 #main .search-button {
@@ -106,6 +107,10 @@ a.current-page:hover {
     background-color: #E87461;
     color: white;
     cursor: pointer;
+}
+
+#main .search-button:hover {
+    background-color: #ea5f4a;
 }
 
 /* responsive navbar */

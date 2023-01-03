@@ -10,14 +10,12 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
         <script src="script.js" async></script>
-        <!-- fontawesome icons -->
-        <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </head>
 
     <body>
         <nav id="navbar" class="topnav">
             <a href="#" id="logo">JobHunter</a>
-            <a href="#" class="nav-tab">Recent jobs</a>
+            <a href="search" class="nav-tab">Recent jobs</a>
             <?php if(!isset($_COOKIE["jwt"])): ?>
                 <div class="right">
                     <a href="login" class="nav-tab">Login</a>
@@ -37,8 +35,11 @@
         <div id="main">
             <h1>Start your journey here.</h1>
 
-            <input id="search" type="text" placeholder="Enter keywords"/>
+            <input id="search" class="search" type="text" placeholder="Enter keywords"/>
             <button class="search-button">Search</button>
         </div>
+        
+        <!-- fontawesome icons -->
+        <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </body>
 </html>

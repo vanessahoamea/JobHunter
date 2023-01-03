@@ -97,6 +97,11 @@
     margin: 0 20px 0 20px;
 }
 
+.add-button {
+    margin: 20px;
+    margin-bottom: 0 !important;
+}
+
 .data-container {
     display: flex;
     flex-direction: row;

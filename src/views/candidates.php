@@ -17,9 +17,7 @@ if($response == -1 || $response == 0)
     exit();
 }
 else
-{
     $title = $response["first_name"] . " " . $response["last_name"];
-}
 
 require_once("../controllers/jwt_controller.php");
 
@@ -57,7 +55,7 @@ if(isset($_COOKIE["jwt"]))
 
         <nav id="navbar" class="topnav">
             <a href="../" id="logo">JobHunter</a>
-            <a href="#" class="nav-tab">Recent jobs</a>
+            <a href="../search" class="nav-tab">Recent jobs</a>
             <div class="right">
                 <?php if(isset($_COOKIE["jwt"])): ?>
                     <?php if($selfView): ?>

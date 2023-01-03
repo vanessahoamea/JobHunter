@@ -57,7 +57,7 @@ if(isset($_GET["item"]))
     <body>
         <nav id="navbar" class="topnav">
             <a href="../" id="logo">JobHunter</a>
-            <a href="#" class="nav-tab">Recent jobs</a>
+            <a href="../search" class="nav-tab">Recent jobs</a>
             <div class="right">
                 <a href="../profile">Profile</a>
                 <a href="javascript:void(0)" class="nav-tab" onclick="logout()">Log out</a>
