@@ -19,7 +19,6 @@ else
         <link rel="stylesheet" type="text/css" href="../style.css" />
         <link rel="stylesheet" type="text/css" href="search_style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta charset="UTF-8">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,7 +40,7 @@ else
             <?php else: ?>
                 <div class="right">
                     <a href="../profile" class="nav-tab">Profile</a>
-                    <a href="javascript:void(0)" class="nav-tab" onclick="logout(true)">Log out</a>
+                    <a href="javascript:void(0)" class="nav-tab" onclick="logout(false)">Log out</a>
                 </div>
             <?php endif; ?>
             <a href="javascript:void(0);" class="icon" onclick="expand()">
@@ -157,6 +156,18 @@ else
             </div>
 
             <div id="pagination"></div>
+        </div>
+
+        <!-- apply for job modal -->
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="redirect(null)">&times;</span>
+
+                <div class="modal-wrapper" style="text-align: center;">
+                    <p>Would you like to send an application for this job?</p>
+                    <button class="search-button" onclick="apply()">Apply</button>
+                </div>
+            </div>
         </div>
         
         <!-- jQuery -->

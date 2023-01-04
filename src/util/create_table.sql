@@ -45,3 +45,10 @@ CREATE TABLE jobs (
     date_posted date NOT NULL,
     FOREIGN KEY (company_id) REFERENCES companies(id)
 );
+
+CREATE TABLE applicants (
+    candidate_id int(11) NOT NULL,
+    job_id int(11) NOT NULL,
+    FOREIGN KEY (candidate_id) REFERENCES candidates(id),
+    FOREIGN KEY (job_id) REFERENCES jobs(id)
+);

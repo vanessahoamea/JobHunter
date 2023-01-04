@@ -267,7 +267,7 @@ if(isset($_COOKIE["jwt"]))
                 </div>
 
                 <!-- delete item modal -->
-                <div class="modal-wrapper" style="text-align: center;">
+                <div class="modal-wrapper delete-modal" style="text-align: center;">
                     <p>Are you sure you want to delete this entry?</p>
                     <button class="add-button" onclick="deleteItem()">Delete</button>
                 </div>

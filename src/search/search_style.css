@@ -13,7 +13,7 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
 }
 
 .lower-content {
@@ -113,7 +113,6 @@
 
 .skill-box input {
     flex: 1;
-    outline: none;
     border: none;
     min-width: 10vw;
     width: 100%;
@@ -176,10 +175,6 @@
     color: rgb(77, 77, 77);
 }
 
-h2 a, h2 a:visited {
-    color: black;
-}
-
 .buttons {
     margin: 10px 0;
     display: flex;
@@ -198,16 +193,17 @@ h2 a, h2 a:visited {
 }
 
 .page {
+    background-color: black;
     padding: 10px 13px;
     cursor: pointer;
 }
 
 .page:hover {
-    background-color: #9c1de0;
+    background-color: rgb(67, 67, 67);
 }
 
 .page.active {
-    background-color: #700ea4;
+    background-color: rgb(67, 67, 67);
 }
 
 i.fa-fw {
@@ -222,6 +218,15 @@ i.fa-xmark {
     background: #700ea4;
     border-radius: 50%;
     cursor: pointer;
+}
+
+/* modal */
+.modal-wrapper {
+    text-align: center;
+}
+
+.modal-wrapper .search-button {
+    width: auto !important;
 }
 
 /* responsiveness */

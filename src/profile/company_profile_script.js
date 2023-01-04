@@ -132,7 +132,7 @@ function buildJobCard(data)
     let cardInformation = $("<div class='card-information'></div>");
     let jobRequirements = $("<div class='job-requirements'></div>");
 
-    topRow.append("<h2>" + data["title"] + "</h2>");
+    topRow.append("<h2><a href='../views/jobs.php?id=" + data["id"] + "'>" + data["title"] + "</a></h2>");
     topRow.append("<p class='date-posted'>" + data["date_posted"] + "</p>");
 
     if(data["skills"] != null)

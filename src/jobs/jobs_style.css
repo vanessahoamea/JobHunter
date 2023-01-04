@@ -1,0 +1,111 @@
+#main {
+    max-width: 75vw;
+}
+
+#wrapper {
+    margin: 0 auto;
+    padding: 25px 40px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-radius: 10px;
+}
+
+.upper-part {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.company-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.job-data-upper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0px;
+    min-height: 1.5em;
+    box-sizing: border-box;
+}
+
+.job-data-lower {
+    text-align: left;
+    margin-top: 5px;
+}
+
+.upper-part h2, .upper-part p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.date-posted {
+    color: rgb(77, 77, 77);
+}
+
+.job-description {
+    min-height: 10vh;
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.job-description h2 {
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.job-requirements {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.skill-tag {
+    background-color: #A443DA;
+    color: white;
+    margin: 0 5px 5px 0;
+    padding: 7px;
+    border-radius: 5px;
+}
+
+i.fa-fw {
+    margin-right: 6px;
+}
+
+/* responsiveness */
+@media screen and (max-width: 750px) {
+    #wrapper {
+        gap: 0;
+    }
+    .company-picture {
+        height: 100px;
+        width: 100px;
+    }
+    .upper-part {
+        flex-direction: column;
+        gap: 0;
+    }
+    .job-data-upper {
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+    .job-data-lower {
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    #wrapper {
+        padding: 30px;
+    }
+}

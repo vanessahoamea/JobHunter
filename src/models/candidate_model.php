@@ -247,5 +247,49 @@ class CandidateModel extends DBHandler
         $stmt = null;
         return 1;
     }
+
+    protected function apply($candidateId, $jobId)
+    {
+        $stmt = $this->connect()->prepare("SELECT * FROM jobs WHERE id = ?;");
+
+        if(!$stmt->execute(array($jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return -1;
+        }
+
+        $stmt = null;
+        $stmt = $this->connect()->prepare("SELECT * FROM applicants WHERE candidate_id = ? AND job_id = ?;");
+
+        if(!$stmt->execute(array($candidateId, $jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() > 0)
+        {
+            $stmt = null;
+            return -2;
+        }
+
+        $stmt = null;
+        $stmt = $this->connect()->prepare("INSERT INTO applicants VALUES (?, ?);");
+
+        if(!$stmt->execute(array($candidateId, $jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $stmt = null;
+        return 1;
+    }
 }
 ?>

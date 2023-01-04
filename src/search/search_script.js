@@ -1,6 +1,6 @@
 $(document).ready(function() {
     //load job data
-    const limit = 5;
+    const limit = 4;
     const interval = 5;
     $.ajax({
         url: "../api/get_job_postings.php",
@@ -9,8 +9,7 @@ $(document).ready(function() {
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
         success: function(response) {
-            totalJobs = response["total_count"];
-            pageCount = Math.ceil(response["total_count"] / limit);
+            const pageCount = Math.ceil(response["total_count"] / limit);
             for(let page=1; page<=pageCount; page++)
                 $("#pagination").append(`<div class='page' onclick='displayJobs(${page}, ${limit}, ${interval}, ${pageCount}, null)'>${page}</div>`);
             
@@ -22,10 +21,7 @@ $(document).ready(function() {
             if(response["jobs"].length == 0)
                 $(".job-postings").append("<p><i>Nothing to see here.</i></p>");
             else
-            {
-                $(".job-postings").prepend("<h2 class='total-jobs'>Found " + totalJobs + " jobs.</h2>");
                 displayJobs(1, limit, interval, pageCount, response["jobs"]);
-            }
         }
     });
 
@@ -67,7 +63,7 @@ $(document).ready(function() {
             container.empty();
             container.css("display", "none");
         }
-        else
+        else if(text.length > 2)
         {
             fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${text}&format=json&apiKey=${apiKey}`)
             .then(response => response.json())
@@ -85,7 +81,7 @@ $(document).ready(function() {
                     }
                 }
             })
-            .catch();
+            .catch(() => { return; });
         }
     });
 
@@ -102,8 +98,7 @@ $(document).ready(function() {
     });
 });
 
-let totalJobs = 0;
-let pageCount = 0;
+let currentJobId = -1;
 
 //handle skills
 let skillsArray = [];
@@ -162,11 +157,11 @@ function buildJobCard(data)
         card.append(cardInformation);
 
         const buttons = $("<div class='buttons'></div>");
-        buttons.append("<button class='search-button' onclick='redirect(this)'>view details</button>");
+        buttons.append("<button class='search-button' onclick='getId(this, 0)'>View details</button>");
         if($("#can-apply").length != 0)
-            buttons.append("<button class='search-button' onclick='redirect(null)'>apply</button>");
+            buttons.append("<button class='search-button' onclick='getId(this, 1)'>Apply</button>");
         card.append(buttons);
-    }).catch(() => {});
+    }).catch(() => { return; });
 
     return card;
 }
@@ -255,7 +250,7 @@ function displayJobs(currentPage, limit, interval, pageCount, jobsArray)
                     card = buildJobCard(response[i]);
                     jobsPage.append(card);
                 }
-            }).catch(() => {});
+            }).catch(() => { return; });
         }
     }
     //otherwise, we can just display the fully-loaded page and hide the others
@@ -263,16 +258,77 @@ function displayJobs(currentPage, limit, interval, pageCount, jobsArray)
         $("#page" + currentPage).css("display", "block");
 }
 
-//helper function
-function redirect(target)
+//view + apply for job
+$(window).click(function(event) {
+    if(event.target == $(".modal")[0])
+    getId(null, 1);
+});
+
+function getCookie(name)
 {
-    if(target != null)
+    name += "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let cookies = decodedCookie.split(";");
+
+    for(let i=0; i<cookies.length; i++)
     {
-        const id = $(target).parent().parent().children().eq(0).text();
-        window.location.href = `../views/jobs.php?id=${id}`;
+        let cookie = cookies[i];
+        while(cookie.charAt(0) == " ")
+            cookie = cookie.substring(1);
+
+        if(cookie.indexOf(name) == 0)
+            return cookie.substring(name.length, cookie.length);
     }
+
+    return "";
+}
+
+function getId(target, action)
+{
+    currentJobId = $(target).parent().parent().children().eq(0).text();
+
+    if(action == 0)
+        window.location.href = `../views/jobs.php?id=${currentJobId}`;
     else
     {
-        //apply popup
+        if($(".modal").eq(0).css("display") == "none")
+        {
+            $(".modal-wrapper").empty();
+            $(".modal-wrapper").append("<p>Would you like to send an application for this job?</p>");
+            $(".modal-wrapper").append("<button class='search-button' onclick='apply()'>Apply</button>");
+
+            $(".modal").eq(0).css("display", "block");
+            $(".modal-wrapper").css("display", "block");
+        }
+        else
+        {
+            $(".modal").eq(0).css("display", "none");
+            $(".modal-wrapper").css("display", "none");
+        }
     }
+}
+
+function apply()
+{
+    const bearerToken = getCookie("jwt");
+
+    $.ajax({
+        url: "../api/apply.php",
+        method: "POST",
+        data: JSON.stringify({"job_id": currentJobId}),
+        contentType: "application/x-www-form-urlencoded",
+        dataType: "json",
+        beforeSend: function(xmlhttp) {
+            xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
+        },   
+        success: function() {
+            $(".modal-wrapper").html("<p>Your application was sent.</p>");
+        },
+        error: function(xmlhttp) {
+            $(".modal-wrapper").html("<p>" + JSON.parse(xmlhttp.responseText)["message"] + "</p>");
+        },
+        complete: function() {
+            $(".modal-wrapper").append("<button class='search-button' onclick='getId(null, 1)'>Close</button>");
+        }
+    });
 }

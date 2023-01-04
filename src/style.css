@@ -86,7 +86,7 @@ a.current-page:hover {
     padding: 15vmin;
 }
 
-#main .search {
+.search {
     background-image: url("https://www.w3schools.com/css/searchicon.png");
     background-position: 10px 10px;
     background-repeat: no-repeat;
@@ -99,7 +99,7 @@ a.current-page:hover {
     font-size: 16px;
 }
 
-#main .search-button {
+.search-button {
     padding: 12px 10px;
     font-size: 16px;
     border: none;
@@ -109,8 +109,48 @@ a.current-page:hover {
     cursor: pointer;
 }
 
-#main .search-button:hover {
+.search-button:hover {
     background-color: #ea5f4a;
+}
+
+input, select {
+    outline: none;
+}
+
+/* modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 8% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 45vw;
+    border-radius: 10px;
+}
+
+.close {
+    cursor: pointer;
+    float: right;
+}
+
+.modal {
+    -ms-overflow-style: none; 
+    scrollbar-width: none;
+}
+
+.modal::-webkit-scrollbar { 
+    display: none;
 }
 
 /* responsive navbar */

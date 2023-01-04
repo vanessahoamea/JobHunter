@@ -89,6 +89,11 @@ class CandidateController extends CandidateModel
         return $this->deleteExperience($this->id, $experienceId);
     }
 
+    public function applyToJob($jobId)
+    {
+        return $this->apply($this->id, $jobId);
+    }
+
     private function emptyInput($params)
     {
         if(empty($this->id))
