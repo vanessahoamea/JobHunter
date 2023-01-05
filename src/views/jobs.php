@@ -20,11 +20,17 @@ if($response == 0 || $response == -1)
 require_once("../controllers/jwt_controller.php");
 
 $canApply = true;
+$ownJob = false;
 if(isset($_COOKIE["jwt"]))
 {
     $data = JWTController::getPayload($_COOKIE["jwt"]);
-    if(JWTController::validateToken($_COOKIE["jwt"]) && $data["account_type"] == "company")
-        $canApply = false;
+    if(JWTController::validateToken($_COOKIE["jwt"]))
+    {
+        if($data["account_type"] == "company")
+            $canApply = false;
+        if($data["account_type"] == "company" && $data["id"] == $response["company_id"])
+            $ownJob = true;
+    }
 }
 ?>
 
@@ -112,6 +118,10 @@ if(isset($_COOKIE["jwt"]))
 
             <?php if($canApply): ?>
                 <button class="search-button" onclick="toggleModal()">Apply</button>
+            <?php endif; ?>
+
+            <?php if($ownJob): ?>
+                <button class="search-button company-button" onclick="redirect()">View applicants</button>
             <?php endif; ?>
             </div>
         </div>

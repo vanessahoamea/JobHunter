@@ -83,6 +83,11 @@ function toggleModal()
 function apply()
 {
     const bearerToken = getCookie("jwt");
+    if(bearerToken == "")
+    {
+        window.location.href = "../login";
+        return;
+    }
 
     $.ajax({
         url: "../api/apply.php",
@@ -103,4 +108,10 @@ function apply()
             $(".modal-wrapper").append("<button class='search-button' onclick='toggleModal()'>Close</button>");
         }
     });
+}
+
+//helper function
+function redirect()
+{
+    window.location.href = "../applicants?id=" + currentJobId;
 }

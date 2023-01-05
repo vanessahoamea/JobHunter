@@ -48,6 +48,11 @@ class CompanyController extends CompanyModel
         return $this->deleteJob($this->id, $jobId);
     }
 
+    public function getJobApplicants($jobId)
+    {
+        return $this->getApplicants($this->id, $jobId);
+    }
+
     public function validate($jobId)
     {
         return $this->validateJob($this->id, $jobId);

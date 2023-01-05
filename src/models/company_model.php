@@ -248,6 +248,42 @@ class CompanyModel extends DBHandler
         return 1;
     }
 
+    protected function getApplicants($companyId, $jobId)
+    {
+        $stmt = $this->connect()->prepare("SELECT company_id FROM jobs WHERE id = ?;");
+
+        if(!$stmt->execute(array($jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return -1;
+        }
+
+        if($stmt->fetch()["company_id"] != $companyId)
+        {
+            $stmt = null;
+            return -2;
+        }
+
+        $stmt = null;
+        $stmt = $this->connect()->prepare("SELECT candidates.id, candidates.first_name, candidates.last_name FROM applicants JOIN candidates ON applicants.candidate_id = candidates.id WHERE job_id = ?;");
+
+        if(!$stmt->execute(array($jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $applicants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = null;
+        return $applicants;
+    }
+
     protected function validateJob($companyId, $jobId)
     {
         $stmt = $this->connect()->prepare("SELECT company_id FROM jobs WHERE id = ?;");

@@ -15,7 +15,7 @@ else
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Post job</title>
+        <title>Recent jobs</title>
         <link rel="stylesheet" type="text/css" href="../style.css" />
         <link rel="stylesheet" type="text/css" href="search_style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">

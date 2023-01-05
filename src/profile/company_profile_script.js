@@ -91,9 +91,9 @@ function getCookie(name)
     return "";
 }
 
-function getId(target, action)
+function redirect(id, action)
 {
-    currentItemId = $(target).parent().parent().children().eq(0).text();
+    currentItemId = id;
     const hashedId = btoa(btoa(currentItemId) + "." + Math.round(Date.now() / 1000) + "." + getCookie("jwt").split(".")[2]);
 
     if(action == 0)
@@ -101,9 +101,7 @@ function getId(target, action)
     else if(action == 1)
         toggleModal();
     else
-    {
-        //
-    }
+        window.location.href = "../applicants?id=" + currentItemId;
 }
 
 function deleteJob()
@@ -148,7 +146,6 @@ function buildJobCard(data)
     cardInformation.append("<p><i class='fa-solid fa-location-dot fa-fw'></i>in " + data["location_name"] + "</p>");
     cardInformation.append(jobRequirements);
 
-    card.append("<div class='job-id' style='display: none;'>" + data["id"] + "</div>");
     card.append(topRow);
     card.append(cardInformation);
 
@@ -156,9 +153,9 @@ function buildJobCard(data)
     if($("#self-view").length != 0)
     {
         const buttons = $("<div class='buttons'></div>");
-        buttons.append("<button class='section-button'><i class='fa-solid fa-users fa-fw'></i>applicants</button>");
-        buttons.append("<button class='section-button' onclick='getId(this, 0)'><i class='fa-solid fa-pen-to-square fa-fw'></i>edit</button>");
-        buttons.append("<button class='section-button' onclick='getId(this, 1)'><i class='fa-solid fa-trash fa-fw'></i>delete</button>");
+        buttons.append(`<button class='section-button' onclick='redirect(${data["id"]}, 2)'><i class='fa-solid fa-users fa-fw'></i>applicants</button>`);
+        buttons.append(`<button class='section-button' onclick='redirect(${data["id"]}, 0)'><i class='fa-solid fa-pen-to-square fa-fw'></i>edit</button>`);
+        buttons.append(`<button class='section-button' onclick='redirect(${data["id"]}, 1)'><i class='fa-solid fa-trash fa-fw'></i>delete</button>`);
         card.append(buttons);
     }
 
@@ -256,33 +253,3 @@ function displayJobs(currentPage, limit, interval, pageCount, id, jobsArray)
     else
         $("#page" + currentPage).css("display", "block");
 }
-
-// function show_data()
-// {
-//     let bearerToken = getCookie("jwt");
-
-//     let xmlhttp = new XMLHttpRequest();
-//     xmlhttp.open("GET", "../api/get_experience_data.php", true);
-//     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-//     xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
-//     xmlhttp.responseType = "json";
-
-//     xmlhttp.onload = function(e)
-//     {
-//         if(this.status == 200)
-//         {
-//             string = "Has a total of " + Math.floor(this.response["total_months"] / 12) + " years and " + (this.response["total_months"] % 12) + " months of work experience<br>";
-//             if(this.response["average_employment_period"] >= 6)
-//                 string += "Is likely to stay at one workplace for a longer period of time<br>";
-//             else
-//                 string += "Not likely to stay at one workplace for long periods of time, might be a job hopper<br>";
-//             if(this.response["adds_descriptions"])
-//                 string += "Provides descriptions for most of their previous roles<br>";
-//             else
-//                 string += "Doesn't provide descriptions for most of their previous roles<br>";
-
-//             $("#result-text").html(string);
-//         }
-//     };
-//     xmlhttp.send();
-// }

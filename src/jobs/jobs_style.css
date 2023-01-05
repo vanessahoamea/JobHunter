@@ -78,8 +78,12 @@
     border-radius: 5px;
 }
 
-i.fa-fw {
-    margin-right: 6px;
+.company-button {
+    background-color: #A443DA;
+}
+
+.company-button:hover {
+    background-color: #9c1de0;
 }
 
 /* responsiveness */

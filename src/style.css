@@ -113,8 +113,13 @@ a.current-page:hover {
     background-color: #ea5f4a;
 }
 
-input, select {
+input, select, textarea, div[contenteditable="true"] {
     outline: none;
+    font-family: 'Roboto', Arial, sans-serif;
+}
+
+i.fa-fw {
+    margin-right: 6px;
 }
 
 /* modal */

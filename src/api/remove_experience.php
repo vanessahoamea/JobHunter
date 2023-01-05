@@ -44,7 +44,7 @@ else
 
         if($response == 1)
         {
-            http_response_code(201);
+            http_response_code(200);
             echo json_encode(array("message" => "Deleted experience."));
         }
         else if($response == 0)
