@@ -17,10 +17,17 @@ if(!isset($_GET["page"]) || !isset($_GET["limit"]))
 }
 else
 {
-    $company_id = isset($_GET["company_id"]) ? $_GET["company_id"] : 0;
+    $companyId = isset($_GET["company_id"]) ? $_GET["company_id"] : 0;
+    $keywords = isset($_GET["keywords"]) ? explode(",", $_GET["keywords"]) : '';
+    $locationLat = isset($_GET["location_lat"]) ? $_GET["location_lat"] : '';
+    $locationLon = isset($_GET["location_lon"]) ? $_GET["location_lon"] : '';
+    $skills = isset($_GET["skills"]) ? explode(",", $_GET["skills"]) : '';
+    $type = isset($_GET["type"]) ? explode(",", $_GET["type"]) : '';
+    $level = isset($_GET["level"]) ? explode(",", $_GET["level"]) : '';
+    $salary = isset($_GET["salary"]) ? $_GET["salary"] : '';
     
-    $company = new CompanyController($company_id);
-    $response = $company->getJobs($_GET["page"], $_GET["limit"]);
+    $company = new CompanyController($companyId);
+    $response = $company->getJobs($_GET["page"], $_GET["limit"], $keywords, $locationLat, $locationLon, $skills, $type, $level, $salary);
 
     if($response == 0)
     {

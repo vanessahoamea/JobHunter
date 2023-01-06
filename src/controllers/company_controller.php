@@ -33,9 +33,9 @@ class CompanyController extends CompanyModel
         return $this->getSingleJob($jobId);
     }
 
-    public function getJobs($page, $limit)
+    public function getJobs($page, $limit, $keywords, $locationLat, $locationLon, $skills, $type, $level, $salary)
     {
-        return $this->getRecentJobs($this->id, $page, $limit);
+        return $this->getRecentJobs($this->id, $page, $limit, $keywords, $locationLat, $locationLon, $skills, $type, $level, $salary);
     }
 
     public function editJob($jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical)

@@ -42,4 +42,21 @@
         <!-- fontawesome icons -->
         <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </body>
+
+    <script>
+        function searchKeywords()
+        {
+            const keywords = encodeURIComponent(document.getElementById("search").value);
+            window.location.href = "/search?keywords=" + keywords;
+        }
+
+        document.querySelector(".search-button").addEventListener("click", () => {
+            searchKeywords();
+        });
+
+        document.getElementById("search").addEventListener("keyup", (event) => {
+            if(event.key == "Enter")
+                searchKeywords();
+        });
+    </script>
 </html>

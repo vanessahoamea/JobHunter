@@ -93,22 +93,77 @@ class CompanyModel extends DBHandler
         return $job;
     }
 
-    protected function getRecentJobs($id, $page, $limit)
+    protected function getRecentJobs($id, $page, $limit, $keywords, $locationLat, $locationLon, $skills, $type, $level, $salary)
     {
         $result = array();
         $startIndex = ($page - 1) * $limit;
         $endIndex = $page * $limit;
 
+        $params = array();
+        $queryParams = array();
+
         if($id > 0)
         {
-            $query = "SELECT * FROM jobs WHERE company_id = ? ORDER BY date_posted DESC, id DESC;";
-            $params = array($id);
+            array_push($params, $id);
+            array_push($queryParams, "company_id = ?");
         }
-        else
+
+        if(!empty($keywords))
         {
-            $query = "SELECT * FROM jobs ORDER BY date_posted DESC, id DESC;";
-            $params = array();
+            $options = array();
+            foreach($keywords as $value)
+            {
+                array_push($params, $value . "%");
+                array_push($options, "LOWER(title) LIKE ?");
+            }
+            array_push($queryParams, "(" . implode(" OR ", $options) . ")");
         }
+
+        if(!empty($locationLat) && !empty($locationLon))
+        {
+            array_push($params, "\"" . $locationLat . "\"", "\"" . $locationLon . "\"");
+            array_push($queryParams, "JSON_CONTAINS(location_coords, ?, '$[0]') AND JSON_CONTAINS(location_coords, ?, '$[1]')");
+        }
+
+        if(!empty($skills))
+        {
+            $options = array();
+            foreach($skills as $value)
+            {
+                array_push($params, "\"" . $value . "\"");
+                array_push($options, "JSON_CONTAINS(skills, ?)");
+            }
+            array_push($queryParams, "(" . implode(" OR ", $options) . ")");
+        }
+
+        if(!empty($type))
+        {
+            $options = array();
+            foreach($type as $value)
+            {
+                array_push($params, $value);
+                array_push($options, "?");
+            }
+            array_push($queryParams, "type IN (" . implode(", ", $options) . ")");
+        }
+
+        if(!empty($level))
+        {
+            $options = array();
+            foreach($level as $value)
+            {
+                array_push($params, $value);
+                array_push($options, "?");
+            }
+            array_push($queryParams, "level IN (" . implode(", ", $options) . ")");
+        }
+
+        if($salary == "true")
+            array_push($queryParams, "salary IS NOT NULL");
+
+        $query = "SELECT * FROM jobs";
+        $query .= count($queryParams) > 0 ? " WHERE " . implode(" AND ", $queryParams) : "";
+        $query .= " ORDER BY date_posted DESC, id DESC;";
         $stmt = $this->connect()->prepare($query);
 
         if(!$stmt->execute($params))

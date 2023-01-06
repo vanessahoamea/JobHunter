@@ -1,27 +1,41 @@
 $(document).ready(function() {
     //load job data
-    const limit = 4;
-    const interval = 5;
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+    data = {
+        keywords: decodeURIComponent(params.keywords),
+        location_name: decodeURIComponent(params.location_name),
+        location_lat: decodeURIComponent(params.location_lat),
+        location_lon: decodeURIComponent(params.location_lon),
+        skills: params.skills != null ? params.skills.split(",").map(skill => decodeURIComponent(skill)) : null,
+        type: params.type != null ? params.type.split(",").map(type => decodeURIComponent(type)) : null,
+        level: params.level != null ? params.level.split(",").map(level => decodeURIComponent(level)) : null,
+        salary: params.salary
+    }
+    data = Object.fromEntries(Object.entries(data).filter(([key, value]) => value != null && value != "null"));
+    setFilters();
+
     $.ajax({
         url: "../api/get_job_postings.php",
         method: "GET",
-        data: {"company_id": 0, "page": 1, "limit": limit},
+        data: {...data, "company_id": 0, "page": 1, "limit": limit},
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
         success: function(response) {
             const pageCount = Math.ceil(response["total_count"] / limit);
             for(let page=1; page<=pageCount; page++)
-                $("#pagination").append(`<div class='page' onclick='displayJobs(${page}, ${limit}, ${interval}, ${pageCount}, null)'>${page}</div>`);
+                $("#pagination").append(`<div class='page' onclick='displayJobs(${page}, ${pageCount}, null)'>${page}</div>`);
             
             //quick jump to first and last pages
-            $("#pagination").prepend(`<div id='quick-first' class='page' onclick='displayJobs(1, ${limit}, ${interval}, ${pageCount}, null)' style='display: none;'>first</div>`);
-            $("#pagination").append(`<div id='quick-last' class='page' onclick='displayJobs(${pageCount}, ${limit}, ${interval}, ${pageCount}, null)' style='display: none;'>last</div>`);
+            $("#pagination").prepend(`<div id='quick-first' class='page' onclick='displayJobs(1, ${pageCount}, null)' style='display: none;'>first</div>`);
+            $("#pagination").append(`<div id='quick-last' class='page' onclick='displayJobs(${pageCount}, ${pageCount}, null)' style='display: none;'>last</div>`);
             
             $(".card").remove();
             if(response["jobs"].length == 0)
                 $(".job-postings").append("<p><i>Nothing to see here.</i></p>");
             else
-                displayJobs(1, limit, interval, pageCount, response["jobs"]);
+                displayJobs(1, pageCount, response["jobs"]);
         }
     });
 
@@ -96,9 +110,81 @@ $(document).ready(function() {
     $(document).on("click", "#main", function() {
         $("#listing-container").css("display", "none");
     });
+
+    //filter jobs
+    $("#search").on("keyup", function(event) {
+        if(event.key == "Enter")
+            applyFilters();
+    });
+
+    $("#search-button").on("click", function() {
+        applyFilters();
+    });
 });
 
 let currentJobId = -1;
+const limit = 4;
+const interval = 5;
+let data = null;
+
+//filter jobs
+function applyFilters()
+{
+    const keywords = encodeURIComponent($("#search").val());
+    const locationName = encodeURIComponent($("#location").val());
+    const locationLat = encodeURIComponent($("#location-lat").val());
+    const locationLon = encodeURIComponent($("#location-lon").val());
+    const skills = skillsArray.map(skill => encodeURIComponent(skill)).join(",");
+    const type = [];
+    $("input[name='job-type']:checked").each(function() {
+        type.push(encodeURIComponent($(this).val()));
+    });
+    const level = [];
+    $("input[name='level']:checked").each(function() {
+        type.push(encodeURIComponent($(this).val()));
+    });
+    const salary = $("#salary").prop("checked");
+    
+    console.log(skills)
+    let params = {
+        keywords: keywords,
+        location_name: locationName,
+        location_lat: locationName != "" ? locationLat : "",
+        location_lon: locationName != "" ? locationLon : "",
+        skills: skills,
+        type: type.join(","),
+        level: level.join(","),
+        salary: salary
+    };
+    params = new URLSearchParams(
+        Object.fromEntries(Object.entries(params).filter(([key, value]) => value != ""))
+    );
+
+    window.location.href = "index.php?" + params.toString();
+}
+
+function setFilters()
+{
+    $("#search").val(data.keywords);
+    $("#location").val(data.location_name);
+    $("#location-lat").val(data.location_lat);
+    $("#location-lon").val(data.location_lon);
+    if(data.skills != null)
+    {
+        skillsArray = data.skills;
+        skillsArray.forEach(skill => {
+                const listItem = $("<li><i class='fa-solid fa-xmark fa-fw' onclick='removeSkill(this)'></i>" + skill + "</li>");
+                $(listItem).insertBefore("#skills");
+            }
+        );
+    }
+    if(data.type != null)
+        data.type.forEach(type => $(`input[name='job-type'][value='${type}']`).prop("checked", true));
+    if(data.level != null)
+        data.level.forEach(level => $(`input[name='job-type'][value='${level}']`).prop("checked", true));
+    if(data.salary != null)
+        $("input[name='salary'][value='on']").prop("checked", true);
+}
 
 //handle skills
 let skillsArray = [];
@@ -157,16 +243,16 @@ function buildJobCard(data)
         card.append(cardInformation);
 
         const buttons = $("<div class='buttons'></div>");
-        buttons.append("<button class='search-button' onclick='getId(this, 0)'>View details</button>");
+        buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 0)'>View details</button>`);
         if($("#can-apply").length != 0)
-            buttons.append("<button class='search-button' onclick='getId(this, 1)'>Apply</button>");
+            buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 1)'>Apply</button>`);
         card.append(buttons);
     }).catch(() => { return; });
 
     return card;
 }
 
-function displayJobs(currentPage, limit, interval, pageCount, jobsArray)
+function displayJobs(currentPage, pageCount, jobsArray)
 {
     const defaultHtml = `
         <div class="card">
@@ -233,7 +319,7 @@ function displayJobs(currentPage, limit, interval, pageCount, jobsArray)
                 $.ajax({
                     url: "../api/get_job_postings.php",
                     method: "GET",
-                    data: {"company_id": 0, "page": currentPage, "limit": limit},
+                    data: {...data, "company_id": 0, "page": currentPage, "limit": limit},
                     contentType: "application/x-www-form-urlencoded",
                     dataType: "json",
                     success: function(response) {
@@ -283,9 +369,9 @@ function getCookie(name)
     return "";
 }
 
-function getId(target, action)
+function getId(id, action)
 {
-    currentJobId = $(target).parent().parent().children().eq(0).text();
+    currentJobId = id;
 
     if(action == 0)
         window.location.href = `../views/jobs.php?id=${currentJobId}`;

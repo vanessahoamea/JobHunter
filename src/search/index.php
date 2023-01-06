@@ -55,8 +55,8 @@ else
         <div id="main">
             <div id="wrapper">
                 <div class="upper-searchbar">
-                    <input type="text" class="search" placeholder="Enter keywords">
-                    <button class="search-button">Search</button>
+                    <input type="text" id="search" class="search" placeholder="Enter keywords">
+                    <button id="search-button" class="search-button">Search</button>
                 </div>
 
                 <div class="lower-content">
