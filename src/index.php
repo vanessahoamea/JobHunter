@@ -47,7 +47,7 @@
         function searchKeywords()
         {
             const keywords = encodeURIComponent(document.getElementById("search").value);
-            window.location.href = "/search?keywords=" + keywords;
+            window.location.href = "search?keywords=" + keywords;
         }
 
         document.querySelector(".search-button").addEventListener("click", () => {

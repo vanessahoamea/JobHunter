@@ -15,7 +15,7 @@ $(document).ready(function() {
     $("#skills").on("keyup", function(e) {
         if(e.key == "," || e.key == "Enter")
         {
-            let text = e.target.value.replace(/\s+/g, " ");
+            let text = e.target.value.toLowerCase().replace(/\s+/g, " ");
             if(text.length > 0 && !skillsArray.includes(text))
                 text.split(",").forEach(skill => {
                     skill = skill.trim();

@@ -4,16 +4,16 @@ $(document).ready(function() {
         get: (searchParams, prop) => searchParams.get(prop),
     });
     data = {
-        keywords: decodeURIComponent(params.keywords),
-        location_name: decodeURIComponent(params.location_name),
-        location_lat: decodeURIComponent(params.location_lat),
-        location_lon: decodeURIComponent(params.location_lon),
-        skills: params.skills != null ? params.skills.split(",").map(skill => decodeURIComponent(skill)) : null,
-        type: params.type != null ? params.type.split(",").map(type => decodeURIComponent(type)) : null,
-        level: params.level != null ? params.level.split(",").map(level => decodeURIComponent(level)) : null,
+        keywords: params.keywords != null ? decodeURIComponent(params.keywords) : null,
+        location_name: params.location_name != null ? decodeURIComponent(params.location_name) : null,
+        location_lat: params.location_lat != null ? decodeURIComponent(params.location_lat) : null,
+        location_lon: params.location_lon != null ? decodeURIComponent(params.location_lon) : null,
+        skills: params.skills != null ? params.skills.split(",").map(skill => decodeURIComponent(skill)).join(",") : null,
+        type: params.type != null ? params.type.split(",").map(type => decodeURIComponent(type)).join(",") : null,
+        level: params.level != null ? params.level.split(",").map(level => decodeURIComponent(level)).join(",") : null,
         salary: params.salary
     }
-    data = Object.fromEntries(Object.entries(data).filter(([key, value]) => value != null && value != "null"));
+    data = Object.fromEntries(Object.entries(data).filter(([_, value]) => value != null));
     setFilters();
 
     $.ajax({
@@ -43,7 +43,7 @@ $(document).ready(function() {
     $("#skills").on("keyup", function(e) {
         if(e.key == "," || e.key == "Enter")
         {
-            let text = e.target.value.replace(/\s+/g, " ");
+            let text = e.target.value.toLowerCase().replace(/\s+/g, " ");
             if(text.length > 0 && !skillsArray.includes(text))
                 text.split(",").forEach(skill => {
                     skill = skill.trim();
@@ -141,7 +141,7 @@ function applyFilters()
     });
     const level = [];
     $("input[name='level']:checked").each(function() {
-        type.push(encodeURIComponent($(this).val()));
+        level.push(encodeURIComponent($(this).val()));
     });
     const salary = $("#salary").prop("checked");
     
@@ -157,7 +157,7 @@ function applyFilters()
         salary: salary
     };
     params = new URLSearchParams(
-        Object.fromEntries(Object.entries(params).filter(([key, value]) => value != ""))
+        Object.fromEntries(Object.entries(params).filter(([_, value]) => value != ""))
     );
 
     window.location.href = "index.php?" + params.toString();
@@ -171,7 +171,7 @@ function setFilters()
     $("#location-lon").val(data.location_lon);
     if(data.skills != null)
     {
-        skillsArray = data.skills;
+        skillsArray = data.skills.split(",");
         skillsArray.forEach(skill => {
                 const listItem = $("<li><i class='fa-solid fa-xmark fa-fw' onclick='removeSkill(this)'></i>" + skill + "</li>");
                 $(listItem).insertBefore("#skills");
@@ -179,10 +179,10 @@ function setFilters()
         );
     }
     if(data.type != null)
-        data.type.forEach(type => $(`input[name='job-type'][value='${type}']`).prop("checked", true));
+        data.type.split(",").forEach(type => $(`input[name='job-type'][value='${type}']`).prop("checked", true));
     if(data.level != null)
-        data.level.forEach(level => $(`input[name='job-type'][value='${level}']`).prop("checked", true));
-    if(data.salary != null)
+        data.level.split(",").forEach(level => $(`input[name='job-type'][value='${level}']`).prop("checked", true));
+    if(data.salary == "true")
         $("input[name='salary'][value='on']").prop("checked", true);
 }
 
@@ -397,6 +397,11 @@ function getId(id, action)
 function apply()
 {
     const bearerToken = getCookie("jwt");
+    if(bearerToken == "")
+    {
+        window.location.href = "../login";
+        return;
+    }
 
     $.ajax({
         url: "../api/apply.php",

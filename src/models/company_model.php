@@ -113,7 +113,7 @@ class CompanyModel extends DBHandler
             $options = array();
             foreach($keywords as $value)
             {
-                array_push($params, $value . "%");
+                array_push($params, "%" . $value . "%");
                 array_push($options, "LOWER(title) LIKE ?");
             }
             array_push($queryParams, "(" . implode(" OR ", $options) . ")");
