@@ -64,6 +64,31 @@ else
         </nav>
 
         <div id="main">
+            <button class="return-button" onclick="redirect(<?php echo $_GET['id'] ?>, 1)">Back to job page</button>
+            <div class="filters">
+                <h2>Filter candidates</h2>
+
+                <h3>Minimum years of experience</h3>
+                <label for="minimum-years">
+                    <input class="input" type="number" id="minimum-years" name="minimum-years" min="0" value="0">
+                </label>
+
+                <h3>Others</h3>
+                <label for="sort">
+                    <input type="checkbox" id="sort" name="sort"> Sort by amount of experience
+                </label>
+                <label for="job-hoppers">
+                    <input type="checkbox" id="job-hoppers" name="job-hoppers"> Hide candidates that might be job hoppers
+                </label>
+                <label for="descriptions">
+                    <input type="checkbox" id="descriptions" name="descriptions"> Hide candidates that don't provide descriptions for previous roles
+                </label>
+
+                <div class="buttons">
+                    <button class="search-button" onclick="applyFilters(<?php echo $_GET['id'] ?>)">Apply</button>
+                </div>
+            </div>
+
             <div id="wrapper">
                 <div class="candidates">
                     <div class="candidate-card">

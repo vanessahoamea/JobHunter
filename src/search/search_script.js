@@ -145,7 +145,6 @@ function applyFilters()
     });
     const salary = $("#salary").prop("checked");
     
-    console.log(skills)
     let params = {
         keywords: keywords,
         location_name: locationName,

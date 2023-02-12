@@ -92,6 +92,39 @@
     margin-bottom: 3vh;
 }
 
+.filters {
+    width: calc(50vw + 20px);
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+.filters h3, h2 {
+    margin-left: 4px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.filters h2 {
+    margin-bottom: 15px;
+}
+
+.input {
+    padding: 10px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+}
+
 /* responsiveness */
 @media screen and (max-width: 845px) {
     .buttons button {
@@ -110,7 +143,13 @@
 }
 
 @media screen and (max-width: 650px) {
-    .candidate-card {
+    .candidate-card, .filters {
         width: 60vw;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .input {
+        width: 30vw;
     }
 }
