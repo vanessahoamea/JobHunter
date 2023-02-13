@@ -93,7 +93,7 @@ class CompanyModel extends DBHandler
         return $job;
     }
 
-    protected function getRecentJobs($id, $page, $limit, $keywords, $locationLat, $locationLon, $skills, $type, $level, $salary)
+    protected function getRecentJobs($id, $page, $limit, $keywords, $locationLat, $locationLon, $skills, $type, $level, $salary, $candidateId)
     {
         $result = array();
         $startIndex = ($page - 1) * $limit;
@@ -163,6 +163,12 @@ class CompanyModel extends DBHandler
 
         $query = "SELECT * FROM jobs";
         $query .= count($queryParams) > 0 ? " WHERE " . implode(" AND ", $queryParams) : "";
+        if($candidateId != 0)
+        {
+            $query .= count($queryParams) > 0 ? " AND " : " WHERE ";
+            $query .= "id NOT IN (SELECT job_id FROM hidden WHERE candidate_id = ?)";
+            array_push($params, $candidateId);
+        }
         $query .= " ORDER BY date_posted DESC, id DESC;";
         $stmt = $this->connect()->prepare($query);
 

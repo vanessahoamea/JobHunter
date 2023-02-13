@@ -40,6 +40,9 @@ else
             <?php else: ?>
                 <div class="right">
                     <a href="../profile" class="nav-tab">Profile</a>
+                    <?php if($canApply): ?>
+                        <a href="../my-jobs" class="nav-tab">My jobs</a>
+                    <?php endif; ?>
                     <a href="javascript:void(0)" class="nav-tab" onclick="logout(false)">Log out</a>
                 </div>
             <?php endif; ?>
@@ -161,7 +164,7 @@ else
         <!-- apply for job modal -->
         <div class="modal">
             <div class="modal-content">
-                <span class="close" onclick="redirect(null)">&times;</span>
+                <span class="close" onclick="getId(null, null)">&times;</span>
 
                 <div class="modal-wrapper" style="text-align: center;">
                     <p>Would you like to send an application for this job?</p>

@@ -22,6 +22,10 @@ $(document).ready(function() {
         data: {...data, "company_id": 0, "page": 1, "limit": limit},
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
+        beforeSend: function(xmlhttp) {
+            if(getCookie("jwt") != "")
+                xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
+        },   
         success: function(response) {
             const pageCount = Math.ceil(response["total_count"] / limit);
             for(let page=1; page<=pageCount; page++)
@@ -244,7 +248,11 @@ function buildJobCard(data)
         const buttons = $("<div class='buttons'></div>");
         buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 0)'>View details</button>`);
         if($("#can-apply").length != 0)
+        {
             buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 1)'>Apply</button>`);
+            buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 2)'>Save</button>`);
+            buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 3)'>Hide</button>`);
+        }
         card.append(buttons);
     }).catch(() => { return; });
 
@@ -379,8 +387,15 @@ function getId(id, action)
         if($(".modal").eq(0).css("display") == "none")
         {
             $(".modal-wrapper").empty();
-            $(".modal-wrapper").append("<p>Would you like to send an application for this job?</p>");
-            $(".modal-wrapper").append("<button class='search-button' onclick='apply()'>Apply</button>");
+
+            if(action == 1)
+                $(".modal-wrapper").append("<p>Would you like to send an application for this job?</p>");
+            else if(action == 2)
+                $(".modal-wrapper").append("<p>Would you like to save this job for later?</p>");
+            else
+                $(".modal-wrapper").append("<p>Would you like to hide this job posting?</p>");
+
+            $(".modal-wrapper").append("<button class='search-button' onclick='selectJob(" + action + ")'>Confirm</button>");
 
             $(".modal").eq(0).css("display", "block");
             $(".modal-wrapper").css("display", "block");
@@ -393,7 +408,7 @@ function getId(id, action)
     }
 }
 
-function apply()
+function selectJob(action)
 {
     const bearerToken = getCookie("jwt");
     if(bearerToken == "")
@@ -402,8 +417,11 @@ function apply()
         return;
     }
 
+    let endpoint = "../api/";
+    endpoint += (action == 1) ? "apply.php" : (action == 2) ? "save_job.php" : "hide_job.php";
+
     $.ajax({
-        url: "../api/apply.php",
+        url: endpoint,
         method: "POST",
         data: JSON.stringify({"job_id": currentJobId}),
         contentType: "application/x-www-form-urlencoded",
@@ -412,13 +430,17 @@ function apply()
             xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
         },   
         success: function() {
-            $(".modal-wrapper").html("<p>Your application was sent.</p>");
+            if(action == 1)
+                $(".modal-wrapper").html("<p>Your application was sent.</p>");
+            else
+                window.location.href = `../search`;
         },
         error: function(xmlhttp) {
             $(".modal-wrapper").html("<p>" + JSON.parse(xmlhttp.responseText)["message"] + "</p>");
         },
         complete: function() {
-            $(".modal-wrapper").append("<button class='search-button' onclick='getId(null, 1)'>Close</button>");
+            if(action == 1)
+                $(".modal-wrapper").append("<button class='search-button' onclick='getId(null, 1)'>Close</button>");
         }
     });
 }

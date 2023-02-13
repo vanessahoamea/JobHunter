@@ -138,10 +138,7 @@ else
             <div class="modal-content">
                 <span class="close" onclick="toggleModal(null)">&times;</span>
 
-                <div class="modal-wrapper" style="text-align: center;">
-                    <p>...</p>
-                    <button class="search-button" onclick="toggleModal(null)">Close</button>
-                </div>
+                <div class="modal-wrapper" style="text-align: center;"></div>
             </div>
         </div>
         

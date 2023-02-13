@@ -28,10 +28,10 @@ class JWTController
         return $jwt;
     }
 
-    public static function validateToken($token)
+    public static function validateToken($token, $configPath = "../util/config.php")
     {
         //validating signature
-        include("../util/config.php");
+        include($configPath);
 
         $tokenParts = explode(".", $token);
         $header = $tokenParts[0];

@@ -52,3 +52,17 @@ CREATE TABLE applicants (
     FOREIGN KEY (candidate_id) REFERENCES candidates(id),
     FOREIGN KEY (job_id) REFERENCES jobs(id)
 );
+
+CREATE TABLE bookmarks (
+    candidate_id int(11) NOT NULL,
+    job_id int(11) NOT NULL,
+    FOREIGN KEY (candidate_id) REFERENCES candidates(id),
+    FOREIGN KEY (job_id) REFERENCES jobs(id)
+);
+
+CREATE TABLE hidden (
+    candidate_id int(11) NOT NULL,
+    job_id int(11) NOT NULL,
+    FOREIGN KEY (candidate_id) REFERENCES candidates(id),
+    FOREIGN KEY (job_id) REFERENCES jobs(id)
+);

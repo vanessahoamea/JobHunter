@@ -8,6 +8,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once("../models/database.php");
 include_once("../models/company_model.php");
 include_once("../controllers/company_controller.php");
+include_once("../controllers/jwt_controller.php");
 
 if(!isset($_GET["page"]) || !isset($_GET["limit"]))
 {
@@ -25,9 +26,18 @@ else
     $type = isset($_GET["type"]) ? explode(",", $_GET["type"]) : '';
     $level = isset($_GET["level"]) ? explode(",", $_GET["level"]) : '';
     $salary = isset($_GET["salary"]) ? $_GET["salary"] : '';
+
+    $candidateId = 0;
+    $headers = apache_request_headers();
+    if(isset($headers["Authorization"]))
+    {
+        $token = explode(" ", trim($headers["Authorization"]))[1];
+        if(JWTController::validateToken($token))
+            $candidateId = JWTController::getPayload($token)["id"];
+    }
     
     $company = new CompanyController($companyId);
-    $response = $company->getJobs($_GET["page"], $_GET["limit"], $keywords, $locationLat, $locationLon, $skills, $type, $level, $salary);
+    $response = $company->getJobs($_GET["page"], $_GET["limit"], $keywords, $locationLat, $locationLon, $skills, $type, $level, $salary, $candidateId);
 
     if($response == 0)
     {

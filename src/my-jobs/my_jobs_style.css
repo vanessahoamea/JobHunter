@@ -1,0 +1,68 @@
+.top-buttons {
+    margin: 0 auto;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.top-buttons .search-button {
+    min-width: 12vw;
+}
+
+.top-buttons .selected-button {
+    background-color: #ea5f4a;
+}
+
+.card {
+    width: 50vw;
+    background-color: white;
+    border-radius: 10px;
+    padding: 5px 25px 5px 25px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 10px 0 10px 0;
+    min-height: 1.5em;
+}
+
+.top-row h2, .top-row p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.card-information {
+    margin-bottom: 5px;
+}
+
+.card-information > p {
+    margin: 0;
+}
+
+.card-information .skeleton-text:last-child {
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 499px) {
+    .card {
+        padding: 5px 15px 5px 15px;
+    }
+}
+
+@media screen and (max-width: 440px) {
+    .top-buttons {
+        flex-direction: column;
+    }
+    .top-buttons .search-button {
+        min-width: 50vw;
+    }
+}

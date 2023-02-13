@@ -1,3 +1,18 @@
+<?php
+$isCandidate = false;
+if(isset($_COOKIE["jwt"]))
+{
+    require_once("controllers/jwt_controller.php");
+
+    if(JWTController::validateToken($_COOKIE["jwt"], $configPath = "util/config.php"));
+    {
+        $data = JWTController::getPayload($_COOKIE["jwt"]);
+        if($data["account_type"] == "candidate")
+            $isCandidate = true;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -24,6 +39,9 @@
             <?php else: ?>
                 <div class="right">
                     <a href="profile" class="nav-tab">Profile</a>
+                    <?php if($isCandidate): ?>
+                        <a href="my-jobs" class="nav-tab">My jobs</a>
+                    <?php endif; ?>
                     <a href="javascript:void(0)" class="nav-tab" onclick="logout(true)">Log out</a>
                 </div>
             <?php endif; ?>

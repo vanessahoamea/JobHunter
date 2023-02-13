@@ -32,6 +32,10 @@ $(document).ready(function() {
         data: {"company_id": id, "page": 1, "limit": limit},
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
+        beforeSend: function(xmlhttp) {
+            if(getCookie("jwt") != "")
+                xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
+        },
         success: function(response) {
             const pageCount = Math.ceil(response["total_count"] / limit);
             for(let page=1; page<=pageCount; page++)
@@ -232,6 +236,10 @@ function displayJobs(currentPage, limit, interval, pageCount, id, jobsArray)
                     data: {"company_id": id, "page": currentPage, "limit": limit},
                     contentType: "application/x-www-form-urlencoded",
                     dataType: "json",
+                    beforeSend: function(xmlhttp) {
+                        if(getCookie("jwt") != "")
+                            xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
+                    },
                     success: function(response) {
                         resolve(response["jobs"]);
                     },

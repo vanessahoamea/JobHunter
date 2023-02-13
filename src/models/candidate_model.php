@@ -248,7 +248,7 @@ class CandidateModel extends DBHandler
         return 1;
     }
 
-    protected function apply($candidateId, $jobId)
+    protected function applySaveHide($candidateId, $jobId, $table)
     {
         $stmt = $this->connect()->prepare("SELECT * FROM jobs WHERE id = ?;");
 
@@ -265,7 +265,7 @@ class CandidateModel extends DBHandler
         }
 
         $stmt = null;
-        $stmt = $this->connect()->prepare("SELECT * FROM applicants WHERE candidate_id = ? AND job_id = ?;");
+        $stmt = $this->connect()->prepare("SELECT * FROM " . $table . " WHERE candidate_id = ? AND job_id = ?;");
 
         if(!$stmt->execute(array($candidateId, $jobId)))
         {
@@ -280,7 +280,7 @@ class CandidateModel extends DBHandler
         }
 
         $stmt = null;
-        $stmt = $this->connect()->prepare("INSERT INTO applicants VALUES (?, ?);");
+        $stmt = $this->connect()->prepare("INSERT INTO " . $table . " VALUES (?, ?);");
 
         if(!$stmt->execute(array($candidateId, $jobId)))
         {

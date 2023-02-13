@@ -22,11 +22,14 @@ else
 require_once("../controllers/jwt_controller.php");
 
 $selfView = false;
+$isCandidate = false;
 if(isset($_COOKIE["jwt"]))
 {
     $data = JWTController::getPayload($_COOKIE["jwt"]);
     if(JWTController::validateToken($_COOKIE["jwt"]) && $data["id"] == $_GET["id"] && $data["account_type"] == "company")
         $selfView = true;
+    if(JWTController::validateToken($_COOKIE["jwt"]) && $data["account_type"] == "candidate")
+        $isCandidate = true;
 }
 ?>
 
@@ -61,6 +64,9 @@ if(isset($_COOKIE["jwt"]))
                         <a href="#" class="current-page">Profile</a>
                     <?php else: ?>
                         <a href="../profile">Profile</a>
+                    <?php endif; ?>
+                    <?php if($isCandidate): ?>
+                        <a href="../my-jobs" class="nav-tab">My jobs</a>
                     <?php endif; ?>
                     <a href="javascript:void(0)" class="nav-tab" onclick="logout()">Log out</a>
                 <?php else: ?>
