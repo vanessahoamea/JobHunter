@@ -25,7 +25,7 @@ $(document).ready(function() {
         beforeSend: function(xmlhttp) {
             if(getCookie("jwt") != "")
                 xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
-        },   
+        },
         success: function(response) {
             const pageCount = Math.ceil(response["total_count"] / limit);
             for(let page=1; page<=pageCount; page++)
@@ -37,82 +37,10 @@ $(document).ready(function() {
             
             $(".card").remove();
             if(response["jobs"].length == 0)
-                $(".job-postings").append("<p><i>Nothing to see here.</i></p>");
+                $(".job-postings").append("<p style='text-align: center'><i>Nothing to see here.</i></p>");
             else
                 displayJobs(1, pageCount, response["jobs"]);
         }
-    });
-
-    //create skill tags
-    $("#skills").on("keyup", function(e) {
-        if(e.key == "," || e.key == "Enter")
-        {
-            let text = e.target.value.toLowerCase().replace(/\s+/g, " ");
-            if(text.length > 0 && !skillsArray.includes(text))
-                text.split(",").forEach(skill => {
-                    skill = skill.trim();
-                    if(skill.length == 0 || skillsArray.includes(skill))
-                        return;
-
-                    skillsArray.push(skill);
-                    const listItem = $("<li><i class='fa-solid fa-xmark fa-fw' onclick='removeSkill(this)'></i>" + skill + "</li>");
-                    $(listItem).insertBefore("#skills");
-                });
-            
-            e.target.value = "";
-        }
-    });
-
-    //autocomplete location search
-    const apiKey = "ef42d07733984937ada80ca08c261076";
-    let selectedLocation = null;
-    $("#location").on("input", function() {
-        let text = $(this).val();
-        let container = $("#listing-container");
-
-        if(selectedLocation != null && selectedLocation != text)
-        {
-            $("#location-lat").val("");
-            $("#location-lon").val("");
-        }
-
-        if(text == "")
-        {
-            container.empty();
-            container.css("display", "none");
-        }
-        else if(text.length > 2)
-        {
-            fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${text}&format=json&apiKey=${apiKey}`)
-            .then(response => response.json())
-            .then(response => {
-                response = response["results"];
-                if(response.length > 0)
-                {
-                    container.empty();
-                    container.css("display", "flex");
-                    for(let i=0; i<response.length; i++)
-                    {
-                        container.append("<li class='listing'><i class='fa-solid fa-location-dot fa-fw'></i>" + response[i]["formatted"] + "</li>");
-                        container.append("<p style='display: none;'>" + response[i]["lat"] + "</p>");
-                        container.append("<p style='display: none;'>" + response[i]["lon"] + "</p>");
-                    }
-                }
-            })
-            .catch(() => { return; });
-        }
-    });
-
-    $(document).on("click", ".listing", function() {
-        $("#location").val($(this).text());
-        $("#location-lat").val($(this).next().text());
-        $("#location-lon").val($(this).next().next().text());
-        $("#listing-container").css("display", "none");
-        selectedLocation = $(this).text();
-    });
-
-    $(document).on("click", "#main", function() {
-        $("#listing-container").css("display", "none");
     });
 
     //filter jobs
@@ -189,18 +117,6 @@ function setFilters()
         $("input[name='salary'][value='on']").prop("checked", true);
 }
 
-//handle skills
-let skillsArray = [];
-function removeSkill(skill)
-{
-    const index = skillsArray.indexOf($(skill).parent().text());
-    if(index > -1)
-    {
-        skillsArray.splice(index, 1);
-        $(skill).parent().remove();
-    }
-}
-
 //render data on page
 function buildJobCard(data)
 {
@@ -209,52 +125,36 @@ function buildJobCard(data)
     let cardInformation = $("<div class='card-information'></div>");
     let jobRequirements = $("<div class='job-requirements'></div>");
 
-    new Promise((resolve, reject) => {
-        $.ajax({
-            url: "../api/get_company.php",
-            method: "GET",
-            data: {"id": data["company_id"]},
-            contentType: "application/x-www-form-urlencoded",
-            dataType: "json",
-            success: function(response) {
-                resolve(response);
-            },
-            error: function() {
-                reject();
-            }
-        });
-    }).then((response) => {
-        topRow.append("<h2><a href='../views/jobs.php?id=" + data["id"] + "'>" + data["title"] + "</a></h2>");
-        topRow.append("<p class='date-posted'>" + data["date_posted"] + "</p>");
+    topRow.append("<h2><a href='../views/jobs.php?id=" + data["id"] + "'>" + data["title"] + "</a></h2>");
+    topRow.append("<p class='date-posted'>" + data["date_posted"] + "</p>");
 
-        if(data["skills"] != null)
-        {
-            data["skills"] = JSON.parse(data["skills"]);
-            for(let i=0; i<data["skills"].length; i++)
-                jobRequirements.append("<div class='skill-tag'>" + data["skills"][i] + "</div>");
-        }
+    if(data["skills"] != null)
+    {
+        data["skills"] = JSON.parse(data["skills"]);
+        for(let i=0; i<data["skills"].length; i++)
+            jobRequirements.append("<div class='skill-tag'>" + data["skills"][i] + "</div>");
+    }
 
-        cardInformation.append("<i class='fa-solid fa-building-user fa-fw'></i><a href='../views/companies.php?id=" + data["company_id"] + "' style='font-weight: bold;'>" + response["company_name"] + "</a>");
-        cardInformation.append("<p><i class='fa-solid fa-suitcase fa-fw'></i>" + data["type"] + " (" + data["physical"] + ") &#x2022; " + data["level"] + "</p>");
-        if(data["salary"] != null)
-            cardInformation.append("<p><i class='fa-solid fa-money-bill-wave fa-fw'></i>" + data["salary"] + " (per month)</p>");
-        cardInformation.append("<p><i class='fa-solid fa-location-dot fa-fw'></i>in " + data["location_name"] + "</p>");
-        cardInformation.append(jobRequirements);
+    cardInformation.append("<i class='fa-solid fa-building-user fa-fw'></i><a href='../views/companies.php?id=" + data["company_id"] + "' style='font-weight: bold;'>" + data["company_name"] + "</a>");
+    cardInformation.append("<p><i class='fa-solid fa-suitcase fa-fw'></i>" + data["type"] + " (" + data["physical"] + ") &#x2022; " + data["level"] + "</p>");
+    if(data["salary"] != null)
+        cardInformation.append("<p><i class='fa-solid fa-money-bill-wave fa-fw'></i>" + data["salary"] + " (per month)</p>");
+    cardInformation.append("<p><i class='fa-solid fa-location-dot fa-fw'></i>in " + data["location_name"] + "</p>");
+    cardInformation.append(jobRequirements);
 
-        card.append("<div class='job-id' style='display: none;'>" + data["id"] + "</div>");
-        card.append(topRow);
-        card.append(cardInformation);
+    card.append("<div class='job-id' style='display: none;'>" + data["id"] + "</div>");
+    card.append(topRow);
+    card.append(cardInformation);
 
-        const buttons = $("<div class='buttons'></div>");
-        buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 0)'>View details</button>`);
-        if($("#can-apply").length != 0)
-        {
-            buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 1)'>Apply</button>`);
-            buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 2)'>Save</button>`);
-            buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 3)'>Hide</button>`);
-        }
-        card.append(buttons);
-    }).catch(() => { return; });
+    const buttons = $("<div class='buttons'></div>");
+    buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 0)'>View details</button>`);
+    if($("#can-apply").length != 0)
+    {
+        buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 1)'>Apply</button>`);
+        buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 2)'>Save</button>`);
+        buttons.append(`<button class='search-button' onclick='getId(${data["id"]}, 3)'>Hide</button>`);
+    }
+    card.append(buttons);
 
     return card;
 }
@@ -356,25 +256,6 @@ $(window).click(function(event) {
     if(event.target == $(".modal")[0])
     getId(null, 1);
 });
-
-function getCookie(name)
-{
-    name += "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let cookies = decodedCookie.split(";");
-
-    for(let i=0; i<cookies.length; i++)
-    {
-        let cookie = cookies[i];
-        while(cookie.charAt(0) == " ")
-            cookie = cookie.substring(1);
-
-        if(cookie.indexOf(name) == 0)
-            return cookie.substring(name.length, cookie.length);
-    }
-
-    return "";
-}
 
 function getId(id, action)
 {

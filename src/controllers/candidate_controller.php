@@ -106,6 +106,16 @@ class CandidateController extends CandidateModel
         return $this->applySaveHide($this->id, $jobId, "hidden");
     }
 
+    public function getCandidateJobs($type)
+    {
+        return $this->getJobs($this->id, $type);
+    }
+
+    public function removeCandidateJob($jobId, $type)
+    {
+        return $this->deleteAppliedSavedHiddenJob($this->id, $jobId, $type);
+    }
+
     private function emptyInput($params)
     {
         if(empty($this->id))

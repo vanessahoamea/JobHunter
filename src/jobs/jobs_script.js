@@ -17,6 +17,7 @@ $(document).ready(function() {
             $(".job-data-upper").append("<p class='date-posted'>" + response["date_posted"] + "</p>");
 
             $(".job-data-lower").empty();
+            $(".job-data-lower").append("<p><i class='fa-solid fa-building-user fa-fw'></i><a href='../views/companies.php?id=" + response["company_id"] + "' style='font-weight: bold;'>" + response["company_name"] + "</a></p>");
             $(".job-data-lower").append("<p><i class='fa-solid fa-suitcase fa-fw'></i>" + response["type"] + " (" + response["physical"] + ") &#x2022; " + response["level"] + "</p>");
             if(response["salary"] != null)
                 $(".job-data-lower").append("<p><i class='fa-solid fa-money-bill-wave fa-fw'></i>" + response["salary"] + " (per month)</p>");
@@ -42,25 +43,6 @@ $(window).click(function(event) {
     if(event.target == $(".modal")[0])
     toggleModal();
 });
-
-function getCookie(name)
-{
-    name += "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let cookies = decodedCookie.split(";");
-
-    for(let i=0; i<cookies.length; i++)
-    {
-        let cookie = cookies[i];
-        while(cookie.charAt(0) == " ")
-            cookie = cookie.substring(1);
-
-        if(cookie.indexOf(name) == 0)
-            return cookie.substring(name.length, cookie.length);
-    }
-
-    return "";
-}
 
 function toggleModal()
 {

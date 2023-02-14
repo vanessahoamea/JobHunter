@@ -29,7 +29,7 @@ else
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-        <script src="../script.js" async></script>
+        <script src="../script.js" defer></script>
         <script src="my_jobs_script.js" defer></script>
     </head>
 
@@ -49,7 +49,7 @@ else
 
         <div id="main">
             <div class="top-buttons">
-                <button class="search-button selected-button" onclick="showJobs(0)">Bookmarked</button>
+                <button class="search-button" onclick="showJobs(0)">Bookmarked</button>
                 <button class="search-button" onclick="showJobs(1)">Hidden</button>
                 <button class="search-button" onclick="showJobs(2)">Applied to</button>
             </div>

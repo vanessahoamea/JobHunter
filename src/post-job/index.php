@@ -50,8 +50,10 @@ if(isset($_GET["item"]))
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-        <script src="../script.js" async></script>
+        <script src="../script.js" defer></script>
         <script src="post_job_script.js" defer></script>
+        <script src="../util/autocomplete_script.js" defer></script>
+        <script src="../util/skill_tags_script.js" defer></script>
     </head>
 
     <body>

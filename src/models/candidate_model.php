@@ -291,5 +291,51 @@ class CandidateModel extends DBHandler
         $stmt = null;
         return 1;
     }
+
+    protected function getJobs($id, $type)
+    {
+        $table = $type == "bookmarked" ? "bookmarks" : ($type == "hidden" ? "hidden" : "applicants");
+        $stmt = $this->connect()->prepare("SELECT job_id FROM " . $table . " WHERE candidate_id = ?;");
+
+        if(!$stmt->execute(array($id)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = null;
+        return $jobs;
+    }
+
+    protected function deleteAppliedSavedHiddenJob($candidateId, $jobId, $type)
+    {
+        $table = $type == "bookmarked" ? "bookmarks" : ($type == "hidden" ? "hidden" : "applicants");
+        $stmt = $this->connect()->prepare("SELECT * FROM " . $table . " WHERE candidate_id = ? AND job_id = ?;");
+        
+        if(!$stmt->execute(array($candidateId, $jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return -1;
+        }
+
+        $stmt = null;
+        $stmt = $this->connect()->prepare("DELETE FROM " . $table . " WHERE candidate_id = ? AND job_id = ?;");
+
+        if(!$stmt->execute(array($candidateId, $jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $stmt = null;
+        return 1;
+    }
 }
 ?>

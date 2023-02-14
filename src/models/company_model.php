@@ -74,7 +74,7 @@ class CompanyModel extends DBHandler
 
     public function getSingleJob($jobId)
     {
-        $stmt = $this->connect()->prepare("SELECT * FROM jobs WHERE id = ?;");
+        $stmt = $this->connect()->prepare("SELECT jobs.*, companies.company_name FROM jobs JOIN companies ON jobs.company_id = companies.id WHERE jobs.id = ?;");
 
         if(!$stmt->execute(array($jobId)))
         {
@@ -161,15 +161,15 @@ class CompanyModel extends DBHandler
         if($salary == "true")
             array_push($queryParams, "salary IS NOT NULL");
 
-        $query = "SELECT * FROM jobs";
+        $query = "SELECT jobs.*, companies.company_name FROM jobs JOIN companies ON jobs.company_id = companies.id";
         $query .= count($queryParams) > 0 ? " WHERE " . implode(" AND ", $queryParams) : "";
         if($candidateId != 0)
         {
             $query .= count($queryParams) > 0 ? " AND " : " WHERE ";
-            $query .= "id NOT IN (SELECT job_id FROM hidden WHERE candidate_id = ?)";
+            $query .= "jobs.id NOT IN (SELECT job_id FROM hidden WHERE candidate_id = ?)";
             array_push($params, $candidateId);
         }
-        $query .= " ORDER BY date_posted DESC, id DESC;";
+        $query .= " ORDER BY date_posted DESC, jobs.id DESC;";
         $stmt = $this->connect()->prepare($query);
 
         if(!$stmt->execute($params))
@@ -180,6 +180,12 @@ class CompanyModel extends DBHandler
 
         $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $jobs = array_slice($jobs, $startIndex, $limit);
+        for($i=0; $i<count($jobs); $i+=1)
+        {
+            unset($jobs[$i]["email"]);
+            unset($jobs[$i]["address"]);
+            unset($jobs[$i]["password"]);
+        }
 
         $result["total_count"] = $stmt->rowCount();
         if($startIndex > 0)
@@ -296,6 +302,17 @@ class CompanyModel extends DBHandler
             return -2;
         }
 
+        //delete entries that reference this job
+        $stmt = null;
+        $stmt = $this->connect()->prepare("DELETE FROM applicants WHERE job_id = ?; DELETE FROM bookmarks WHERE job_id = ?; DELETE FROM hidden WHERE job_id = ?;");
+
+        if(!$stmt->execute(array($jobId, $jobId, $jobId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        //delete job
         $stmt = null;
         $stmt = $this->connect()->prepare("DELETE FROM jobs WHERE id = ?;");
 

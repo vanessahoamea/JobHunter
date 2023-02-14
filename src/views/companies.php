@@ -45,7 +45,7 @@ if(isset($_COOKIE["jwt"]))
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-        <script src="../script.js" async></script>
+        <script src="../script.js" defer></script>
         <script src="../profile/company_profile_script.js" defer></script>
     </head>
 
