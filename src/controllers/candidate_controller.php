@@ -15,6 +15,16 @@ class CandidateController extends CandidateModel
         return $this->getAllData($this->id);
     }
 
+    public function addAbout($text)
+    {
+        return $this->updateAbout($this->id, $text);
+    }
+
+    public function getAbout()
+    {
+        return $this->getCandidateAbout($this->id);
+    }
+
     public function addExperience($title, $companyId, $companyName, $type, $startMonth, $startYear, $endMonth, $endYear, $description)
     {
         if($this->emptyInput(array($title, $companyName, $type, $startMonth, $startYear)))
@@ -25,8 +35,11 @@ class CandidateController extends CandidateModel
 
     public function getExperience()
     {
-        $experience = $this->getAllExperience($this->id);
+        $experience = $this->getSectionData($this->id, "candidate_experience");
         $months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
+        if($experience < 1)
+            return $experience;
 
         //sorting the array by most recent job
         usort($experience, function($a, $b) use ($months) {
@@ -41,7 +54,7 @@ class CandidateController extends CandidateModel
 
     public function getExperienceData()
     {
-        $experience = $this->getAllExperience($this->id);
+        $experience = $this->getSectionData($this->id, "candidate_experience");
 
         if($experience < 1)
             return $experience;
@@ -88,7 +101,44 @@ class CandidateController extends CandidateModel
 
     public function removeExperience($experienceId)
     {
-        return $this->deleteExperience($this->id, $experienceId);
+        return $this->deleteItem($this->id, $experienceId, "candidate_experience");
+    }
+
+    public function addEducation($institutionName, $startMonth, $startYear, $endMonth, $endYear, $degree, $studyField, $description)
+    {
+        if($this->emptyInput(array($institutionName, $startMonth, $startYear)))
+            return -1;
+
+        return $this->createEducation($this->id, $institutionName, $startMonth, $startYear, $endMonth, $endYear, $degree, $studyField, $description);
+    }
+
+    public function getEducation()
+    {
+        $education = $this->getSectionData($this->id, "candidate_education");
+        $months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
+        if($education < 1)
+            return $education;
+
+        //sorting the array by most recent education
+        usort($education, function($a, $b) use ($months) {
+            $years = $b["start_year"] - $a["start_year"];
+            if($years != 0)
+                return $years;
+            return array_search($b["start_month"], $months) - array_search($a["start_month"], $months);
+        });
+
+        return $education;
+    }
+
+    public function editEducation($educationId, $institutionName, $startMonth, $startYear, $endMonth, $endYear, $degree, $studyField, $ongoing, $description)
+    {
+        return $this->updateEducation($this->id, $educationId, $institutionName, $startMonth, $startYear, $endMonth, $endYear, $degree, $studyField, $ongoing, $description);
+    }
+
+    public function removeEducation($educationId)
+    {
+        return $this->deleteItem($this->id, $educationId, "candidate_education");
     }
 
     public function applyToJob($jobId)
@@ -108,7 +158,7 @@ class CandidateController extends CandidateModel
 
     public function getCandidateJobs($type)
     {
-        return $this->getJobs($this->id, $type);
+        return $this->getAppliedSavedHiddenJobs($this->id, $type);
     }
 
     public function removeCandidateJob($jobId, $type)

@@ -1,3 +1,4 @@
+--users
 CREATE TABLE candidates (
     id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
     first_name varchar(50) NOT NULL,
@@ -13,6 +14,13 @@ CREATE TABLE companies (
     email varchar(320) NOT NULL,
     address varchar(150),
     password varchar(100) NOT NULL
+);
+
+--candidate data
+CREATE TABLE candidate_about (
+    candidate_id int(11) NOT NULL,
+    text varchar(1500),
+    FOREIGN KEY (candidate_id) REFERENCES candidates(id)
 );
 
 CREATE TABLE candidate_experience (
@@ -31,6 +39,21 @@ CREATE TABLE candidate_experience (
     FOREIGN KEY (company_id) REFERENCES companies(id)
 );
 
+CREATE TABLE candidate_education (
+    id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    candidate_id int(11) NOT NULL,
+    institution_name varchar(100) NOT NULL,
+    start_month varchar(10) NOT NULL,
+    start_year int(11) NOT NULL,
+    end_month varchar(10),
+    end_year int(11),
+    degree varchar(100),
+    study_field varchar(100),
+    description varchar(1500),
+    FOREIGN KEY (candidate_id) REFERENCES candidates(id)
+);
+
+--job-related data
 CREATE TABLE jobs (
     id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
     company_id int(11) NOT NULL,

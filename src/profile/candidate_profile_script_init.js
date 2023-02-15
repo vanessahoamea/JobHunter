@@ -23,7 +23,25 @@ $(document).ready(function() {
     });
 
     //about section
-    fillSection("#about-content", null, null);
+    $.ajax({
+        url: "../api/get_about.php",
+        method: "GET",
+        data: {"id": id},
+        contentType: "application/x-www-form-urlencoded",
+        dataType: "json",
+        success: function(response) {
+            if(response["text"] != null)
+            {
+                $("#about-content").text(response["text"]);
+                $("#about").val(response["text"]);
+            }
+            else
+                fillSection("#about-content", null, null);
+        },
+        error: function() {
+            fillSection("#about-content", null, null);
+        }
+    });
 
     //experience section
     $.ajax({
@@ -40,7 +58,6 @@ $(document).ready(function() {
             let ids = [];
             for(let i=0; i<response.length; i++)
             {
-                const id = response[i]["id"];
                 const jobStart = response[i]["start_month"] + " " + response[i]["start_year"];
                 const jobEnd = response[i]["end_month"] != null ? response[i]["end_month"] + " " + response[i]["end_year"] : "Present";
                 const workPeriod = jobStart + " - " + jobEnd;
@@ -53,7 +70,7 @@ $(document).ready(function() {
                 
                 workPeriods.push(workPeriod);
                 jobDatas.push(jobData);
-                ids.push(id);
+                ids.push(response[i]["id"]);
             }
 
             fillSection("#experience-content", ids, workPeriods, jobDatas);
@@ -64,7 +81,43 @@ $(document).ready(function() {
     });
 
     //education section
-    fillSection("#education-content", null, null, null);
+    $.ajax({
+        url: "../api/get_education.php",
+        method: "GET",
+        data: {"id": id},
+        contentType: "application/x-www-form-urlencoded",
+        dataType: "json",
+        success: function(response) {
+            response = response["data"];
+
+            let studyPeriods = [];
+            let educationDatas = [];
+            let ids = [];
+            for(let i=0; i<response.length; i++)
+            {
+                const studyStart = response[i]["start_month"] + " " + response[i]["start_year"];
+                const studyEnd = response[i]["end_month"] != null ? response[i]["end_month"] + " " + response[i]["end_year"] : "Present";
+                const studyPeriod = studyStart + " - " + studyEnd;
+
+                let educationData = "<p class='bigger-text'>" + response[i]["institution_name"] + "</p>";
+                if(response[i]["degree"] != null)
+                    educationData += "<p>Degree: " + response[i]["degree"] + "</p>";
+                if(response[i]["study_field"] != null)
+                    educationData += "<p>Field of study: " + response[i]["study_field"] + "</p>";
+                if(response[i]["description"] != null)
+                    educationData += "<p>" + response[i]["description"] + "</p>";
+                
+                studyPeriods.push(studyPeriod);
+                educationDatas.push(educationData);
+                ids.push(response[i]["id"]);
+            }
+
+            fillSection("#education-content", ids, studyPeriods, educationDatas);
+        },
+        error: function() {
+            fillSection("#education-content", null, null, null);
+        }
+    });
 
     //projects section
     fillSection("#projects-content", null, null, null);
@@ -129,3 +182,32 @@ $(document).ready(function() {
         $("#listing-container").css("display", "none");
     });
 });
+
+//render data on page
+function fillSection(target, id, leftContent, rightContent)
+{
+    $(target).empty();
+
+    if(leftContent != null && rightContent != null)
+    {
+        for(let i=0; i<leftContent.length; i++)
+        {
+            const div = $("<div class='data-container'></div>");
+            div.append("<div class='item-id' style='display: none;'>" + id[i] + "</div>");
+            div.append("<div class='left-data bigger-text'>" + leftContent[i] + "</div>");
+            div.append("<div class='right-data'><div class='right-data-container'>" + rightContent[i] + "</div></div>");
+            $(target).append(div);
+        }
+
+        if($("#self-view").length != 0)
+        {
+            const containers = $(target).children(".data-container");
+            const buttons = $("<div class='buttons'></div>");
+            buttons.append("<button class='section-button' onclick='getId(this, 0)'><i class='fa-solid fa-pen-to-square fa-fw'></i>edit</button>");
+            buttons.append("<button class='section-button' onclick='getId(this, 1)'><i class='fa-solid fa-trash fa-fw'></i>delete</button>");
+            buttons.insertAfter(containers);
+        }
+    }
+    else
+        $(target).append("<p><i>This section is empty.</i></p>");
+}

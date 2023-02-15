@@ -1,7 +1,6 @@
 //constants and variables
 const modal = $(".modal").eq(0);
 const modals = $(".modal-wrapper");
-const forms = $("form");
 
 let currentIndex = -1;
 let currentItemId = -1;
@@ -28,9 +27,8 @@ function hideModal()
     modals.eq(currentIndex).css("display", "none");
     modal.css("display", "none");
 
-    //resetting forms
     if(currentIndex < 4)
-        forms[currentIndex].reset();
+        $("form")[currentIndex].reset();
     $(".warning-text").hide();
 
     modals.eq(1).children("button").text("Add experience");
@@ -42,14 +40,14 @@ function hideModal()
 }
 
 //hide end date selects if job is ongoing
-function toggleEndDate()
+function toggleEndDate(index, category)
 {
-    let month = $("#job-end-month");
-    let year = $(".year-list").eq(1);
+    let month = $(`#${category}-end-month`);
+    let year = $(".year-list").eq(index);
 
-    $("div[name='job-end-date']").toggleClass("disabled");
+    $(`div[name='${category}-end-date']`).toggleClass("disabled");
 
-    if($("#ongoing").is(":checked"))
+    if($(`#${category}-ongoing`).is(":checked"))
     {
         month.prop("disabled", true);
         year.prop("disabled", true);
@@ -61,23 +59,49 @@ function toggleEndDate()
     }
 }
 
-//add new experience
-function checkEmtpyValues(title, companyName)
+//add or edit user information
+function checkEmtpyValues(values, startIndex)
 {
-    const values = [title, companyName];
     const warnings = $(".warning-text");
     let returnValue = false;
 
-    for(let i=0; i<values.length; i++)
+    for(let i=0; i<=values.length; i++)
         if(values[i] == "")
         {
-            warnings.eq(i).css("display", "inline");
+            warnings.eq(i + startIndex).css("display", "inline");
             returnValue = true;
         }
         else
             warnings.eq(i).css("display", "none");
 
     return returnValue;
+}
+
+function apiRequest(endpoint, method, params)
+{
+    $.ajax({
+        url: endpoint,
+        method: method,
+        data: JSON.stringify(params),
+        contentType: "application/x-www-form-urlencoded",
+        beforeSend: function(xmlhttp) {
+            xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
+        },        
+        success: function() {
+            hideModal();
+            location.reload();
+        }
+    });
+}
+
+function updateAbout()
+{
+    const text = $("#about").val();
+
+    const endpoint = "../api/add_about.php";
+    const params = {"text": text};
+
+    apiRequest(endpoint, "POST", params);
 }
 
 function addExperience()
@@ -91,13 +115,12 @@ function addExperience()
     const endMonth = $("#job-end-month").val().slice(0, 3);
     const endYear =  $(".year-list").eq(1).val();
     const description = $("#job-description").val();
-    const ongoing = $("#ongoing").is(":checked");
+    const ongoing = $("#job-ongoing").is(":checked");
 
-    if(checkEmtpyValues(title, companyName))
+    if(checkEmtpyValues([title, companyName], 0))
         return;
 
     let endpoint = "../api/add_experience.php";
-    let bearerToken = getCookie("jwt");
     let params = {
         "title": title,
         "company_id": companyId == "" ? null : companyId,
@@ -117,23 +140,48 @@ function addExperience()
         endpoint = "../api/edit_experience.php";
     }
 
-    $.ajax({
-        url: endpoint,
-        method: "POST",
-        data: JSON.stringify(params),
-        contentType: "application/x-www-form-urlencoded",
-        beforeSend: function(xmlhttp) {
-            xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
-        },        
-        success: function() {
-            hideModal();
-            location.reload();
-        }
-    });
+    apiRequest(endpoint, "POST", params);
+}
+
+function addEducation()
+{
+    const institutionName = $("#institution-name").val();
+    const startMonth = $("#education-start-month").val().slice(0, 3);
+    const startYear = $(".year-list").eq(2).val();
+    const endMonth = $("#education-end-month").val().slice(0, 3);
+    const endYear =  $(".year-list").eq(3).val();
+    const degree = $("#degree").val();
+    const studyField = $("#study-field").val();
+    const description = $("#education-description").val();
+    const ongoing = $("#education-ongoing").is(":checked");
+
+    if(checkEmtpyValues([institutionName], 2))
+        return;
+
+    let endpoint = "../api/add_education.php";
+    let params = {
+        "institution_name": institutionName,
+        "start_month": startMonth,
+        "start_year": startYear,
+        "end_month": ongoing == true ? null : endMonth,
+        "end_year": ongoing == true ? null : endYear,
+        "degree": degree,
+        "study_field": studyField,
+        "description": description
+    };
+
+    if(currentItemId != -1)
+    {
+        params["education_id"] = currentItemId;
+        params["ongoing"] = ongoing;
+        endpoint = "../api/edit_education.php";
+    }
+
+    apiRequest(endpoint, "POST", params);
 }
 
 //edit + delete item
-function setDate(data, startMonth, startYear, endMonth, endYear)
+function setDate(data, startMonth, startYear, endMonth, endYear, category)
 {
     originalStartMonth = data.split(" - ")[0].split(" ")[0];
     originalStartYear = data.split(" - ")[0].split(" ")[1];
@@ -164,7 +212,7 @@ function setDate(data, startMonth, startYear, endMonth, endYear)
     else
     {
         endMonth.parent().addClass("disabled");
-        $("#ongoing").prop("checked", true);
+        $(`#${category}-ongoing`).prop("checked", true);
     }
 }
 
@@ -190,7 +238,7 @@ function getId(target, action)
         {
             case 1:
             {
-                setDate(leftContent, $("#job-start-month"), $(".year-list").eq(0), $("#job-end-month"), $(".year-list").eq(1));
+                setDate(leftContent, $("#job-start-month"), $(".year-list").eq(0), $("#job-end-month"), $(".year-list").eq(1), "job");
                 $("#job-title").val(rightContent.eq(0).text());
                 $("#job-type").val(rightContent.eq(1).text().split(" @ ")[0]);
                 $("#company-name").val(rightContent.eq(1).text().split(" @ ")[1]);
@@ -205,6 +253,22 @@ function getId(target, action)
             }
             case 2:
             {
+                setDate(leftContent, $("#education-start-month"), $(".year-list").eq(2), $("#education-end-month"), $(".year-list").eq(3), "education");
+                $("#institution-name").val(rightContent.eq(0).text());
+                if(rightContent.length > 1)
+                {
+                    rightContent.map((index, child) => {
+                        if(index == 0)
+                            return;
+                        else if($(child).text().split(": ")[0] == "Degree")
+                            $("#degree").val($(child).text().split(":")[1]);
+                        else if($(child).text().split(": ")[0] == "Field of study")
+                            $("#study-field").val($(child).text().split(":")[1]);
+                        else
+                            $("#education-description").val($(child).text());
+                    });
+                }
+
                 break;
             }
             case 3:
@@ -223,61 +287,23 @@ function getId(target, action)
 function deleteItem()
 {
     let endpoint = "../api/";
-    let bearerToken = getCookie("jwt");
+    let params = {};
 
     if(currentItemSection == "experience-content")
-        endpoint += "remove_experience.php"
+    {
+        endpoint += "remove_experience.php";
+        params = {"experience_id": currentItemId};
+    }
     else if(currentItemSection == "education-content")
-        endpoint += "remove_education.php"
+    {
+        endpoint += "remove_education.php";
+        params = {"education_id": currentItemId};
+    }
     else if(currentItemSection == "projects-content")
-        endpoint += "remove_project.php"
-    
-    $.ajax({
-        url: endpoint,
-        method: "DELETE",
-        data: JSON.stringify({"experience_id": currentItemId}),
-        contentType: "application/x-www-form-urlencoded",
-        beforeSend: function(xmlhttp) {
-            xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
-        },        
-        success: function() {
-            hideModal();
-            location.reload();
-        }
-    });
-}
-
-//render data on page
-function fillSection(target, id, leftContent, rightContent)
-{
-    $(target).empty();
-
-    if(leftContent != null && rightContent != null)
     {
-        for(let i=0; i<leftContent.length; i++)
-        {
-            const div = $("<div class='data-container'></div>");
-            div.append("<div class='item-id' style='display: none;'>" + id[i] + "</div>");
-            div.append("<div class='left-data bigger-text'>" + leftContent[i] + "</div>");
-            div.append("<div class='right-data'><div class='right-data-container'>" + rightContent[i] + "</div></div>");
-            $(target).append(div);
-        }
-
-        addSectionButtons(target);
+        endpoint += "remove_project.php";
+        params = {"project_id": currentItemId};
     }
-    else
-        $(target).append("<p><i>This section is empty.</i></p>");
 
-}
-
-function addSectionButtons(target)
-{
-    if($("#self-view").length != 0)
-    {
-        const containers = $(target).children(".data-container");
-        const buttons = $("<div class='buttons'></div>");
-        buttons.append("<button class='section-button' onclick='getId(this, 0)'><i class='fa-solid fa-pen-to-square fa-fw'></i>edit</button>");
-        buttons.append("<button class='section-button' onclick='getId(this, 1)'><i class='fa-solid fa-trash fa-fw'></i>delete</button>");
-        buttons.insertAfter(containers);
-    }
+    apiRequest(endpoint, "DELETE", params);
 }

@@ -227,10 +227,6 @@ textarea {
     flex-direction: column;
 }
 
-#job-start-month, #job-end-month {
-    margin-bottom: 0;
-}
-
 .year-list {
     margin-top: 0;
 }
@@ -239,6 +235,10 @@ textarea {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+.dates select:first-child {
+    margin-bottom: 0;
 }
 
 .disabled {

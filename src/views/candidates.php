@@ -179,11 +179,11 @@ if(isset($_COOKIE["jwt"]))
                 <!-- about modal -->
                 <div class="modal-wrapper">
                     <form style="width: 95%;">
-                        <label for="about">Tell us about youself</label>
+                        <label for="about">Tell us about youself, your skills, etc.</label>
                         <textarea id="about" name="about" class="input" rows=15></textarea>
                     </form>
 
-                    <button class="add-button" onclick="javascript:void(0)">Update about</button>
+                    <button class="add-button" onclick="updateAbout()">Update about</button>
                 </div>
 
                 <!-- experience modal -->
@@ -253,8 +253,8 @@ if(isset($_COOKIE["jwt"]))
                         </div>
 
                         <div style="margin-bottom: 15px;">
-                            <input type="checkbox" id="ongoing" name="ongoing" onclick="toggleEndDate()">
-                            <label for="ongoing">Ongoing</label>
+                            <input type="checkbox" id="job-ongoing" name="job-ongoing" onclick="toggleEndDate(1, 'job')">
+                            <label for="job-ongoing">Ongoing</label>
                         </div>
 
                         <label for="job-description">Description (optional)</label>
@@ -266,12 +266,77 @@ if(isset($_COOKIE["jwt"]))
 
                 <!-- education modal -->
                 <div class="modal-wrapper">
-                    <form></form>
+                    <form id="#education-form" action="#">
+                        <label for="institution-name">Institution name</label> <span class="warning-text">(this field is required)</span>
+                        <input type="text" id="institution-name" name="institution-name" class="input">
+
+                        <div class="dates">
+                            <div>
+                                <label for="education-start-date">Start date</label>
+                                <div name="education-start-date">
+                                    <select id="education-start-month" name="education-start-month" class="select">
+                                        <option value="January">January</option>
+                                        <option value="February">February</option>
+                                        <option value="March">March</option>
+                                        <option value="April">April</option>
+                                        <option value="May">May</option>
+                                        <option value="June">June</option>
+                                        <option value="July">July</option>
+                                        <option value="August">August</option>
+                                        <option value="September">September</option>
+                                        <option value="October">October</option>
+                                        <option value="November">November</option>
+                                        <option value="December">December</option>
+                                    </select>
+                                    <select class="year-list select"></select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="education-end-date">End date</label>
+                                <div name="education-end-date">
+                                    <select id="education-end-month" name="education-end-month" class="select">
+                                        <option value="January">January</option>
+                                        <option value="February">February</option>
+                                        <option value="March">March</option>
+                                        <option value="April">April</option>
+                                        <option value="May">May</option>
+                                        <option value="June">June</option>
+                                        <option value="July">July</option>
+                                        <option value="August">August</option>
+                                        <option value="September">September</option>
+                                        <option value="October">October</option>
+                                        <option value="November">November</option>
+                                        <option value="December">December</option>
+                                    </select>
+                                    <select class="year-list select"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <input type="checkbox" id="education-ongoing" name="education-ongoing" onclick="toggleEndDate(3, 'education')">
+                            <label for="education-ongoing">Ongoing</label>
+                        </div>
+
+                        <label for="degree">Degree (optional)</label>
+                        <input type="text" id="degree" name="degree" class="input">
+
+                        <label for="study-field">Field of study (optional)</label>
+                        <input type="text" id="study-field" name="study-field" class="input">
+
+                        <label for="education-description">Description (optional)</label>
+                        <textarea id="education-description" name="education-description" class="input" rows=10></textarea>
+                    </form>
+
+                    <button class="add-button" onclick="addEducation()">Add education</button>
                 </div>
 
                 <!-- projects modal -->
                 <div class="modal-wrapper">
-                    <form></form>
+                    <form id="#projects-form" action="#">
+                        //
+                    </form>
                 </div>
 
                 <!-- delete item modal -->
