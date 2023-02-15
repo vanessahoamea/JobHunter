@@ -86,6 +86,15 @@ a.current-page:hover {
     padding: 15vmin;
 }
 
+.upper-searchbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 50px;
+}
+
 .search {
     background-image: url("https://www.w3schools.com/css/searchicon.png");
     background-position: 10px 10px;
@@ -190,6 +199,17 @@ i.fa-fw {
         float: none;
         display: block;
         text-align: left;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    .search-button {
+        width: 57vw;
+        margin-top: 5px;
+    }
+    .upper-searchbar {
+        flex-direction: column;
+        gap: 0;
     }
 }
 

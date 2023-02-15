@@ -7,15 +7,6 @@
     padding: 15px;
 }
 
-.upper-searchbar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 50px;
-}
-
 .lower-content {
     display: flex;
     flex-direction: row;

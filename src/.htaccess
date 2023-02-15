@@ -1,0 +1,1 @@
+ErrorDocument 404 http://localhost/Licenta/views/page_not_found.php

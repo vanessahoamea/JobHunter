@@ -66,11 +66,6 @@ else
             http_response_code(404);
             echo json_encode(array("message" => "Education not found."));
         }
-        else if($response == -2)
-        {
-            http_response_code(401);
-            echo json_encode(array("message" => "You don't have access to this resource."));
-        }
         else
         {
             http_response_code(404);

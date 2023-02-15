@@ -22,7 +22,7 @@ else
     if($response == -1)
     {
         http_response_code(404);
-        echo json_encode(array("message" => "Candidate description not found."));
+        echo json_encode(array("message" => "Data not found."));
     }
     else if($response == 0)
     {
