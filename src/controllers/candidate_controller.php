@@ -23,6 +23,14 @@ class CandidateController extends CandidateModel
         return $data;
     }
 
+    public function editCandidate($fname, $lname, $email, $phone, $location, $newPassword, $currentPassword)
+    {
+        if($this->emptyInput(array($currentPassword)))
+            return -1;
+        
+        return $this->updateCandidate($this->id, $fname, $lname, $email, $phone, $location, $newPassword, $currentPassword);
+    }
+
     public function addAbout($text)
     {
         return $this->createUpdateAbout($this->id, $text);
@@ -153,6 +161,44 @@ class CandidateController extends CandidateModel
     public function removeEducation($educationId)
     {
         return $this->deleteItem($this->id, $educationId, "candidate_education");
+    }
+
+    public function addProject($projectName, $startMonth, $startYear, $endMonth, $endYear, $projectLink, $description)
+    {
+        if($this->emptyInput(array($projectName, $startMonth, $startYear)))
+            return -1;
+        
+        $params = array($this->id, $projectName, $startMonth, $startYear,);
+        $paramsString = array("candidate_id", "project_name", "start_month", "start_year");
+
+        $optionalParams = array($endMonth, $endYear, $projectLink, $description);
+        $optionalParamsString = array("end_month", "end_year", "project_link", "description");
+
+        return $this->createItem($params, $paramsString, $optionalParams, $optionalParamsString, "candidate_projects");
+    }
+
+    public function getProjects()
+    {
+        $projects = $this->getAllRows($this->id, "candidate_projects", "candidate_id");
+
+        if($projects < 1)
+            return $projects;
+
+        $this->sortByDate($projects);
+        return $projects;
+    }
+
+    public function editProject($projectId, $projectName, $startMonth, $startYear, $endMonth, $endYear, $projectLink, $ongoing, $description)
+    {
+        $params = array($startMonth, $startYear, $endMonth, $endYear, $projectName, $projectLink, $description);
+        $paramsString = array("start_month", "start_year", "end_month", "end_year", "project_name", "project_link", "description");
+
+        return $this->updateItem($this->id, $projectId, "candidate_projects", $startMonth, $startYear, $endMonth, $endYear, $ongoing, $description, $params, $paramsString);
+    }
+
+    public function removeProject($projectId)
+    {
+        return $this->deleteItem($this->id, $projectId, "candidate_projects");
     }
 
     public function applyToJob($jobId)

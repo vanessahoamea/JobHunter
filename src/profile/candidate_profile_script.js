@@ -27,7 +27,7 @@ function hideModal()
     modals.eq(currentIndex).css("display", "none");
     modal.css("display", "none");
 
-    if(currentIndex < 4)
+    if(currentIndex > 0 && currentIndex < 4)
         $("form")[currentIndex].reset();
     $(".warning-text").hide();
 
@@ -42,20 +42,17 @@ function hideModal()
 //hide end date selects if job is ongoing
 function toggleEndDate(index, category)
 {
-    let month = $(`#${category}-end-month`);
-    let year = $(".year-list").eq(index);
-
-    $(`div[name='${category}-end-date']`).toggleClass("disabled");
-
     if($(`#${category}-ongoing`).is(":checked"))
     {
-        month.prop("disabled", true);
-        year.prop("disabled", true);
+        $(`div[name='${category}-end-date']`).addClass("disabled");
+        $(`#${category}-end-month`).prop("disabled", true);
+        $(".year-list").eq(index).prop("disabled", true);
     }
     else
     {
-        month.prop("disabled", false);
-        year.prop("disabled", false);
+        $(`div[name='${category}-end-date']`).removeClass("disabled");
+        $(`#${category}-end-month`).prop("disabled", false);
+        $(".year-list").eq(index).prop("disabled", false);
     }
 }
 
@@ -180,6 +177,41 @@ function addEducation()
     apiRequest(endpoint, "POST", params);
 }
 
+function addProject()
+{
+    const projectName = $("#project-name").val();
+    const startMonth = $("#project-start-month").val().slice(0, 3);
+    const startYear = $(".year-list").eq(4).val();
+    const endMonth = $("#project-end-month").val().slice(0, 3);
+    const endYear =  $(".year-list").eq(5).val();
+    const projectLink = $("#project-link").val();
+    const description = $("#project-description").val();
+    const ongoing = $("#project-ongoing").is(":checked");
+
+    if(checkEmtpyValues([projectName], 3))
+        return;
+
+    let endpoint = "../api/add_project.php";
+    let params = {
+        "project_name": projectName,
+        "start_month": startMonth,
+        "start_year": startYear,
+        "end_month": ongoing == true ? null : endMonth,
+        "end_year": ongoing == true ? null : endYear,
+        "project_link": projectLink,
+        "description": description
+    };
+
+    if(currentItemId != -1)
+    {
+        params["project_id"] = currentItemId;
+        params["ongoing"] = ongoing;
+        endpoint = "../api/edit_project.php";
+    }
+
+    apiRequest(endpoint, "POST", params);
+}
+
 //edit + delete item
 function setDate(data, startMonth, startYear, endMonth, endYear, category)
 {
@@ -239,6 +271,7 @@ function getId(target, action)
             case 1:
             {
                 setDate(leftContent, $("#job-start-month"), $(".year-list").eq(0), $("#job-end-month"), $(".year-list").eq(1), "job");
+                toggleEndDate(1, "job");
                 $("#job-title").val(rightContent.eq(0).text());
                 $("#job-type").val(rightContent.eq(1).text().split(" @ ")[0]);
                 $("#company-name").val(rightContent.eq(1).text().split(" @ ")[1]);
@@ -254,6 +287,7 @@ function getId(target, action)
             case 2:
             {
                 setDate(leftContent, $("#education-start-month"), $(".year-list").eq(2), $("#education-end-month"), $(".year-list").eq(3), "education");
+                toggleEndDate(3, "education");
                 $("#institution-name").val(rightContent.eq(0).text());
                 if(rightContent.length > 1)
                 {
@@ -273,6 +307,21 @@ function getId(target, action)
             }
             case 3:
             {
+                setDate(leftContent, $("#project-start-month"), $(".year-list").eq(4), $("#project-end-month"), $(".year-list").eq(5), "project");
+                toggleEndDate(5, "project");
+                $("#project-name").val(rightContent.eq(0).text());
+                if(rightContent.length > 1)
+                {
+                    rightContent.map((index, child) => {
+                        if(index == 0)
+                            return;
+                        else if($(child).is("a"))
+                            $("#project-link").val($(child).attr("href"));
+                        else
+                            $("#project-description").val($(child).text());
+                    });
+                }
+                
                 break;
             }
         }

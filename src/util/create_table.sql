@@ -5,6 +5,7 @@ CREATE TABLE candidates (
     last_name varchar(50) NOT NULL,
     email varchar(320) NOT NULL,
     phone varchar(20),
+    location varchar(100),
     password varchar(100) NOT NULL
 );
 
@@ -13,6 +14,7 @@ CREATE TABLE companies (
     company_name varchar(100) NOT NULL,
     email varchar(320) NOT NULL,
     address varchar(150),
+    website varchar(100),
     password varchar(100) NOT NULL
 );
 
@@ -49,6 +51,19 @@ CREATE TABLE candidate_education (
     end_year int(11),
     degree varchar(100),
     study_field varchar(100),
+    description varchar(1500),
+    FOREIGN KEY (candidate_id) REFERENCES candidates(id)
+);
+
+CREATE TABLE candidate_projects (
+    id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    candidate_id int(11) NOT NULL,
+    project_name varchar(100) NOT NULL,
+    start_month varchar(10) NOT NULL,
+    start_year int(11) NOT NULL,
+    end_month varchar(10),
+    end_year int(11),
+    project_link varchar(200),
     description varchar(1500),
     FOREIGN KEY (candidate_id) REFERENCES candidates(id)
 );

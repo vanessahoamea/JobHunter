@@ -24,36 +24,114 @@ class CandidateModel extends DBHandler
         return -1;
     }
 
-    protected function createUpdateAbout($id, $text)
+    protected function updateCandidate($id, $fname, $lname, $email, $phone, $location, $newPassword, $currentPassword)
     {
-        $alreadyExists = $this->getAllRows($id, "candidate_about", "candidate_id");
-        if($alreadyExists == 0)
-            return 0;
-        else if($alreadyExists == -1)
-        {
-            $query = "INSERT INTO candidate_about VALUES (?, ?);";
-            $params = array($id, $text);
-        }
-        else
-        {
-            $query = "UPDATE candidate_about SET text = ? WHERE candidate_id = ?;";
-            $params = array($text, $id);
-        }
+        $candidate = $this->getAllRows($id, "candidates", "id");
 
-        $stmt = $this->connect()->prepare($query);
-
-        if($text == "")
-        {
-            $stmt->bindValue(array_search($text, $params) + 1, null, PDO::PARAM_NULL);
-            $stmt->bindValue(array_search($id, $params) + 1, $id, PDO::PARAM_INT);
-
-            $params = array();
-        }
+        if($candidate == 0)
+            return $candidate;
         
+        $candidate = $candidate[0];
+        if(!password_verify($currentPassword, $candidate["password"]))
+            return -2;
+        
+        $encodedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $params = array($fname, $lname, $email);
+        $paramsString = array("first_name", "last_name", "email");
+        if($newPassword != "")
+        {
+            array_push($params, $encodedPassword);
+            array_push($paramsString, "password");
+        }
+
+        //removing optional values
+        $emptyArray = array_fill(0, count($params), '');
+        $params = array_diff($params, $emptyArray);
+        $paramsString = array_diff_key($paramsString, array_diff_key($paramsString, $params));
+
+        $params = array_values($params);
+        array_push($params, $phone);
+        array_push($params, $location);
+        array_push($params, $id);
+        array_push($paramsString, "phone");
+        array_push($paramsString, "location");
+
+        //modifying database entry
+        $queryParams = implode(", ", array_map(fn($item) => $item . " = ?", $paramsString));
+        $stmt = $this->connect()->prepare("UPDATE candidates SET " . $queryParams . " WHERE id = ?;");
+
         if(!$stmt->execute($params))
         {
             $stmt = null;
             return 0;
+        }
+
+        if($phone == "")
+        {
+            $stmt = null;
+            $stmt = $this->connect()->prepare("UPDATE candidates SET phone = ? WHERE id = ?;");
+
+            $stmt->bindValue(1, null, PDO::PARAM_NULL);
+            $stmt->bindValue(2, $id, PDO::PARAM_INT);
+
+            if(!$stmt->execute())
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+
+        if($location == "")
+        {
+            $stmt = null;
+            $stmt = $this->connect()->prepare("UPDATE candidates SET location = ? WHERE id = ?;");
+
+            $stmt->bindValue(1, null, PDO::PARAM_NULL);
+            $stmt->bindValue(2, $id, PDO::PARAM_INT);
+
+            if(!$stmt->execute())
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+
+        $stmt = null;
+        return 1;
+    }
+
+    protected function createUpdateAbout($id, $text)
+    {
+        $params = array($text, $id);
+        $alreadyExists = $this->getAllRows($id, "candidate_about", "candidate_id");
+
+        if($alreadyExists == 0)
+            return 0;
+        else if($alreadyExists == -1)
+            $query = "INSERT INTO candidate_about (text, candidate_id) VALUES (?, ?);";
+        else
+            $query = "UPDATE candidate_about SET text = ? WHERE candidate_id = ?;";
+        
+        $stmt = $this->connect()->prepare($query);
+
+        if($text == "")
+        {
+            $stmt->bindValue(1, null, PDO::PARAM_NULL);
+            $stmt->bindValue(2, $id, PDO::PARAM_INT);
+
+            if(!$stmt->execute())
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+        else
+        {
+            if(!$stmt->execute($params))
+            {
+                $stmt = null;
+                return 0;
+            }
         }
 
         $stmt = null;

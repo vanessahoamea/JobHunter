@@ -1,1 +1,1 @@
-ErrorDocument 404 http://localhost/Licenta/views/page_not_found.php
+ErrorDocument 404 /Licenta/views/page_not_found.php

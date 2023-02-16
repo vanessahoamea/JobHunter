@@ -98,7 +98,9 @@ if(isset($_COOKIE["jwt"]))
                     </div>
                 </div>
                 <?php if($selfView): ?>
-                    <div class="edit-button"><button>Edit profile</button></div>
+                    <div class="edit-button">
+                        <button onclick="window.location.href = '../settings'">Edit profile</button>
+                    </div>
                 <?php endif; ?>
             </div>
 
@@ -334,9 +336,67 @@ if(isset($_COOKIE["jwt"]))
 
                 <!-- projects modal -->
                 <div class="modal-wrapper">
-                    <form id="#projects-form" action="#">
-                        //
+                    <form id="#project-form" action="#">
+                        <label for="project-name">Project name</label> <span class="warning-text">(this field is required)</span>
+                        <input type="text" id="project-name" name="project-name" class="input">
+
+                        <div class="dates">
+                            <div>
+                                <label for="project-start-date">Start date</label>
+                                <div name="project-start-date">
+                                    <select id="project-start-month" name="project-start-month" class="select">
+                                        <option value="January">January</option>
+                                        <option value="February">February</option>
+                                        <option value="March">March</option>
+                                        <option value="April">April</option>
+                                        <option value="May">May</option>
+                                        <option value="June">June</option>
+                                        <option value="July">July</option>
+                                        <option value="August">August</option>
+                                        <option value="September">September</option>
+                                        <option value="October">October</option>
+                                        <option value="November">November</option>
+                                        <option value="December">December</option>
+                                    </select>
+                                    <select class="year-list select"></select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="project-end-date">End date</label>
+                                <div name="project-end-date">
+                                    <select id="project-end-month" name="project-end-month" class="select">
+                                        <option value="January">January</option>
+                                        <option value="February">February</option>
+                                        <option value="March">March</option>
+                                        <option value="April">April</option>
+                                        <option value="May">May</option>
+                                        <option value="June">June</option>
+                                        <option value="July">July</option>
+                                        <option value="August">August</option>
+                                        <option value="September">September</option>
+                                        <option value="October">October</option>
+                                        <option value="November">November</option>
+                                        <option value="December">December</option>
+                                    </select>
+                                    <select class="year-list select"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <input type="checkbox" id="project-ongoing" name="project-ongoing" onclick="toggleEndDate(5, 'project')">
+                            <label for="project-ongoing">Ongoing</label>
+                        </div>
+
+                        <label for="project-link">Link to project (optional)</label>
+                        <input type="url" id="project-link" name="project-link" class="input">
+
+                        <label for="project-description">Description (optional)</label>
+                        <textarea id="project-description" name="project-description" class="input" rows=10></textarea>
                     </form>
+
+                    <button class="add-button" onclick="addProject()">Add project</button>
                 </div>
 
                 <!-- delete item modal -->

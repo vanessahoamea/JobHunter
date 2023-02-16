@@ -15,6 +15,14 @@ class CompanyController extends CompanyModel
         return $this->getAllData($this->id);
     }
 
+    public function editCompany($cname, $email, $address, $website, $newPassword, $currentPassword)
+    {
+        if($this->emptyInput(array($currentPassword)))
+            return -1;
+        
+        return $this->updateCompany($this->id, $cname, $email, $address, $website, $newPassword, $currentPassword);
+    }
+
     public function getNames($companyName)
     {
         return $this->getAllCompanyNames($companyName);

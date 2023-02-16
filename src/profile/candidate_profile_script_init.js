@@ -120,7 +120,41 @@ $(document).ready(function() {
     });
 
     //projects section
-    fillSection("#projects-content", null, null, null);
+    $.ajax({
+        url: "../api/get_projects.php",
+        method: "GET",
+        data: {"id": id},
+        contentType: "application/x-www-form-urlencoded",
+        dataType: "json",
+        success: function(response) {
+            response = response["data"];
+
+            let projectPeriods = [];
+            let projectDatas = [];
+            let ids = [];
+            for(let i=0; i<response.length; i++)
+            {
+                const projectStart = response[i]["start_month"] + " " + response[i]["start_year"];
+                const projectEnd = response[i]["end_month"] != null ? response[i]["end_month"] + " " + response[i]["end_year"] : "Present";
+                const projectPeriod = projectStart + " - " + projectEnd;
+
+                let projectData = "<p class='bigger-text'>" + response[i]["project_name"] + "</p>";
+                if(response[i]["project_link"] != null)
+                    projectData += "<a href='" + response[i]["project_link"] + "'>Link to project</a>";
+                if(response[i]["description"] != null)
+                    projectData += "<p>" + response[i]["description"] + "</p>";
+                
+                projectPeriods.push(projectPeriod);
+                projectDatas.push(projectData);
+                ids.push(response[i]["id"]);
+            }
+
+            fillSection("#projects-content", ids, projectPeriods, projectDatas);
+        },
+        error: function() {
+            fillSection("#projects-content", null, null, null);
+        }
+    });
 
     //populate date dropdown
     const yearList = $(".year-list");

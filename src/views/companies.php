@@ -91,7 +91,7 @@ if(isset($_COOKIE["jwt"]))
                 </div>
 
                 <?php if($selfView): ?>
-                    <button class="edit-button">Edit profile</button>
+                    <button class="edit-button" onclick="window.location.href = '../settings'">Edit profile</button>
                 <?php endif; ?>
             </div>
 

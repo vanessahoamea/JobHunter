@@ -5,7 +5,7 @@ class CompanyModel extends DBHandler
 {
     protected function getAllData($id)
     {
-        $stmt = $this->connect()->prepare("SELECT company_name, email, address FROM companies WHERE id = ?;");
+        $stmt = $this->connect()->prepare("SELECT company_name, email, address, website FROM companies WHERE id = ?;");
 
         if(!$stmt->execute(array($id)))
         {
@@ -22,6 +22,85 @@ class CompanyModel extends DBHandler
 
         $stmt = null;
         return -1;
+    }
+
+    protected function updateCompany($id, $cname, $email, $address, $website, $newPassword, $currentPassword)
+    {
+        $stmt = $this->connect()->prepare("SELECT * FROM companies WHERE id = ?;");
+
+        if(!$stmt->execute(array($id)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $company = $stmt->fetch();
+        if(!password_verify($currentPassword, $company["password"]))
+            return -2;
+        
+        $encodedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $params = array($cname, $email);
+        $paramsString = array("company_name", "email");
+        if($newPassword != "")
+        {
+            array_push($params, $encodedPassword);
+            array_push($paramsString, "password");
+        }
+
+        //removing optional values
+        $emptyArray = array_fill(0, count($params), '');
+        $params = array_diff($params, $emptyArray);
+        $paramsString = array_diff_key($paramsString, array_diff_key($paramsString, $params));
+
+        $params = array_values($params);
+        array_push($params, $address);
+        array_push($params, $website);
+        array_push($params, $id);
+        array_push($paramsString, "address");
+        array_push($paramsString, "website");
+
+        //modifying database entry
+        $queryParams = implode(", ", array_map(fn($item) => $item . " = ?", $paramsString));
+        $stmt = $this->connect()->prepare("UPDATE companies SET " . $queryParams . " WHERE id = ?;");
+
+        if(!$stmt->execute($params))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($address == "")
+        {
+            $stmt = null;
+            $stmt = $this->connect()->prepare("UPDATE companies SET address = ? WHERE id = ?;");
+
+            $stmt->bindValue(1, null, PDO::PARAM_NULL);
+            $stmt->bindValue(2, $id, PDO::PARAM_INT);
+
+            if(!$stmt->execute())
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+
+        if($website == "")
+        {
+            $stmt = null;
+            $stmt = $this->connect()->prepare("UPDATE companies SET website = ? WHERE id = ?;");
+
+            $stmt->bindValue(1, null, PDO::PARAM_NULL);
+            $stmt->bindValue(2, $id, PDO::PARAM_INT);
+
+            if(!$stmt->execute())
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+
+        $stmt = null;
+        return 1;
     }
 
     protected function getAllCompanyNames($companyName)

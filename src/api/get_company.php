@@ -16,8 +16,8 @@ if(!isset($_GET["id"]))
 }
 else
 {
-    $candidate = new CompanyController($_GET["id"]);
-    $response = $candidate->getCompanyData();
+    $company = new CompanyController($_GET["id"]);
+    $response = $company->getCompanyData();
 
     if($response == -1)
     {

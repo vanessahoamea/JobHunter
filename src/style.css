@@ -2,9 +2,9 @@ body {
     margin: 0;
     font-family: 'Roboto', sans-serif, Arial;
     background: rgb(122,199,79);
-    background: linear-gradient(90deg, rgba(122,199,79,1) 0%, rgba(161,207,107,1) 33%, rgba(213,216,135,1) 66%, rgba(224,200,121,1) 100%);
+    /* background: linear-gradient(90deg, rgba(122,199,79,1) 0%, rgba(161,207,107,1) 33%, rgba(213,216,135,1) 66%, rgba(224,200,121,1) 100%);
     background-size: 400% 400%;
-    animation: gradient 5s ease infinite;
+    animation: gradient 5s ease infinite; */
     height: 100vh;
 }
 
