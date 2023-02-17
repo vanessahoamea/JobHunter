@@ -40,6 +40,7 @@ else
             return;
         }
 
+        $profilePicture = isset($data->profile_picture) ? trim($data->profile_picture) : '';
         $currentPassword = isset($data->current_password) ? trim($data->current_password) : '';
         $newPassword = isset($data->new_password) ? trim($data->new_password) : null;
         if($accountType == "candidate")
@@ -66,6 +67,22 @@ else
 
         if($response == 1)
         {
+            if($profilePicture != '')
+            {
+                $fileName = "../assets/images/" . $accountType . "/image_" . $id . ".jpg";
+                
+                if($profilePicture == "../assets/default.jpg")
+                    //the user removed their profile image
+                    unlink($fileName);
+                else
+                {
+                    //saving the new profile image on the server
+                    $base64 = explode(",", $profilePicture)[1];
+                    $data = base64_decode($base64);
+                    file_put_contents($fileName, $data);
+                }
+            }
+
             http_response_code(201);
             echo json_encode(array("message" => "Saved changes."));
         }

@@ -10,6 +10,16 @@ include_once("../models/company_model.php");
 include_once("../controllers/company_controller.php");
 include_once("../controllers/jwt_controller.php");
 
+$func = function($candidate)
+{
+    $fileName = "../assets/images/candidate/image_" . $candidate["id"] . ".jpg";
+    if(file_exists($fileName))
+        $candidate["profile_picture"] = $fileName;
+    else
+        $candidate["profile_picture"] = "../assets/default.jpg";
+    return $candidate;
+};
+
 $headers = apache_request_headers();
 if(!isset($headers["Authorization"]))
 {
@@ -51,6 +61,10 @@ else
         }
         else
         {
+            clearstatcache();
+
+            $response = array_map($func, $response);
+            
             http_response_code(200);
             echo json_encode(array("data" => $response));
         }

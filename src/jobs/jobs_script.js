@@ -13,6 +13,7 @@ $(document).ready(function() {
         dataType: "json",
         success: function(response) {
             $(".job-data-upper").empty();
+            $(".company-picture").eq(1).attr("src", response["profile_picture"]);
             $(".job-data-upper").append("<h2>" + response["title"] + "</h2>");
             $(".job-data-upper").append("<p class='date-posted'>" + response["date_posted"] + "</p>");
 

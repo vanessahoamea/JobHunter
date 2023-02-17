@@ -50,6 +50,12 @@ if($data["account_type"] == "candidate")
             <div id="wrapper">
                 <div class="profile-picture">
                     <img id="profile-picture" src="../assets/default.jpg" alt="Profile picture"></img>
+                    <input type="file" id="image-upload" name="image-upload" accept="image/png, image/jpeg" onclick="this.value = null" style="display: none;">
+                    <label for="image-upload" id="image-upload-label">Change picture</label>
+                </div>
+
+                <div class="ahh">
+                <a class="remove-text" onclick="removePicture()">Remove profile picture</a>
                 </div>
 
                 <?php if($isCandidate): ?>
@@ -87,7 +93,7 @@ if($data["account_type"] == "candidate")
                     </form>
 
                     <div class="button-container">
-                        <button class="candidate-button" onclick="toggleModal(0)">Save changes</button>
+                        <button class="candidate-button" onclick="toggleModal()">Save changes</button>
                     </div>
                 <?php else: ?>
                     <!-- company data -->
@@ -119,7 +125,7 @@ if($data["account_type"] == "candidate")
                     </form>
 
                     <div class="button-container">
-                        <button class="candidate-button company-button" onclick="toggleModal(1)">Save changes</button>
+                        <button class="candidate-button company-button" onclick="toggleModal()">Save changes</button>
                     </div>
                 <?php endif; ?>
             </div>
@@ -128,7 +134,7 @@ if($data["account_type"] == "candidate")
         <!-- modal -->
         <div class="modal">
             <div class="modal-content">
-                <span class="close" onclick="toggleModal(null)">&times;</span>
+                <span class="close" onclick="toggleModal()">&times;</span>
 
                 <div class="modal-wrapper" style="text-align: center;"></div>
             </div>
@@ -136,6 +142,9 @@ if($data["account_type"] == "candidate")
         
         <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js" crossorigin="anonymous"></script>
+        <!-- Cropper.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" integrity="sha512-6lplKUSl86rUVprDIjiW8DuOniNX8UDoRATqZSds/7t6zCQZfaCe3e5zcGaQwxa8Kpn5RTM9Fvl3X2lLV4grPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" integrity="sha512-cyzxRvewl+FOKTtpBzYjW6x6IAYUCZy3sGP40hn+DQkqeluGRCax7qztK2ImL64SA+C7kVWdLI6wvdlStawhyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <!-- fontawesome icons -->
         <script src="https://kit.fontawesome.com/a4f543b8bc.js" crossorigin="anonymous"></script>
     </body>

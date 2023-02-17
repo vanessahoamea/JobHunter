@@ -37,7 +37,7 @@ $(document).ready(function() {
             new Promise((resolve) => {
                 response["data"].forEach((candidate, index) => {
                     const candidatePicture = $("<div class='candidate-picture'></div>");
-                    candidatePicture.append("<img class='candidate-picture skeleton' src='../assets/default.jpg' alt='Candidate picture'>");
+                    candidatePicture.append(`<img class='candidate-picture skeleton' src='${candidate["profile_picture"]}' alt='Candidate picture'>`);
                     
                     const candidateData = $("<div class='candidate-data'></div>");
                     candidateData.append(candidatePicture);

@@ -92,7 +92,6 @@ function redirect(id, action)
 
 function deleteJob()
 {
-    console.log(currentItemId)
     const bearerToken = getCookie("jwt");
     $.ajax({
         url: "../api/remove_job.php",
