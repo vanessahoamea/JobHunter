@@ -31,6 +31,14 @@ else
     }
     else
     {
+        clearstatcache();
+
+        $fileName = "../assets/images/company/image_" . $_GET["id"] . ".jpg";
+        if(file_exists($fileName))
+            $response["profile_picture"] = $fileName;
+        else
+            $response["profile_picture"] = "../assets/default.jpg";
+
         http_response_code(200);
         echo json_encode($response);
     }

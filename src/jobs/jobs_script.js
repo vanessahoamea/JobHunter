@@ -41,16 +41,20 @@ let currentJobId = -1;
 //apply for job
 $(window).click(function(event) {
     if(event.target == $(".modal")[0])
-    toggleModal();
+    toggleModal(null);
 });
 
-function toggleModal()
+function toggleModal(index)
 {
+    let text = (index == 1) ? "<p>Would you like to send an application for this job?</p>"
+               : (index == 2) ? "<p>Would you like to save this job for later?</p>"
+               : "<p>Would you like to hide this job posting?</p>";
+
     if($(".modal").eq(0).css("display") == "none")
     {
         $(".modal-wrapper").empty();
-        $(".modal-wrapper").append("<p>Would you like to send an application for this job?</p>");
-        $(".modal-wrapper").append("<button class='search-button' onclick='apply()'>Apply</button>");
+        $(".modal-wrapper").append(text);
+        $(".modal-wrapper").append(`<button class='search-button' onclick='postRequest(${index})'>Confirm</button>`);
 
         $(".modal").eq(0).css("display", "block");
         $(".modal-wrapper").css("display", "block");
@@ -62,7 +66,7 @@ function toggleModal()
     }
 }
 
-function apply()
+function postRequest(index)
 {
     const bearerToken = getCookie("jwt");
     if(bearerToken == "")
@@ -71,8 +75,11 @@ function apply()
         return;
     }
 
+    let endpoint = "../api/";
+    endpoint += (index == 1) ? "apply.php" : (index == 2) ? "save_job.php" : "hide_job.php";
+
     $.ajax({
-        url: "../api/apply.php",
+        url: endpoint,
         method: "POST",
         data: JSON.stringify({"job_id": currentJobId}),
         contentType: "application/x-www-form-urlencoded",
@@ -80,14 +87,17 @@ function apply()
         beforeSend: function(xmlhttp) {
             xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
         },   
-        success: function() {
-            $(".modal-wrapper").html("<p>Your application was sent.</p>");
+        success: function(response) {
+            if(index == 1)
+                $(".modal-wrapper").html("<p>Your application was sent.</p>");
+            else
+                $(".modal-wrapper").html("<p>" + response["message"] + "</p>");
         },
         error: function(xmlhttp) {
             $(".modal-wrapper").html("<p>" + JSON.parse(xmlhttp.responseText)["message"] + "</p>");
         },
         complete: function() {
-            $(".modal-wrapper").append("<button class='search-button' onclick='toggleModal()'>Close</button>");
+            $(".modal-wrapper").append("<button class='search-button' onclick='toggleModal(null)'>Close</button>");
         }
     });
 }

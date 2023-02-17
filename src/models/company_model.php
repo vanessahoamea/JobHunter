@@ -3,38 +3,14 @@ include_once("../controllers/company_controller.php");
 
 class CompanyModel extends DBHandler
 {
-    protected function getAllData($id)
-    {
-        $stmt = $this->connect()->prepare("SELECT company_name, email, address, website FROM companies WHERE id = ?;");
-
-        if(!$stmt->execute(array($id)))
-        {
-            $stmt = null;
-            return 0;
-        }
-
-        if($stmt->rowCount() > 0)
-        {
-            $user = $stmt->fetch();
-            $stmt = null;
-            return $user;
-        }
-
-        $stmt = null;
-        return -1;
-    }
-
     protected function updateCompany($id, $cname, $email, $address, $website, $newPassword, $currentPassword)
     {
-        $stmt = $this->connect()->prepare("SELECT * FROM companies WHERE id = ?;");
+        $company = $this->getAllRows($id, "companies", "id");
 
-        if(!$stmt->execute(array($id)))
-        {
-            $stmt = null;
-            return 0;
-        }
+        if($company == 0)
+            return $company;
 
-        $company = $stmt->fetch();
+        $company = $company[0];
         if(!password_verify($currentPassword, $company["password"]))
             return -2;
         
@@ -72,31 +48,19 @@ class CompanyModel extends DBHandler
         if($address == "")
         {
             $stmt = null;
-            $stmt = $this->connect()->prepare("UPDATE companies SET address = ? WHERE id = ?;");
+            $response = $this->setNullValue("companies", "address", $id);
 
-            $stmt->bindValue(1, null, PDO::PARAM_NULL);
-            $stmt->bindValue(2, $id, PDO::PARAM_INT);
-
-            if(!$stmt->execute())
-            {
-                $stmt = null;
-                return 0;
-            }
+            if($response < 1)
+                return $response;
         }
 
         if($website == "")
         {
             $stmt = null;
-            $stmt = $this->connect()->prepare("UPDATE companies SET website = ? WHERE id = ?;");
+            $response = $this->setNullValue("companies", "website", $id);
 
-            $stmt->bindValue(1, null, PDO::PARAM_NULL);
-            $stmt->bindValue(2, $id, PDO::PARAM_INT);
-
-            if(!$stmt->execute())
-            {
-                $stmt = null;
-                return 0;
-            }
+            if($response < 1)
+                return $response;
         }
 
         $stmt = null;
@@ -279,28 +243,13 @@ class CompanyModel extends DBHandler
 
     protected function updateJob($companyId, $jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical)
     {
-        $stmt = $this->connect()->prepare("SELECT company_id FROM jobs WHERE id = ?;");
-
-        if(!$stmt->execute(array($jobId)))
-        {
-            $stmt = null;
-            return 0;
-        }
-
-        if($stmt->rowCount() == 0)
-        {
-            $stmt = null;
-            return -1;
-        }
-
-        if($stmt->fetch()["company_id"] != $companyId)
-        {
-            $stmt = null;
-            return -2;
-        }
+        $job = $this->getAllPairRows(array($companyId, $jobId), "jobs", array("company_id", "id"));
+        
+        if($job < 1)
+            return $job;
         
         if((!empty($locationName) && empty($locationCoords)) || (empty($locationName) && !empty($locationCoords)))
-            return -3;
+            return -2;
 
         //handling parameters
         $params = array($title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical);
@@ -317,7 +266,6 @@ class CompanyModel extends DBHandler
 
         if(count($params) > 1)
         {
-            $stmt = null;
             $stmt = $this->connect()->prepare("UPDATE jobs SET " . $queryParams . " WHERE id = ?;");
 
             if(!$stmt->execute($params))
@@ -330,29 +278,19 @@ class CompanyModel extends DBHandler
         if($skills != null && $skills == "")
         {
             $stmt = null;
-            $stmt = $this->connect()->prepare("UPDATE jobs SET skills = ? WHERE id = ?;");
-            $stmt->bindValue(1, null, PDO::PARAM_NULL);
-            $stmt->bindValue(2, $jobId, PDO::PARAM_INT);
+            $response = $this->setNullValue("jobs", "skills", $jobId);
 
-            if(!$stmt->execute())
-            {
-                $stmt = null;
-                return 0;
-            }
+            if($response < 1)
+                return $response;
         }
 
         if($salary == "")
         {
             $stmt = null;
-            $stmt = $this->connect()->prepare("UPDATE jobs SET salary = ? WHERE id = ?;");
-            $stmt->bindValue(1, null, PDO::PARAM_NULL);
-            $stmt->bindValue(2, $jobId, PDO::PARAM_INT);
+            $response = $this->setNullValue("jobs", "salary", $jobId);
 
-            if(!$stmt->execute())
-            {
-                $stmt = null;
-                return 0;
-            }
+            if($response < 1)
+                return $response;
         }
 
         $stmt = null;
@@ -361,28 +299,12 @@ class CompanyModel extends DBHandler
 
     protected function deleteJob($companyId, $jobId)
     {
-        $stmt = $this->connect()->prepare("SELECT company_id FROM jobs WHERE id = ?;");
-
-        if(!$stmt->execute(array($jobId)))
-        {
-            $stmt = null;
-            return 0;
-        }
-
-        if($stmt->rowCount() == 0)
-        {
-            $stmt = null;
-            return -1;
-        }
-
-        if($stmt->fetch()["company_id"] != $companyId)
-        {
-            $stmt = null;
-            return -2;
-        }
+        $job = $this->getAllPairRows(array($companyId, $jobId), "jobs", array("company_id", "id"));
+        
+        if($job < 1)
+            return $job;
 
         //delete entries that reference this job
-        $stmt = null;
         $stmt = $this->connect()->prepare("DELETE FROM applicants WHERE job_id = ?; DELETE FROM bookmarks WHERE job_id = ?; DELETE FROM hidden WHERE job_id = ?;");
 
         if(!$stmt->execute(array($jobId, $jobId, $jobId)))
@@ -407,27 +329,11 @@ class CompanyModel extends DBHandler
 
     protected function getApplicants($companyId, $jobId)
     {
-        $stmt = $this->connect()->prepare("SELECT company_id FROM jobs WHERE id = ?;");
+        $job = $this->getAllPairRows(array($companyId, $jobId), "jobs", array("company_id", "id"));
+        
+        if($job < 1)
+            return $job;
 
-        if(!$stmt->execute(array($jobId)))
-        {
-            $stmt = null;
-            return 0;
-        }
-
-        if($stmt->rowCount() == 0)
-        {
-            $stmt = null;
-            return -1;
-        }
-
-        if($stmt->fetch()["company_id"] != $companyId)
-        {
-            $stmt = null;
-            return -2;
-        }
-
-        $stmt = null;
         $stmt = $this->connect()->prepare("SELECT candidates.id, candidates.first_name, candidates.last_name FROM applicants JOIN candidates ON applicants.candidate_id = candidates.id WHERE job_id = ?;");
 
         if(!$stmt->execute(array($jobId)))
@@ -439,26 +345,6 @@ class CompanyModel extends DBHandler
         $applicants = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt = null;
         return $applicants;
-    }
-
-    protected function validateJob($companyId, $jobId)
-    {
-        $stmt = $this->connect()->prepare("SELECT company_id FROM jobs WHERE id = ?;");
-
-        if(!$stmt->execute(array($jobId)) || $stmt->rowCount() == 0)
-        {
-            $stmt = null;
-            return false;
-        }
-
-        if($stmt->fetch()["company_id"] != $companyId)
-        {
-            $stmt = null;
-            return false;
-        }
-
-        $stmt = null;
-        return true;
     }
 }
 ?>

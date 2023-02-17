@@ -3,27 +3,6 @@ include_once("../controllers/candidate_controller.php");
 
 class CandidateModel extends DBHandler
 {
-    protected function getAllRows($id, $table, $field)
-    {
-        $stmt = $this->connect()->prepare("SELECT * FROM " . $table . " WHERE " . $field . " = ?;");
-
-        if(!$stmt->execute(array($id)))
-        {
-            $stmt = null;
-            return 0;
-        }
-
-        if($stmt->rowCount() > 0)
-        {
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $stmt = null;
-            return $data;
-        }
-
-        $stmt = null;
-        return -1;
-    }
-
     protected function updateCandidate($id, $fname, $lname, $email, $phone, $location, $newPassword, $currentPassword)
     {
         $candidate = $this->getAllRows($id, "candidates", "id");
@@ -69,31 +48,19 @@ class CandidateModel extends DBHandler
         if($phone == "")
         {
             $stmt = null;
-            $stmt = $this->connect()->prepare("UPDATE candidates SET phone = ? WHERE id = ?;");
+            $response = $this->setNullValue("candidates", "phone", $id);
 
-            $stmt->bindValue(1, null, PDO::PARAM_NULL);
-            $stmt->bindValue(2, $id, PDO::PARAM_INT);
-
-            if(!$stmt->execute())
-            {
-                $stmt = null;
-                return 0;
-            }
+            if($response < 1)
+                return $response;
         }
 
         if($location == "")
         {
             $stmt = null;
-            $stmt = $this->connect()->prepare("UPDATE candidates SET location = ? WHERE id = ?;");
+            $response = $this->setNullValue("candidates", "location", $id);
 
-            $stmt->bindValue(1, null, PDO::PARAM_NULL);
-            $stmt->bindValue(2, $id, PDO::PARAM_INT);
-
-            if(!$stmt->execute())
-            {
-                $stmt = null;
-                return 0;
-            }
+            if($response < 1)
+                return $response;
         }
 
         $stmt = null;
@@ -291,28 +258,6 @@ class CandidateModel extends DBHandler
         return 1;
     }
 
-    private function getAllPairRows($params, $table, $fields)
-    {
-        $fields = implode(" AND ", array_map(fn($item) => $item . " = ?", $fields));
-        $stmt = $this->connect()->prepare("SELECT * FROM " . $table . " WHERE " . $fields . ";");
-        
-        if(!$stmt->execute($params))
-        {
-            $stmt = null;
-            return 0;
-        }
-
-        if($stmt->rowCount() > 0)
-        {
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $stmt = null;
-            return $data;
-        }
-
-        $stmt = null;
-        return -1;
-    }
-
     private function validateUpdate($candidateId, $itemId, $itemIdString, $table, $startMonth, $startYear, $endMonth, $endYear, $ongoing, &$params, &$paramsString)
     {
         $data = $this->getAllPairRows(array($candidateId, $itemId), $table, array("candidate_id", $itemIdString));
@@ -366,30 +311,24 @@ class CandidateModel extends DBHandler
         if($ongoing)
         {
             $stmt = null;
-            $stmt = $this->connect()->prepare("UPDATE " . $table . " SET end_month = ?, end_year = ? WHERE id = ?;");
-            $stmt->bindValue(1, null, PDO::PARAM_NULL);
-            $stmt->bindValue(2, null, PDO::PARAM_NULL);
-            $stmt->bindValue(3, $itemId, PDO::PARAM_INT);
+            $response = $this->setNullValue($table, "end_month", $itemId);
 
-            if(!$stmt->execute())
-            {
-                $stmt = null;
-                return 0;
-            }
+            if($response < 1)
+                return $response;
+            
+            $response = $this->setNullValue($table, "end_year", $itemId);
+
+            if($response < 1)
+                return $response;
         }
 
         if($description == "")
         {
             $stmt = null;
-            $stmt = $this->connect()->prepare("UPDATE " . $table . " SET description = ? WHERE id = ?;");
-            $stmt->bindValue(1, null, PDO::PARAM_NULL);
-            $stmt->bindValue(2, $itemId, PDO::PARAM_INT);
+            $response = $this->setNullValue($table, "description", $itemId);
 
-            if(!$stmt->execute())
-            {
-                $stmt = null;
-                return 0;
-            }
+            if($response < 1)
+                return $response;
         }
 
         $stmt = null;

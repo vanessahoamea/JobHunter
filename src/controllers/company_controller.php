@@ -12,7 +12,15 @@ class CompanyController extends CompanyModel
 
     public function getCompanyData()
     {
-        return $this->getAllData($this->id);
+        $data = $this->getAllRows($this->id, "companies", "id");
+
+        if($data < 1)
+            return $data;
+        
+        $data = $data[0];
+        unset($data["id"]);
+        unset($data["password"]);
+        return $data;
     }
 
     public function editCompany($cname, $email, $address, $website, $newPassword, $currentPassword)
@@ -63,7 +71,12 @@ class CompanyController extends CompanyModel
 
     public function validate($jobId)
     {
-        return $this->validateJob($this->id, $jobId);
+        $data = $this->getAllPairRows(array($this->id, $jobId), "jobs", array("company_id", "id"));
+        
+        if($data < 1)
+            return false;
+
+        return true;
     }
 
     private function emptyInput($params)

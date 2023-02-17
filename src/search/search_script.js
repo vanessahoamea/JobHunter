@@ -310,17 +310,19 @@ function selectJob(action)
         beforeSend: function(xmlhttp) {
             xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
         },   
-        success: function() {
+        success: function(response) {
             if(action == 1)
                 $(".modal-wrapper").html("<p>Your application was sent.</p>");
+            else if(action == 2)
+                $(".modal-wrapper").html("<p>" + response["message"] + "</p>");
             else
-                window.location.href = `../search`;
+                location.reload();
         },
         error: function(xmlhttp) {
             $(".modal-wrapper").html("<p>" + JSON.parse(xmlhttp.responseText)["message"] + "</p>");
         },
         complete: function() {
-            if(action == 1)
+            if(action < 3)
                 $(".modal-wrapper").append("<button class='search-button' onclick='getId(null, 1)'>Close</button>");
         }
     });

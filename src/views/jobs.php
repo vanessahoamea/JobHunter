@@ -120,7 +120,11 @@ if(isset($_COOKIE["jwt"]))
                 </div>
 
             <?php if($canApply): ?>
-                <button class="search-button" onclick="toggleModal()">Apply</button>
+                <div class="buttons">
+                    <button class="search-button" onclick="toggleModal(1)">Apply</button>
+                    <button class='search-button' onclick='toggleModal(2)'>Save</button>
+                    <button class='search-button' onclick='toggleModal(3)'>Hide</button>
+                </div>
             <?php endif; ?>
 
             <?php if($ownJob): ?>
@@ -132,12 +136,9 @@ if(isset($_COOKIE["jwt"]))
         <!-- apply for job modal -->
         <div class="modal">
             <div class="modal-content">
-                <span class="close" onclick="toggleModal()">&times;</span>
+                <span class="close" onclick="toggleModal(null)">&times;</span>
 
-                <div class="modal-wrapper" style="text-align: center;">
-                    <p>Would you like to send an application for this job?</p>
-                    <button class="search-button" onclick="apply()">Apply</button>
-                </div>
+                <div class="modal-wrapper" style="text-align: center;"></div>
             </div>
         </div>
         

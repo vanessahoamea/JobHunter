@@ -57,7 +57,7 @@ else
         {
             clearstatcache();
 
-            $fileName = "../assets/images/image_" . $id . ".jpg";
+            $fileName = "../assets/images/" . $accountType . "/image_" . $id . ".jpg";
             if(file_exists($fileName))
                 $response["profile_picture"] = $fileName;
             else

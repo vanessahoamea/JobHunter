@@ -14,6 +14,7 @@ $(document).ready(function() {
         dataType: "json",
         success: function(response) {
             $("#company-name").text(response["company_name"]);
+            $(".profile-picture").eq(1).attr("src", response["profile_picture"]);
             
             $(".information-list").empty();
             if(response["address"] != null)

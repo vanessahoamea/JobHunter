@@ -14,11 +14,14 @@ $(document).ready(function() {
         dataType: "json",
         success: function(response) {
             $("#full-name").text(response["first_name"] + " " + response["last_name"]);
+            $(".profile-picture").eq(1).attr("src", response["profile_picture"]);
 
             $(".information-list").empty();
             $(".information-list").append("<li><i class='fa-solid fa-envelope fa-fw'></i>" + response["email"] + "</li>");
             if(response["phone"] != null)
                 $(".information-list").append("<li><i class='fa-solid fa-phone fa-fw'></i>" + response["phone"] + "</li>");
+            if(response["location"] != null)
+                $(".information-list").append("<li><i class='fa-solid fa-building fa-fw'></i>" + response["location"] + "</li>");
         }
     });
 
@@ -66,7 +69,7 @@ $(document).ready(function() {
                 let jobData = "<p class='bigger-text'>" + response[i]["title"] + "</p>";
                 jobData += "<p>" + response[i]["type"] + " @ " + company + "</p>";
                 if(response[i]["description"] != null)
-                    jobData += "<p>" + response[i]["description"] + "</p>";
+                    jobData += "<p class='job-description'>" + response[i]["description"] + "</p>";
                 
                 workPeriods.push(workPeriod);
                 jobDatas.push(jobData);

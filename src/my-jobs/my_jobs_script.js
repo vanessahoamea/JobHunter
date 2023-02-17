@@ -8,6 +8,7 @@ $(window).click(function(event) {
 });
 
 let currentIndex = -1;
+let jobCards = {};
 
 function showJobs(index)
 {
@@ -39,44 +40,57 @@ function displayJobs(type)
         </div>
     `;
 
-    $(".jobs").html(defaultHtml);
-    $(".jobs").append(defaultHtml);
+    //loading jobs for the first time
+    if(!jobCards.hasOwnProperty(type))
+    {
+        $(".jobs").html(defaultHtml);
+        $(".jobs").append(defaultHtml);
+        jobCards[type] = [];
 
-    $.ajax({
-        url: "../api/get_my_jobs.php",
-        method: "GET",
-        data: {"type": type},
-        contentType: "application/x-www-form-urlencoded",
-        dataType: "json",
-        beforeSend: function(xmlhttp) {
-            if(getCookie("jwt") != "")
-                xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
-        },
-        success: function(response) {
-            response = response["data"];
-            if(response.length == 0)
-            {
-                $(".jobs").html("<p style='text-align: center'><i>Nothing to see here.</i></p>");
-                return;
-            }
+        $.ajax({
+            url: "../api/get_my_jobs.php",
+            method: "GET",
+            data: {"type": type},
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "json",
+            beforeSend: function(xmlhttp) {
+                if(getCookie("jwt") != "")
+                    xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
+            },
+            success: function(response) {
+                response = response["data"];
+                if(response.length == 0)
+                {
+                    $(".jobs").html("<p style='text-align: center'><i>Nothing to see here.</i></p>");
+                    jobCards[type].push("<p style='text-align: center'><i>Nothing to see here.</i></p>");
+                    return;
+                }
 
-            $(".jobs").empty();
-            for(let i=0; i<response.length; i++)
-            {
-                $.ajax({
-                    url: "../api/get_job.php",
-                    method: "GET",
-                    data: {"id": response[i]["job_id"]},
-                    contentType: "application/x-www-form-urlencoded",
-                    dataType: "json",
-                    success: function(data) {
-                        card = buildJobCard(data);
-                        $(".jobs").append(card);
-                    }
-                });
+                $(".jobs").empty();
+                for(let i=0; i<response.length; i++)
+                {
+                    $.ajax({
+                        url: "../api/get_job.php",
+                        method: "GET",
+                        data: {"id": response[i]["job_id"]},
+                        contentType: "application/x-www-form-urlencoded",
+                        dataType: "json",
+                        success: function(data) {
+                            card = buildJobCard(data);
+                            $(".jobs").append(card);
+                            jobCards[type].push(card);
+                        }
+                    });
+                }
             }
-        }
-    });
+        });
+    }
+    //once all the jobs have been loaded, we don't need to make anymore API calls
+    else
+    {
+        $(".jobs").empty();
+        jobCards[type].map((item) => { $(".jobs").append(item); });
+    }
 }
 
 function buildJobCard(data)

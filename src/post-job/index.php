@@ -131,7 +131,7 @@ if(isset($_GET["item"]))
                     </div>
 
                     <div class="pair">
-                        <label for="salary" style="margin-top: 15px;">Salary (optional)</label>
+                        <label for="salary" style="margin-top: 15px;">Monthly salary (optional)</label>
                         <input type="text" id="salary" name="salary" class="input">
                     </div>
 

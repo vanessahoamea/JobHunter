@@ -55,15 +55,10 @@ else
             http_response_code(500);
             echo json_encode(array("message" => "Something went wrong. Try again later."));
         }
-        else if($response == -1)
+        else
         {
             http_response_code(404);
             echo json_encode(array("message" => "Job not found."));
-        }
-        else
-        {
-            http_response_code(401);
-            echo json_encode(array("message" => "You don't have access to this resource."));
         }
     }
 }
