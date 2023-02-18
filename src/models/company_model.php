@@ -346,5 +346,20 @@ class CompanyModel extends DBHandler
         $stmt = null;
         return $applicants;
     }
+
+    protected function getCompanyReviews($id)
+    {
+        $stmt = $this->connect()->prepare("SELECT * FROM reviews WHERE company_id = ? ORDER BY date_posted DESC, id DESC;");
+
+        if(!$stmt->execute(array($id)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = null;
+        return $reviews;
+    }
 }
 ?>

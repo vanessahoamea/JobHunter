@@ -16,7 +16,7 @@ if($data["account_type"] == "candidate")
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Post job</title>
+        <title>Settings</title>
         <link rel="stylesheet" type="text/css" href="../style.css" />
         <link rel="stylesheet" type="text/css" href="settings_style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">

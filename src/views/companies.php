@@ -92,7 +92,27 @@ if(isset($_COOKIE["jwt"]))
 
                 <?php if($selfView): ?>
                     <button class="edit-button" onclick="window.location.href = '../settings'">Edit profile</button>
+                <?php elseif($isCandidate || !isset($_COOKIE["jwt"])): ?>
+                    <button class="edit-button" onclick="window.location.href = '../post-review?id=<?php echo $_GET['id']; ?>'">Review this company</button>
                 <?php endif; ?>
+            </div>
+
+            <div id="rating">
+                <div class="upper-part">
+                    <h1>Rating</h1>
+                </div>
+
+                <div class="stars-container">
+                    <div id="company-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                </div>
+                
+                <button class="edit-button" style="width: fit-content;" onclick="window.location.href = '../reviews?id=<?php echo $_GET['id']; ?>'">See all company reviews</button>
             </div>
 
             <div id="job-postings">

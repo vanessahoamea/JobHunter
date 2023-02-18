@@ -179,8 +179,8 @@ function saveChanges()
 function crop()
 {
     const canvas = cropper.getCroppedCanvas({
-        width: 300,
-        height: 300
+        maxWidth: 300,
+        maxHeight: 300
     });
 
     canvas.toBlob((blob) => {

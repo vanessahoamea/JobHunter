@@ -1,0 +1,119 @@
+#wrapper {
+    background-color: #fefefe;
+    margin: 0 auto;
+    padding: 20px;
+    width: 60vw;
+    border-radius: 10px;
+}
+
+#form {
+    padding: 25px 15px 0 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pair {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.pair label {
+    text-align: left;
+    font-size: 18px;
+}
+
+.input, .select {
+    width: 57vw;
+    padding: 12px 20px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+textarea {
+    width: 57vw;
+    resize: none;
+}
+
+.radio-buttons {
+    width: 57vw;
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.stars-container {
+    width: 57vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.star-widget input {
+    display: none;
+}
+
+.star-widget label {
+    font-size: 40px;
+    color: #ddd;
+    padding: 5px;
+    float: right;
+    cursor: pointer;
+}
+
+.star-widget input:checked ~ label,
+.star-widget input:not(:checked) ~ label:hover,
+.star-widget input:not(:checked) ~ label:hover ~ label {
+    color: rgb(255, 217, 0);
+}
+
+.submit-button {
+    background-color: #E87461;
+    border: none;
+    border-radius: 3px;
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.submit-button:hover {
+    background-color: #ea5f4a;
+}
+
+.warning-text {
+    display: none;
+    color: red;
+}
+
+/* responsiveness */
+@media screen and (max-width: 645px) {
+    .radio-buttons {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .star-widget label {
+        font-size: 25px;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    .star-widget label {
+        font-size: 15px;
+    }
+}

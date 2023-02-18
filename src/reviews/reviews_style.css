@@ -1,0 +1,99 @@
+.stars-container {
+    width: 70vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px auto;
+}
+
+.fa-star {
+    font-size: 40px;
+    color: #ddd;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.full-star {
+    color: rgb(255, 217, 0);
+}
+
+.card {
+    width: 50vw;
+    background-color: white;
+    border-radius: 10px;
+    padding: 5px 25px 5px 25px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    min-height: 1.5em;
+}
+
+.top-row h2, .top-row p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.date-posted {
+    color: rgb(77, 77, 77);
+}
+
+.card-stars-container {
+    margin-top: 5px;
+}
+
+.card-stars-container i {
+    font-size: 20px;
+    padding: 0;
+}
+
+.review-content {
+    margin-bottom: 5px;
+}
+
+.review-content > p {
+    margin: 0;
+}
+
+.review-content .skeleton-text:last-child {
+    margin-bottom: 10px;
+}
+
+.review-text {
+    margin: 10px 0;
+}
+
+.review-text h3, .review-text p {
+    margin: 0;
+}
+
+.return-button {
+    min-height: 8vh;
+    min-width: 10vw;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    margin-bottom: 20px;
+}
+
+/* responsiveness */
+@media screen and (max-width: 500px) {
+    .stars-container .fa-star {
+        font-size: 25px;
+        padding: 3px;
+    }
+    .card {
+        padding: 5px 15px 5px 15px;
+    }
+}

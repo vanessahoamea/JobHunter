@@ -258,6 +258,21 @@ class CandidateModel extends DBHandler
         return 1;
     }
 
+    protected function createRating($candidateId, $companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted)
+    {
+        $queryParams = implode(", ", array("candidate_id", "company_id", "job_title", "job_type", "employment_status", "pros", "cons", "rating", "date_posted"));
+        $stmt = $this->connect()->prepare("INSERT INTO reviews (" . $queryParams . ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+
+        if(!$stmt->execute(array($candidateId, $companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $stmt = null;
+        return 1;
+    }
+
     private function validateUpdate($candidateId, $itemId, $itemIdString, $table, $startMonth, $startYear, $endMonth, $endYear, $ongoing, &$params, &$paramsString)
     {
         $data = $this->getAllPairRows(array($candidateId, $itemId), $table, array("candidate_id", $itemIdString));

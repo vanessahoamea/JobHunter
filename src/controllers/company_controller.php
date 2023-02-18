@@ -69,6 +69,11 @@ class CompanyController extends CompanyModel
         return $this->getApplicants($this->id, $jobId);
     }
 
+    public function getReviews()
+    {
+        return $this->getCompanyReviews($this->id);
+    }
+
     public function validate($jobId)
     {
         $data = $this->getAllPairRows(array($this->id, $jobId), "jobs", array("company_id", "id"));

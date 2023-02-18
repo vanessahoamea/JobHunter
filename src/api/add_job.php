@@ -46,7 +46,7 @@ else
         $physical = isset($data->physical) ? trim($data->physical) : '';
         $salary = isset($data->salary) ? trim($data->salary) : '';
         $description = isset($data->description) ? urldecode($data->description) : '';
-        $datePosted = date('Y-m-d');
+        $datePosted = date("Y-m-d");
 
         $company = new CompanyController($id);
         $response = $company->addJob($title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $description, $datePosted);

@@ -24,6 +24,27 @@ $(document).ready(function() {
         }
     });
 
+    //ratings
+    $.ajax({
+        url: "../api/get_reviews.php",
+        method: "GET",
+        data: {"company_id": id},
+        contentType: "application/x-www-form-urlencoded",
+        dataType: "json",
+        success: function(response) {
+            response = response["data"];
+
+            let rating = 0;
+            for(let i=0; i<response.length; i++)
+                rating += response[i]["rating"];
+            rating = Math.round(rating / response.length);
+            
+            let stars = $("#company-rating").children(".fa-star");
+            for(let j=0; j<rating; j++)
+                stars.eq(j).addClass("full-star");
+        }
+    });
+
     //job postings
     const limit = 5;
     const interval = 5;

@@ -228,6 +228,14 @@ class CandidateController extends CandidateModel
         return $this->deleteAppliedSavedHiddenJob($this->id, $jobId, $table);
     }
 
+    public function addRating($companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted)
+    {
+        if($this->emptyInput(array($companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating)))
+            return -1;
+        
+        return $this->createRating($this->id, $companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted);
+    }
+
     private function emptyInput($params)
     {
         if(empty($this->id))

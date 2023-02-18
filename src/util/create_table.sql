@@ -104,3 +104,18 @@ CREATE TABLE hidden (
     FOREIGN KEY (candidate_id) REFERENCES candidates(id),
     FOREIGN KEY (job_id) REFERENCES jobs(id)
 );
+
+CREATE TABLE reviews (
+    id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    candidate_id int(11) NOT NULL,
+    company_id int(11) NOT NULL,
+    job_title varchar(100) NOT NULL,
+    job_type varchar(20) NOT NULL,
+    employment_status varchar(10) NOT NULL,
+    pros varchar(1000) NOT NULL,
+    cons varchar(1000) NOT NULL,
+    rating tinyint NOT NULL,
+    date_posted date NOT NULL,
+    FOREIGN KEY (candidate_id) REFERENCES candidates(id),
+    FOREIGN KEY (company_id) REFERENCES companies(id)
+);
