@@ -179,7 +179,7 @@ class CandidateModel extends DBHandler
 
     protected function deleteItem($candidateId, $itemId, $table)
     {
-        $data = $this->getAllRows($itemId, $table, "id");
+        $data = $this->getAllPairRows(array($candidateId, $itemId), $table, array("candidate_id", "id"));
 
         if($data < 1)
             return $data;
@@ -258,12 +258,42 @@ class CandidateModel extends DBHandler
         return 1;
     }
 
-    protected function createRating($candidateId, $companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted)
+    protected function createReview($candidateId, $companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted)
     {
         $queryParams = implode(", ", array("candidate_id", "company_id", "job_title", "job_type", "employment_status", "pros", "cons", "rating", "date_posted"));
         $stmt = $this->connect()->prepare("INSERT INTO reviews (" . $queryParams . ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
 
         if(!$stmt->execute(array($candidateId, $companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $stmt = null;
+        return 1;
+    }
+
+    protected function updateReview($candidateId, $reviewId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating)
+    {
+        $data = $this->getAllPairRows(array($candidateId, $reviewId), "reviews", array("candidate_id", "id"));
+
+        if($data < 1)
+            return $data;
+
+        $params = array($jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating);
+        $paramsString = array("job_title", "job_type", "employment_status", "pros", "cons", "rating");
+
+        $emptyArray = array_fill(0, count($params), '');
+        $params = array_diff($params, $emptyArray);
+        $paramsString = array_diff_key($paramsString, array_diff_key($paramsString, $params));
+
+        $queryParams = implode(", ", array_map(fn($item) => $item . " = ?", $paramsString));
+        array_push($params, $reviewId);
+        $params = array_values($params);
+
+        $stmt = $this->connect()->prepare("UPDATE reviews SET " . $queryParams . " WHERE id = ?;");
+
+        if(!$stmt->execute($params))
         {
             $stmt = null;
             return 0;
@@ -313,7 +343,6 @@ class CandidateModel extends DBHandler
         
         if(count($params) > 1)
         {
-            $stmt = null;
             $stmt = $this->connect()->prepare("UPDATE " . $table . " SET " . $queryParams . " WHERE id = ?;");
 
             if(!$stmt->execute($params))

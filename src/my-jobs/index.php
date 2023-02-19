@@ -40,6 +40,7 @@ else
             <div class="right">
                 <a href="../profile" class="nav-tab">Profile</a>
                 <a href="#" class="current-page">My jobs</a>
+                <a href="../my-reviews" class="nav-tab">My reviews</a>
                 <a href="javascript:void(0)" class="nav-tab" onclick="logout(false)">Log out</a>
             </div>
             <a href="javascript:void(0);" class="icon" onclick="expand()">

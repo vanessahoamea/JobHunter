@@ -115,7 +115,7 @@ class CompanyModel extends DBHandler
         return $id;
     }
 
-    public function getSingleJob($jobId)
+    protected function getSingleJob($jobId)
     {
         $stmt = $this->connect()->prepare("SELECT jobs.*, companies.company_name FROM jobs JOIN companies ON jobs.company_id = companies.id WHERE jobs.id = ?;");
 
@@ -347,19 +347,25 @@ class CompanyModel extends DBHandler
         return $applicants;
     }
 
-    protected function getCompanyReviews($id)
+    protected function getSingleReview($reviewId)
     {
-        $stmt = $this->connect()->prepare("SELECT * FROM reviews WHERE company_id = ? ORDER BY date_posted DESC, id DESC;");
+        $stmt = $this->connect()->prepare("SELECT * FROM reviews WHERE id = ?;");
 
-        if(!$stmt->execute(array($id)))
+        if(!$stmt->execute(array($reviewId)))
         {
             $stmt = null;
             return 0;
         }
 
-        $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if($stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return -1;
+        }
+
+        $review = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
         $stmt = null;
-        return $reviews;
+        return $review;
     }
 }
 ?>

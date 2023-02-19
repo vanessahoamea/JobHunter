@@ -169,7 +169,7 @@ i.fa-fw {
 }
 
 /* responsive navbar */
-@media screen and (max-width: 740px) {
+@media screen and (max-width: 900px) {
     .topnav a {
         margin: 0 10px;
     }

@@ -28,11 +28,11 @@ $(document).ready(function() {
     $.ajax({
         url: "../api/get_reviews.php",
         method: "GET",
-        data: {"company_id": id},
+        data: {"company_id": id, "page": 1, "limit": 9999},
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
         success: function(response) {
-            response = response["data"];
+            response = response["reviews"];
 
             let rating = 0;
             for(let i=0; i<response.length; i++)

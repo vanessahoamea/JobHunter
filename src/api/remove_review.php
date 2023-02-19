@@ -1,7 +1,7 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Methods: DELETE");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
@@ -30,29 +30,22 @@ else
         $id = $jwt["id"];
 
         $data = json_decode(file_get_contents("php://input"));
-        if($data == null)
+        if(!isset($data->review_id))
         {
             http_response_code(400);
-            echo json_encode(array("message" => "Fields 'company_id', 'job_title', 'job_type', 'employment_status', 'pros', 'cons', 'rating' are required."));
+            echo json_encode(array("message" => "Field 'review_id' is required."));
             return;
         }
 
-        $companyId = isset($data->company_id) ? trim($data->company_id) : '';
-        $jobTitle = isset($data->job_title) ? trim($data->job_title) : '';
-        $jobType = isset($data->job_type) ? trim($data->job_type) : '';
-        $employmentStatus = isset($data->employment_status) ? trim($data->employment_status) : '';
-        $pros = isset($data->pros) ? trim($data->pros) : '';
-        $cons = isset($data->cons) ? trim($data->cons) : '';
-        $rating = isset($data->rating) ? trim($data->rating) : '';
-        $datePosted = date("Y-m-d");
+        $reviewId = trim($data->review_id);
 
         $candidate = new CandidateController($id);
-        $response = $candidate->addReview($companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted);
+        $response = $candidate->removeReview($reviewId);
 
         if($response == 1)
         {
-            http_response_code(201);
-            echo json_encode(array("message" => "Posted review."));
+            http_response_code(200);
+            echo json_encode(array("message" => "Deleted review."));
         }
         else if($response == 0)
         {
@@ -61,8 +54,8 @@ else
         }
         else
         {
-            http_response_code(400);
-            echo json_encode(array("message" => "Fields 'company_id', 'job_title', 'job_type', 'employment_status', 'pros', 'cons', 'rating' are required."));
+            http_response_code(404);
+            echo json_encode(array("message" => "Review not found."));
         }
     }
 }

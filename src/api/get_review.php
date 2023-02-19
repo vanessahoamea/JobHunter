@@ -9,17 +9,22 @@ include_once("../models/database.php");
 include_once("../models/company_model.php");
 include_once("../controllers/company_controller.php");
 
-if(!isset($_GET["company_id"]) || !isset($_GET["page"]) || !isset($_GET["limit"]))
+if(!isset($_GET["id"]))
 {
     http_response_code(400);
-    echo json_encode(array("message" => "Fields 'company_id', 'page', 'limit' are required."));
+    echo json_encode(array("message" => "Review ID is required."));
 }
 else
 {
-    $company = new CompanyController($_GET["company_id"]);
-    $response = $company->getCompanyReviews($_GET["page"], $_GET["limit"]);
+    $company = new CompanyController(0);
+    $response = $company->getReview($_GET["id"]);
 
-    if($response == 0)
+    if($response == -1)
+    {
+        http_response_code(404);
+        echo json_encode(array("message" => "Review not found."));
+    }
+    else if($response == 0)
     {
         http_response_code(500);
         echo json_encode(array("message" => "Something went wrong. Try again later."));

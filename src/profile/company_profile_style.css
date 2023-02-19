@@ -200,7 +200,6 @@
     font-size: 40px !important;
     color: #ddd;
     padding: 5px;
-    cursor: pointer;
 }
 
 .full-star {
@@ -221,6 +220,13 @@
     .profile-picture {
         height: 100px;
         width: 100px;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    .top-row {
+        flex-direction: column-reverse;
+        align-items: flex-start;
     }
 }
 

@@ -253,4 +253,8 @@ i.fa-xmark {
         flex-direction: column;
         gap: 0;
     }
+    .top-row {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
 }

@@ -88,6 +88,13 @@
 }
 
 /* responsiveness */
+@media screen and (max-width: 540px) {
+    .top-row {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
+}
+
 @media screen and (max-width: 500px) {
     .stars-container .fa-star {
         font-size: 25px;

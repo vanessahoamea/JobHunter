@@ -18,7 +18,6 @@ class CompanyController extends CompanyModel
             return $data;
         
         $data = $data[0];
-        unset($data["id"]);
         unset($data["password"]);
         return $data;
     }
@@ -69,14 +68,25 @@ class CompanyController extends CompanyModel
         return $this->getApplicants($this->id, $jobId);
     }
 
-    public function getReviews()
+    public function getReview($reviewId)
     {
-        return $this->getCompanyReviews($this->id);
+        return $this->getSingleReview($reviewId);
     }
 
-    public function validate($jobId)
+    public function getCompanyReviews($page, $limit)
     {
-        $data = $this->getAllPairRows(array($this->id, $jobId), "jobs", array("company_id", "id"));
+        $result = $this->getReviews($this->id, $page, $limit, "company_id");
+
+        //reviews are anonymous
+        for($i=0; $i<count($result["reviews"]); $i+=1)
+            unset($result["reviews"][$i]["candidate_id"]);
+        
+        return $result;
+    }
+
+    public function validate($itemId, $table)
+    {
+        $data = $this->getAllPairRows(array($this->id, $itemId), $table, array("company_id", "id"));
         
         if($data < 1)
             return false;

@@ -18,7 +18,6 @@ class CandidateController extends CandidateModel
             return $data;
 
         $data = $data[0];
-        unset($data["id"]);
         unset($data["password"]);
         return $data;
     }
@@ -228,12 +227,27 @@ class CandidateController extends CandidateModel
         return $this->deleteAppliedSavedHiddenJob($this->id, $jobId, $table);
     }
 
-    public function addRating($companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted)
+    public function addReview($companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted)
     {
         if($this->emptyInput(array($companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating)))
             return -1;
         
-        return $this->createRating($this->id, $companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted);
+        return $this->createReview($this->id, $companyId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating, $datePosted);
+    }
+
+    public function getCandidateReviews($page, $limit)
+    {
+        return $this->getReviews($this->id, $page, $limit, "candidate_id");
+    }
+
+    public function editReview($reviewId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating)
+    {
+        return $this->updateReview($this->id, $reviewId, $jobTitle, $jobType, $employmentStatus, $pros, $cons, $rating);
+    }
+
+    public function removeReview($reviewId)
+    {
+        return $this->deleteItem($this->id, $reviewId, "reviews");
     }
 
     private function emptyInput($params)

@@ -65,6 +65,7 @@ if(isset($_COOKIE["jwt"]))
                     <a href="../profile" class="nav-tab">Profile</a>
                     <?php if($canApply): ?>
                         <a href="../my-jobs" class="nav-tab">My jobs</a>
+                        <a href="../my-reviews" class="nav-tab">My reviews</a>
                     <?php endif; ?>
                     <a href="javascript:void(0)" class="nav-tab" onclick="logout(false)">Log out</a>
                 </div>

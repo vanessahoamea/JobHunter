@@ -1,15 +1,13 @@
 $(document).ready(function() {
-    const params = new Proxy(new URLSearchParams(window.location.search), {
-        get: (searchParams, prop) => searchParams.get(prop),
-    });
-    companyId = params.id;
-
     $.ajax({
-        url: "../api/get_reviews.php",
+        url: "../api/get_my_reviews.php",
         method: "GET",
-        data: {"company_id": companyId, "page": currentPage, "limit": 9999},
+        data: {"page": currentPage, "limit": limit},
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
+        beforeSend: function(xmlhttp) {
+            xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
+        },
         success: function(response) {
             if(response["total_count"] == 0)
             {
@@ -17,40 +15,16 @@ $(document).ready(function() {
                 return;
             }
 
-            let rating = 0;
-            let totalCount = response["total_count"];
             response = response["reviews"];
 
             $(".reviews").empty();
-            for(let i=0; i<totalCount; i++)
+            for(let i=0; i<response.length; i++)
             {
-                rating += response[i]["rating"];
-                distribution[response[i]["rating"]]++;
-
-                //displaying user reviews
-                if(i < limit)
-                {
-                    let card = buildReviewCard(response[i]);
-                    $(".reviews").append(card);
-                }
+                let card = buildReviewCard(response[i]);
+                $(".reviews").append(card);
             }
-
-            rating = Math.round(rating / totalCount);
-            
-            //setting the company's rating
-            let stars = $("#company-rating").children(".fa-star");
-            for(let j=0; j<rating; j++)
-                stars.eq(j).addClass("full-star");
-            
-            let reviewStats = $("#reviews-stats");
-            reviewStats.removeClass().removeAttr("style");;
-            reviewStats.css("font-weight", "bold");
-            reviewStats.text(`Calculated from ${response.length} user-submitted reviews`);
         }
     });
-
-    //showing graph in modal
-    $("#company-rating").children(".fa-star").on("click", () => toggleModal());
 });
 
 $(window).click(function(event) {
@@ -80,11 +54,14 @@ window.addEventListener("scroll", function() {
 
         currentPage += 1;
         $.ajax({
-            url: "../api/get_reviews.php",
+            url: "../api/get_my_reviews.php",
             method: "GET",
-            data: {"company_id": companyId, "page": currentPage, "limit": limit},
+            data: {"page": currentPage, "limit": limit},
             contentType: "application/x-www-form-urlencoded",
             dataType: "json",
+            beforeSend: function(xmlhttp) {
+                xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
+            },
             success: function(response) {
                 if(response["next"] == null)
                     loadedAllData = true;
@@ -102,14 +79,11 @@ window.addEventListener("scroll", function() {
     }
 });
 
-let companyId = -1;
 let currentPage = 1;
 let limit = 4;
 let loadedAllData = false;
 
-let chart = null;
-let distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
-
+//render data on page
 function buildReviewCard(data)
 {
     let card = $("<div class='card'></div>");
@@ -136,6 +110,7 @@ function buildReviewCard(data)
     cons.append("<h3>Cons:</h3>");
     cons.append("<p>" + data["cons"] + "</p>");
 
+    reviewContent.append("<p> @ <a href='../views/companies.php?id=" + data["company_id"] + "'>" + data["company_name"] + "</a></p>");
     reviewContent.append("<p>" + data["job_type"] + ", " + data["employment_status"] + " employee</p>");
     reviewContent.append(rating);
     reviewContent.append(pros);
@@ -144,47 +119,50 @@ function buildReviewCard(data)
     card.append(topRow);
     card.append(reviewContent);
 
+    const buttons = $("<div class='buttons'></div>");
+    buttons.append(`<button class='search-button' onclick='editReview(${data["id"]}, ${data["company_id"]})'>Edit</button>`);
+    buttons.append(`<button class='search-button' onclick='toggleModal(${data["id"]})'>Delete</button>`);
+    card.append(buttons);
+
+    card.append(buttons);
+
     return card;
 }
 
-//helper functions
-function toggleModal()
+//edit + delete review
+function editReview(reviewId, companyId)
 {
-    $(".modal-content").css("width", "70vw");
+    const hashedId = btoa(btoa(reviewId) + "." + Math.round(Date.now() / 1000) + "." + getCookie("jwt").split(".")[2]);
+
+    window.location.href = `../post-review?id=${companyId}&edit=${hashedId}`;
+}
+
+function deleteReview(id)
+{
+    $.ajax({
+        url: "../api/remove_review.php",
+        method: "DELETE",
+        data: JSON.stringify({"review_id": id}),
+        contentType: "application/x-www-form-urlencoded",
+        beforeSend: function(xmlhttp) {
+            xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
+        },        
+        success: function() {
+            toggleModal(null);
+            location.reload();
+        }
+    });
+}
+
+//helper functions
+function toggleModal(id)
+{
     if($(".modal").eq(0).css("display") == "none")
     {
         $(".modal-wrapper").empty();
-        $(".modal-wrapper").append("<h2>Overall distribution</h2>");
-        $(".modal-wrapper").append("<canvas id='canvas' style='width: 100%; max-width: 60vw; margin: 0 auto;'></canvas>");
+        $(".modal-wrapper").append("<p>Are you sure you want to delete this review?</p>");
+        $(".modal-wrapper").append(`<button class='search-button' onclick='deleteReview(${id})'>Confirm</button>`);
 
-        chart = new Chart("canvas", {
-            type: "horizontalBar",
-            data: {
-                labels: ["1 star", "2 stars", "3 stars", "4 stars", "5 stars"],
-                datasets: [{
-                    backgroundColor: ["#BAF2BB", "#BAF2D8", "#BAD7F2", "#F2BAC9", "#F2E2BA"],
-                    data: Object.values(distribution),
-                }]
-            },
-            options: {
-                legend: {
-                    display: false
-                },
-                scales: {
-                    xAxes: [{
-                        gridLines: {
-                            display:false
-                        }
-                    }],
-                    yAxes: [{
-                        gridLines: {
-                            display:false
-                        }   
-                    }]
-                }
-            }
-        });
-        
         $(".modal").eq(0).css("display", "block");
         $(".modal-wrapper").css("display", "block");
     }
@@ -192,16 +170,5 @@ function toggleModal()
     {
         $(".modal").eq(0).css("display", "none");
         $(".modal-wrapper").css("display", "none");
-
-        if(chart != null)
-        {
-            chart.destroy();
-            chart = null;
-        }
     }
-}
-
-function redirect(id)
-{
-    window.location.href = "../views/companies.php?id=" + id;
 }

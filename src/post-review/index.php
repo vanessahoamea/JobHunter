@@ -8,10 +8,47 @@ if(!isset($_COOKIE["jwt"]))
 require_once("../controllers/jwt_controller.php");
 
 $data = JWTController::getPayload($_COOKIE["jwt"]);
-if(!isset($_GET["id"]) || !JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "candidate")
+if(!JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "candidate")
 {
     header("location: ../");
     exit();
+}
+else
+{
+    if(!isset($_GET["id"]))
+    {
+        header("location: ../");
+        exit();
+    }
+
+    require_once("../models/database.php");
+    require_once("../models/company_model.php");
+    require_once("../controllers/company_controller.php");
+
+    $company = new CompanyController($_GET["id"]);
+    $data = $company->getCompanyData();
+    if($data < 1)
+    {
+        header("location: ../");
+        exit();
+    }
+
+    $editMode = false;
+    if(isset($_GET["edit"]))
+    {
+        $unhashedId = explode(".", base64_decode(rawurldecode($_GET["edit"])));
+        $reviewId = base64_decode($unhashedId[0]);
+        $time = $unhashedId[1];
+        $signature = $unhashedId[2];
+    
+        if($time <= time() - (2 * 60 * 60) || $signature != explode(".", $_COOKIE["jwt"])[2] || !$company->validate($reviewId, "reviews"))
+        {
+            header("location: ../");
+            exit();
+        }
+        else
+            $editMode = true;
+    }
 }
 ?>
 
@@ -40,6 +77,7 @@ if(!isset($_GET["id"]) || !JWTController::validateToken($_COOKIE["jwt"]) || $dat
                 <?php if(isset($_COOKIE["jwt"])): ?>
                     <a href="../profile">Profile</a>
                     <a href="../my-jobs" class="nav-tab">My jobs</a>
+                    <a href="../my-reviews" class="nav-tab">My reviews</a>
                     <a href="javascript:void(0)" class="nav-tab" onclick="logout()">Log out</a>
                 <?php else: ?>
                     <a href="../login" class="nav-tab">Login</a>
@@ -52,6 +90,11 @@ if(!isset($_GET["id"]) || !JWTController::validateToken($_COOKIE["jwt"]) || $dat
         </nav>
 
         <div id="main">
+            <?php if($editMode): ?>
+                <div id="edit-mode" style="display: none;"></div>
+                <h1>Editing review for <a href="../views/companies.php?id=<?php echo $data["id"]; ?>"><?php echo $data["company_name"]; ?></a></h1>
+            <?php endif; ?>
+
             <div id="wrapper">
                 <form id="form" action="#" method="post">
                     <div class="pair">

@@ -1,19 +1,11 @@
-.top-buttons {
-    margin: 0 auto;
-    margin-bottom: 20px;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
+.fa-star {
+    font-size: 40px;
+    color: #ddd;
+    padding: 5px;
 }
 
-.top-buttons .search-button {
-    min-width: 12vw;
-}
-
-.top-buttons .selected-button {
-    background-color: #ea5f4a;
+.full-star {
+    color: rgb(255, 217, 0);
 }
 
 .card {
@@ -32,7 +24,7 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    margin: 10px 0 10px 0;
+    margin-top: 10px;
     min-height: 1.5em;
 }
 
@@ -41,34 +33,37 @@
     margin-bottom: 0;
 }
 
-.card-information {
+.date-posted {
+    color: rgb(77, 77, 77);
+}
+
+.card-stars-container {
+    margin-top: 5px;
+}
+
+.card-stars-container i {
+    font-size: 20px;
+    padding: 0;
+}
+
+.review-content {
     margin-bottom: 5px;
 }
 
-.card-information > p {
+.review-content > p {
     margin: 0;
 }
 
-.card-information .skeleton-text:last-child {
+.review-content .skeleton-text:last-child {
     margin-bottom: 10px;
 }
 
-.job-requirements {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
+.review-text {
+    margin: 10px 0;
 }
 
-.skill-tag, .page {
-    background-color: #A443DA;
-    color: white;
-    margin: 0 5px 5px 0;
-    padding: 7px;
-    border-radius: 5px;
-}
-
-.date-posted {
-    color: rgb(77, 77, 77);
+.review-text h3, .review-text p {
+    margin: 0;
 }
 
 .buttons {
@@ -76,6 +71,7 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+    gap: 5px;
 }
 
 /* responsiveness */
@@ -87,19 +83,14 @@
 }
 
 @media screen and (max-width: 500px) {
+    .stars-container .fa-star {
+        font-size: 25px;
+        padding: 3px;
+    }
     .card {
         padding: 5px 15px 5px 15px;
     }
     .buttons {
         justify-content: center;
-    }
-}
-
-@media screen and (max-width: 440px) {
-    .top-buttons {
-        flex-direction: column;
-    }
-    .top-buttons .search-button {
-        min-width: 50vw;
     }
 }

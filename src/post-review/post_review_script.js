@@ -3,9 +3,19 @@ $(document).ready(function() {
         get: (searchParams, prop) => searchParams.get(prop),
     });
     companyId = params.id;
+
+    //fill in review data if in edit mode
+    if($("#edit-mode").length > 0)
+    {
+        reviewId = atob(atob(params.edit).split(".")[0]);
+
+        fillData();
+        $(".submit-button").text("Submit changes");
+    }
 });
 
 let companyId = -1;
+let reviewId = -1;
 
 function checkEmtpyValues(title, pros, cons, rating)
 {
@@ -49,6 +59,12 @@ function checkValues()
         "rating": rating
     };
 
+    if($("#edit-mode").length > 0)
+    {
+        params["review_id"] = reviewId;
+        endpoint = "../api/edit_review.php";
+    }
+
     $.ajax({
         url: endpoint,
         method: "POST",
@@ -58,10 +74,25 @@ function checkValues()
             xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
         },        
         success: function() {
-            window.location.href = "../views/reviews.php?id=" + companyId;
-        },
-        error: function(xmlhttp) {
-            console.log(xmlhttp.responseText);
+            location.reload();
+        }
+    });
+}
+
+function fillData()
+{
+    $.ajax({
+        url: "../api/get_review.php",
+        method: "GET",
+        data: {"id": reviewId},
+        contentType: "application/x-www-form-urlencoded",      
+        success: function(response) {
+            $("#title").val(response["job_title"]);
+            $("#type").val(response["job_type"]);
+            $("input[name=status][value=" + response["employment_status"] + "]").prop("checked", true);
+            $("#pros").val(response["pros"]);
+            $("#cons").val(response["cons"]);            
+            $("#rate-" + response["rating"]).prop("checked", true);
         }
     });
 }

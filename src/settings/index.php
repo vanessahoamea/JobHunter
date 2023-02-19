@@ -38,6 +38,7 @@ if($data["account_type"] == "candidate")
                 <a href="../profile">Profile</a>
                 <?php if($isCandidate): ?>
                     <a href="../my-jobs" class="nav-tab">My jobs</a>
+                    <a href="../my-reviews" class="nav-tab">My reviews</a>
                 <?php endif; ?>
                 <a href="javascript:void(0)" class="nav-tab" onclick="logout()">Log out</a>
             </div>
