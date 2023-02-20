@@ -26,22 +26,15 @@ $(document).ready(function() {
 
     //ratings
     $.ajax({
-        url: "../api/get_reviews.php",
+        url: "../api/get_review_stats.php",
         method: "GET",
-        data: {"company_id": id, "page": 1, "limit": 9999},
+        data: {"company_id": companyId},
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
         success: function(response) {
-            response = response["reviews"];
-
-            let rating = 0;
-            for(let i=0; i<response.length; i++)
-                rating += response[i]["rating"];
-            rating = Math.round(rating / response.length);
-            
             let stars = $("#company-rating").children(".fa-star");
-            for(let j=0; j<rating; j++)
-                stars.eq(j).addClass("full-star");
+            for(let i=0; i<response["rating"]; i++)
+                stars.eq(i).addClass("full-star");
         }
     });
 

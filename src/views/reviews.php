@@ -37,6 +37,7 @@ if(isset($_COOKIE["jwt"]))
         <link rel="stylesheet" type="text/css" href="../style.css" />
         <link rel="stylesheet" type="text/css" href="../reviews/reviews_style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

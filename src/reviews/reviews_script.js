@@ -4,10 +4,11 @@ $(document).ready(function() {
     });
     companyId = params.id;
 
+    //loading first batch of reviews
     $.ajax({
         url: "../api/get_reviews.php",
         method: "GET",
-        data: {"company_id": companyId, "page": currentPage, "limit": 9999},
+        data: {"company_id": companyId, "page": currentPage, "limit": limit},
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
         success: function(response) {
@@ -17,35 +18,36 @@ $(document).ready(function() {
                 return;
             }
 
-            let rating = 0;
-            let totalCount = response["total_count"];
             response = response["reviews"];
 
             $(".reviews").empty();
-            for(let i=0; i<totalCount; i++)
+            for(let i=0; i<response.length; i++)
             {
-                rating += response[i]["rating"];
-                distribution[response[i]["rating"]]++;
-
-                //displaying user reviews
-                if(i < limit)
-                {
-                    let card = buildReviewCard(response[i]);
-                    $(".reviews").append(card);
-                }
+                let card = buildReviewCard(response[i]);
+                $(".reviews").append(card);
             }
+        }
+    });
 
-            rating = Math.round(rating / totalCount);
-            
-            //setting the company's rating
+    //setting the company's rating
+    $.ajax({
+        url: "../api/get_review_stats.php",
+        method: "GET",
+        data: {"company_id": companyId},
+        contentType: "application/x-www-form-urlencoded",
+        dataType: "json",
+        success: function(response) {
             let stars = $("#company-rating").children(".fa-star");
-            for(let j=0; j<rating; j++)
-                stars.eq(j).addClass("full-star");
+            for(let i=0; i<response["rating"]; i++)
+                stars.eq(i).addClass("full-star");
             
             let reviewStats = $("#reviews-stats");
             reviewStats.removeClass().removeAttr("style");;
             reviewStats.css("font-weight", "bold");
-            reviewStats.text(`Calculated from ${response.length} user-submitted reviews`);
+            reviewStats.text(`Calculated from ${response["total_count"]} user-submitted reviews`);
+
+            for(let i=1; i<=5; i++)
+                distribution[i] = response[i];
         }
     });
 
