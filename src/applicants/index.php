@@ -19,7 +19,7 @@ if(!isset($_GET["id"]) || !JWTController::validateToken($_COOKIE["jwt"]) || $dat
 else
 {
     $company = new CompanyController($data["id"]);
-    if(!$company->validate($_GET["id"], "jobs"))
+    if(!$company->validate($_GET["id"], null, "jobs"))
     {
         header("location: ../");
         exit();

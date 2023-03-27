@@ -84,9 +84,12 @@ class CompanyController extends CompanyModel
         return $result;
     }
 
-    public function validate($itemId, $table)
+    public function validate($itemId, $candidateId, $table)
     {
-        $data = $this->getAllPairRows(array($this->id, $itemId), $table, array("company_id", "id"));
+        if($table == "jobs")
+            $data = $this->getAllPairRows(array($this->id, $itemId), $table, array("company_id", "id"));
+        else
+            $data = $this->getAllPairRows(array($this->id, $candidateId, $itemId), $table, array("company_id", "candidate_id", "id"));
         
         if($data < 1)
             return false;

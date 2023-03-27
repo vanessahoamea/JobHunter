@@ -28,7 +28,7 @@ $(document).ready(function() {
     $.ajax({
         url: "../api/get_review_stats.php",
         method: "GET",
-        data: {"company_id": companyId},
+        data: {"company_id": id},
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
         success: function(response) {

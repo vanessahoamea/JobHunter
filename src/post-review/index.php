@@ -26,8 +26,8 @@ else
     require_once("../controllers/company_controller.php");
 
     $company = new CompanyController($_GET["id"]);
-    $data = $company->getCompanyData();
-    if($data < 1)
+    $companyData = $company->getCompanyData();
+    if($companyData < 1)
     {
         header("location: ../");
         exit();
@@ -41,7 +41,7 @@ else
         $time = $unhashedId[1];
         $signature = $unhashedId[2];
     
-        if($time <= time() - (2 * 60 * 60) || $signature != explode(".", $_COOKIE["jwt"])[2] || !$company->validate($reviewId, "reviews"))
+        if($time <= time() - (2 * 60 * 60) || $signature != explode(".", $_COOKIE["jwt"])[2] || !$company->validate($reviewId, $data["id"], "reviews"))
         {
             header("location: ../");
             exit();
@@ -92,7 +92,7 @@ else
         <div id="main">
             <?php if($editMode): ?>
                 <div id="edit-mode" style="display: none;"></div>
-                <h1>Editing review for <a href="../views/companies.php?id=<?php echo $data["id"]; ?>"><?php echo $data["company_name"]; ?></a></h1>
+                <h1>Editing review for <a href="../views/companies.php?id=<?php echo $companyData["id"]; ?>"><?php echo $companyData["company_name"]; ?></a></h1>
             <?php endif; ?>
 
             <div id="wrapper">

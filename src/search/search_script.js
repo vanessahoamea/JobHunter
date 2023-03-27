@@ -112,7 +112,7 @@ function setFilters()
     if(data.type != null)
         data.type.split(",").forEach(type => $(`input[name='job-type'][value='${type}']`).prop("checked", true));
     if(data.level != null)
-        data.level.split(",").forEach(level => $(`input[name='job-type'][value='${level}']`).prop("checked", true));
+        data.level.split(",").forEach(level => $(`input[name='level'][value='${level}']`).prop("checked", true));
     if(data.salary == "true")
         $("input[name='salary'][value='on']").prop("checked", true);
 }

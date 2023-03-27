@@ -33,7 +33,11 @@ else
     {
         $token = explode(" ", trim($headers["Authorization"]))[1];
         if(JWTController::validateToken($token))
-            $candidateId = JWTController::getPayload($token)["id"];
+        {
+            $payload = JWTController::getPayload($token);
+            if($payload["account_type"] == "candidate")
+                $candidateId = $payload["id"];
+        }
     }
     
     $company = new CompanyController($companyId);

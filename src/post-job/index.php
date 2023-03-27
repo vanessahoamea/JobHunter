@@ -27,7 +27,7 @@ if(isset($_GET["item"]))
     $time = $unhashedId[1];
     $signature = $unhashedId[2];
 
-    if($time <= time() - (2 * 60 * 60) || $signature != explode(".", $_COOKIE["jwt"])[2] || !$company->validate($jobId, "jobs"))
+    if($time <= time() - (2 * 60 * 60) || $signature != explode(".", $_COOKIE["jwt"])[2] || !$company->validate($jobId, null, "jobs"))
     {
         header("location: ../");
         exit();
