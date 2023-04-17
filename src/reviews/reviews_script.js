@@ -14,6 +14,7 @@ $(document).ready(function() {
         success: function(response) {
             if(response["total_count"] == 0)
             {
+                $("#reviews-stats").remove();
                 $(".reviews").html("<p><i>Nothing to see here.</i><p>");
                 return;
             }
@@ -176,12 +177,16 @@ function toggleModal()
                     xAxes: [{
                         gridLines: {
                             display:false
+                        },
+                        ticks: {
+                            precision: 0,
+                            beginAtZero: true
                         }
                     }],
                     yAxes: [{
                         gridLines: {
                             display:false
-                        }   
+                        }
                     }]
                 }
             }

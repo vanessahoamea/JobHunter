@@ -96,3 +96,8 @@ function fillData()
         }
     });
 }
+
+function redirect(id)
+{
+    window.location.href = "../views/companies.php?id=" + id;
+}

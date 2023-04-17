@@ -84,6 +84,12 @@ class CompanyController extends CompanyModel
         return $result;
     }
 
+    public function getNotifications()
+    {
+        //return $this->getAllRows($this->id, "notifications", "company_id");
+        return $this->getApplicantNotifications($this->id);
+    }
+
     public function validate($itemId, $candidateId, $table)
     {
         if($table == "jobs")

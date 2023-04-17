@@ -7,8 +7,8 @@ if(!isset($_COOKIE["jwt"]))
 
 require_once("../controllers/jwt_controller.php");
 
-$data = JWTController::getPayload($_COOKIE["jwt"]);
-if(!JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "candidate")
+$candidateData = JWTController::getPayload($_COOKIE["jwt"]);
+if(!JWTController::validateToken($_COOKIE["jwt"]) || $candidateData["account_type"] != "candidate")
 {
     header("location: ../");
     exit();
@@ -23,13 +23,22 @@ else
 
     require_once("../models/database.php");
     require_once("../models/company_model.php");
+    require_once("../models/candidate_model.php");
     require_once("../controllers/company_controller.php");
+    require_once("../controllers/candidate_controller.php");
 
     $company = new CompanyController($_GET["id"]);
     $companyData = $company->getCompanyData();
     if($companyData < 1)
     {
         header("location: ../");
+        exit();
+    }
+
+    $candidate = new CandidateController($candidateData["id"]);
+    if(!$candidate->canReview($_GET["id"]))
+    {
+        include("../views/can_not_review.php");
         exit();
     }
 
@@ -41,7 +50,7 @@ else
         $time = $unhashedId[1];
         $signature = $unhashedId[2];
     
-        if($time <= time() - (2 * 60 * 60) || $signature != explode(".", $_COOKIE["jwt"])[2] || !$company->validate($reviewId, $data["id"], "reviews"))
+        if($time <= time() - (2 * 60 * 60) || $signature != explode(".", $_COOKIE["jwt"])[2] || !$company->validate($reviewId, $candidateData["id"], "reviews"))
         {
             header("location: ../");
             exit();

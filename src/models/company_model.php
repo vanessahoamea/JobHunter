@@ -367,5 +367,40 @@ class CompanyModel extends DBHandler
         $stmt = null;
         return $review;
     }
+
+    protected function getApplicantNotifications($companyId)
+    {
+        $stmt = $this->connect()->prepare("SELECT DISTINCT date FROM notifications WHERE company_id = ? ORDER BY date DESC;");
+
+        if(!$stmt->execute(array($companyId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $dates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $dates = array_map(fn($value) => $value["date"], $dates);
+        $stmt = null;
+
+        $stmt = $this->connect()->prepare("SELECT * FROM notifications WHERE company_id = ?;");
+
+        if(!$stmt->execute(array($companyId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = null;
+
+        $notificationsByDate = array();
+        foreach($dates as $date)
+        {
+            $notificationsByDate[$date] = array_filter($notifications, fn($notification) => $notification["date"] == $date);
+            $notificationsByDate[$date] = array_values($notificationsByDate[$date]);
+        }
+
+        return $notificationsByDate;
+    }
 }
 ?>

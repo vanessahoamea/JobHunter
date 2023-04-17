@@ -250,6 +250,16 @@ class CandidateController extends CandidateModel
         return $this->deleteItem($this->id, $reviewId, "reviews");
     }
 
+    public function canReview($companyId)
+    {
+        $data = $this->getAllPairRows(array($this->id, $companyId), "candidate_experience", array("candidate_id", "company_id"));
+
+        if($data < 1)
+            return false;
+
+        return true;
+    }
+
     private function emptyInput($params)
     {
         if(empty($this->id))
