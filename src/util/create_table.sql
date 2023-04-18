@@ -125,6 +125,7 @@ CREATE TABLE notifications (
     job_id int(11) NOT NULL,
     job_title varchar(100) NOT NULL,
     applicants int(11) NOT NULL,
+    unread_notifications int(11) NOT NULL,
     date date NOT NULL,
     FOREIGN KEY (company_id) REFERENCES companies(id),
     FOREIGN KEY (job_id) REFERENCES jobs(id)

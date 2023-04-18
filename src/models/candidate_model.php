@@ -220,6 +220,42 @@ class CandidateModel extends DBHandler
             return 0;
         }
 
+        //sending a notification to the company whenever a candidate applies
+        $stmt = null;
+        $stmt = $this->connect()->prepare("UPDATE notifications SET applicants = applicants + 1, unread_notifications = unread_notifications + 1 WHERE job_id = ? AND date = ?;");
+
+        if(!$stmt->execute(array($jobId, date("Y-m-d"))))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() == 0)
+        {
+            //creating an entry in the notifications table for this job
+            $stmt = null;
+            $stmt = $this->connect()->prepare("SELECT company_id, title FROM jobs WHERE id = ?;");
+
+            if(!$stmt->execute(array($jobId)))
+            {
+                $stmt = null;
+                return 0;
+            }
+            
+            $jobData = $stmt->fetch();
+            $companyId = $jobData["company_id"];
+            $jobTitle = $jobData["title"];
+
+            $stmt = null;
+            $stmt = $this->connect()->prepare("INSERT INTO notifications VALUES (?, ?, ?, ?, ?, ?);");
+
+            if(!$stmt->execute(array($companyId, $jobId, $jobTitle, 1, 1, date("Y-m-d"))))
+            {
+                $stmt = null;
+                return 0;
+            }
+        }
+
         $stmt = null;
         return 1;
     }

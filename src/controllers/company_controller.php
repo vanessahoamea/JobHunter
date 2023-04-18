@@ -86,8 +86,29 @@ class CompanyController extends CompanyModel
 
     public function getNotifications()
     {
-        //return $this->getAllRows($this->id, "notifications", "company_id");
         return $this->getApplicantNotifications($this->id);
+    }
+
+    public function getNotificationCount()
+    {
+        $data = $this->getAllRows($this->id, "notifications", "company_id");
+        
+        if($data < 1)
+            return $data;
+        
+        $total = 0;
+        foreach($data as $value)
+            $total += $value["unread_notifications"];
+        
+        return array(
+            "company_id" => $this->id,
+            "unread_notifications" => $total,
+        );
+    }
+
+    public function removeNotifications()
+    {
+        return $this->deleteNotifications($this->id);
     }
 
     public function validate($itemId, $candidateId, $table)

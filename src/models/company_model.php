@@ -402,5 +402,19 @@ class CompanyModel extends DBHandler
 
         return $notificationsByDate;
     }
+
+    protected function deleteNotifications($companyId)
+    {
+        $stmt = $this->connect()->prepare("UPDATE notifications SET unread_notifications = 0 WHERE company_id = ?;");
+
+        if(!$stmt->execute(array($companyId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        $stmt = null;
+        return 1;
+    }
 }
 ?>

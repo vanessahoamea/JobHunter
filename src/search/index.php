@@ -9,6 +9,21 @@ else
     $data = JWTController::getPayload($_COOKIE["jwt"]);
     if(JWTController::validateToken($_COOKIE["jwt"]) && $data["account_type"] == "candidate")
         $canApply = true;
+
+    //notifications
+    if($data["account_type"] == "company")
+    {
+        require_once("../models/database.php");
+        require_once("../models/company_model.php");
+        require_once("../controllers/company_controller.php");
+
+        $company = new CompanyController($data["id"]);
+        $notifications = $company->getNotificationCount();
+        if($notifications == 0)
+            $notifications = 0;
+        else
+            $notifications = min(99, $notifications["unread_notifications"]);
+    }
 }
 ?>
 
@@ -46,6 +61,12 @@ else
                     <?php if($canApply): ?>
                         <a href="../my-jobs" class="nav-tab">My jobs</a>
                         <a href="../my-reviews" class="nav-tab">My reviews</a>
+                    <?php else: ?>
+                        <a href="../notifications">Notifications
+                            <?php if($notifications > 0): ?>
+                                <div class="notifs"><?php echo $notifications; ?></div>
+                            <?php endif; ?>
+                        </a>
                     <?php endif; ?>
                     <a href="javascript:void(0)" class="nav-tab" onclick="logout(false)">Log out</a>
                 </div>

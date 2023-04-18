@@ -25,6 +25,13 @@ else
         exit();
     }
 }
+
+//notifications
+$notifications = $company->getNotificationCount();
+if($notifications == 0)
+    $notifications = 0;
+else
+    $notifications = min(99, $notifications["unread_notifications"]);
 ?>
 
 <!DOCTYPE html>
@@ -48,17 +55,15 @@ else
         <nav id="navbar" class="topnav">
             <a href="../" id="logo">JobHunter</a>
             <a href="../search" class="nav-tab">Recent jobs</a>
-            <?php if(!isset($_COOKIE["jwt"])): ?>
-                <div class="right">
-                    <a href="../login" class="nav-tab">Login</a>
-                    <a href="../create-account" class="nav-tab">Create account</a>
-                </div>
-            <?php else: ?>
-                <div class="right">
-                    <a href="../profile" class="nav-tab">Profile</a>
-                    <a href="javascript:void(0)" class="nav-tab" onclick="logout(false)">Log out</a>
-                </div>
-            <?php endif; ?>
+            <div class="right">
+                <a href="../profile" class="nav-tab">Profile</a>
+                <a href="../notifications">Notifications
+                    <?php if($notifications > 0): ?>
+                        <div class="notifs"><?php echo $notifications; ?></div>
+                    <?php endif; ?>
+                </a>
+                <a href="javascript:void(0)" class="nav-tab" onclick="logout(false)">Log out</a>
+            </div>
             <a href="javascript:void(0);" class="icon" onclick="expand()">
                 <i class="fa fa-bars"></i>
             </a>

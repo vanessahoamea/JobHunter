@@ -86,6 +86,11 @@
     background-color: #9c1de0;
 }
 
+.modal .search-button {
+    width: fit-content;
+    margin-top: 5px;
+}
+
 /* responsiveness */
 @media screen and (max-width: 750px) {
     #wrapper {

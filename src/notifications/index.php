@@ -1,7 +1,7 @@
 <?php
 if(!isset($_COOKIE["jwt"]))
 {
-    header("location: ..");
+    header("location: ../login");
     exit();
 }
 else
@@ -14,6 +14,14 @@ else
         header("location: ..");
         exit();
     }
+
+    //delete unread notifications
+    require_once("../models/database.php");
+    require_once("../models/company_model.php");
+    require_once("../controllers/company_controller.php");
+
+    $company = new CompanyController($data["id"]);
+    $company->removeNotifications();
 }
 ?>
 

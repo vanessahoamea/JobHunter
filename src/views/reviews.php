@@ -13,7 +13,7 @@ $company = new CompanyController($_GET["id"]);
 $response = $company->getCompanyData();
 if($response == -1 || $response == 0)
 {
-    include("page_not_found.php");
+    include("page_not_found.html");
     exit();
 }
 else
@@ -27,6 +27,17 @@ if(isset($_COOKIE["jwt"]))
     $data = JWTController::getPayload($_COOKIE["jwt"]);
     if(JWTController::validateToken($_COOKIE["jwt"]) && $data["account_type"] == "candidate")
         $isCandidate = true;
+
+    //notifications
+    if($data["account_type"] == "company")
+    {
+        $company = new CompanyController($data["id"]);
+        $notifications = $company->getNotificationCount();
+        if($notifications == 0)
+            $notifications = 0;
+        else
+            $notifications = min(99, $notifications["unread_notifications"]);
+    }
 }
 ?>
 
@@ -57,6 +68,12 @@ if(isset($_COOKIE["jwt"]))
                     <?php if($isCandidate): ?>
                         <a href="../my-jobs" class="nav-tab">My jobs</a>
                         <a href="../my-reviews" class="nav-tab">My reviews</a>
+                    <?php else: ?>
+                        <a href="../notifications">Notifications
+                            <?php if($notifications > 0): ?>
+                                <div class="notifs"><?php echo $notifications; ?></div>
+                            <?php endif; ?>
+                        </a>
                     <?php endif; ?>
                     <a href="javascript:void(0)" class="nav-tab" onclick="logout()">Log out</a>
                 <?php else: ?>

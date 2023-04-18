@@ -14,14 +14,15 @@ if(!JWTController::validateToken($_COOKIE["jwt"]) || $data["account_type"] != "c
     exit();
 }
 
+require_once("../models/database.php");
+require_once("../models/company_model.php");
+require_once("../controllers/company_controller.php");
+
+$company = new CompanyController($data["id"]);
+
 $editMode = false;
 if(isset($_GET["item"]))
 {
-    require_once("../models/database.php");
-    require_once("../models/company_model.php");
-    require_once("../controllers/company_controller.php");
-
-    $company = new CompanyController($data["id"]);
     $unhashedId = explode(".", base64_decode(rawurldecode($_GET["item"])));
     $jobId = base64_decode($unhashedId[0]);
     $time = $unhashedId[1];
@@ -35,6 +36,13 @@ if(isset($_GET["item"]))
     else
         $editMode = true;
 }
+
+//notifications
+$notifications = $company->getNotificationCount();
+if($notifications == 0)
+    $notifications = 0;
+else
+    $notifications = min(99, $notifications["unread_notifications"]);
 ?>
 
 <!DOCTYPE html>
@@ -62,6 +70,11 @@ if(isset($_GET["item"]))
             <a href="../search" class="nav-tab">Recent jobs</a>
             <div class="right">
                 <a href="../profile">Profile</a>
+                <a href="../notifications">Notifications
+                    <?php if($notifications > 0): ?>
+                        <div class="notifs"><?php echo $notifications; ?></div>
+                    <?php endif; ?>
+                </a>
                 <a href="javascript:void(0)" class="nav-tab" onclick="logout()">Log out</a>
             </div>
             <a href="javascript:void(0);" class="icon" onclick="expand()">

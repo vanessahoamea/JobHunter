@@ -10,6 +10,24 @@ if(isset($_COOKIE["jwt"]))
         if($data["account_type"] == "candidate")
             $isCandidate = true;
     }
+    
+    //notifications
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => "http://localhost/Licenta/api/get_notification_count.php",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_CUSTOMREQUEST => "GET",
+        CURLOPT_HTTPHEADER => array(
+            "Authorization: Bearer " . $_COOKIE["jwt"]
+        )
+    ));
+    $response = json_decode(curl_exec($curl), true);
+    curl_close($curl);
+
+    $notifications = min(99, $response["unread_notifications"]);
 }
 ?>
 
@@ -43,6 +61,12 @@ if(isset($_COOKIE["jwt"]))
                     <?php if($isCandidate): ?>
                         <a href="my-jobs" class="nav-tab">My jobs</a>
                         <a href="my-reviews" class="nav-tab">My reviews</a>
+                    <?php else: ?>
+                        <a href="notifications">Notifications
+                            <?php if($notifications > 0): ?>
+                                <div class="notifs"><?php echo $notifications; ?></div>
+                            <?php endif; ?>
+                        </a>
                     <?php endif; ?>
                     <a href="javascript:void(0)" class="nav-tab" onclick="logout(true)">Log out</a>
                 </div>
