@@ -94,9 +94,17 @@ function apiRequest(endpoint, method, params)
 function updateAbout()
 {
     const text = $("#about").val();
+    const portfolioLink1 = $("#portfolio-link1").val();
+    const portfolioLink2 = $("#portfolio-link2").val();
+    const portfolioLink3 = $("#portfolio-link3").val();
 
     const endpoint = "../api/add_about.php";
-    const params = {"text": text};
+    const params = {
+        "text": text,
+        "link1": portfolioLink1,
+        "link2": portfolioLink2,
+        "link3": portfolioLink3
+    };
 
     apiRequest(endpoint, "POST", params);
 }

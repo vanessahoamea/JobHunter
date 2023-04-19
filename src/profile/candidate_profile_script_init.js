@@ -37,12 +37,25 @@ $(document).ready(function() {
             {
                 $("#about-content").text(response["text"]);
                 $("#about").val(response["text"]);
+
+                if(!Array.isArray(response["links"]))
+                {
+                    let portfolioLinks = $("<ul class='portfolio-link-list'></ul>");
+                    for(const [key, value] of Object.entries(response["links"]))
+                    {
+                        $(`#portfolio-${key}`).val(value);
+                        portfolioLinks.append(`<li><a href="${value}">${value}</a></li>`);
+                    }
+                    
+                    $("#about-content").append("<p style='margin-bottom: 3px;'><b>Personal portfolio:</b></p>");
+                    $("#about-content").append(portfolioLinks);
+                }
             }
             else
-                fillSection("#about-content", null, null);
+                fillSection("#about-content", null, null, null);
         },
         error: function() {
-            fillSection("#about-content", null, null);
+            fillSection("#about-content", null, null, null);
         }
     });
 

@@ -205,6 +205,11 @@ if(isset($_COOKIE["jwt"]))
                     <form style="width: 95%;">
                         <label for="about">Tell us about youself, your skills, etc.</label>
                         <textarea id="about" name="about" class="input" rows=15></textarea>
+
+                        <label>Portfolio links</label>
+                        <input type="url" id="portfolio-link1" class="input portfolio-link">
+                        <input type="url" id="portfolio-link2" class="input portfolio-link">
+                        <input type="url" id="portfolio-link3" class="input portfolio-link">
                     </form>
 
                     <button class="add-button" onclick="updateAbout()">Update about</button>

@@ -5,7 +5,7 @@ class DBHandler
     {
         try
         {
-            $dbh = new PDO("mysql:host=localhost; dbname=jobhunter", "root", "");
+            $dbh = new PDO("mysql:host=localhost; dbname=jobhunter", "root", "", array(PDO::MYSQL_ATTR_FOUND_ROWS => true));
             return $dbh;
         }
         catch(PDOException $e)

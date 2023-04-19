@@ -67,7 +67,7 @@ class CandidateModel extends DBHandler
         return 1;
     }
 
-    protected function createUpdateAbout($id, $text)
+    protected function createUpdateAbout($id, $text, $link1, $link2, $link3)
     {
         $params = array($text, $id);
         $alreadyExists = $this->getAllRows($id, "candidate_about", "candidate_id");
@@ -101,7 +101,45 @@ class CandidateModel extends DBHandler
             }
         }
 
-        $stmt = null;
+        $portfolioLinks = array($link1, $link2, $link3);
+        for($i=0; $i<3; $i+=1)
+        {
+            $stmt = null;
+
+            if($portfolioLinks[$i] == "")
+            {
+                $stmt = $this->connect()->prepare("UPDATE candidate_links SET link = null WHERE candidate_id = ? AND link_number = ?;");
+
+                if(!$stmt->execute(array($id, $i+1)))
+                {
+                    $stmt = null;
+                    return 0;
+                }
+            }
+            else
+            {
+                $stmt = $this->connect()->prepare("UPDATE candidate_links SET link = ? WHERE candidate_id = ? AND link_number = ?;");
+
+                if(!$stmt->execute(array($portfolioLinks[$i], $id, $i+1)))
+                {
+                    $stmt = null;
+                    return 0;
+                }
+
+                if($stmt->rowCount() == 0)
+                {
+                    $stmt = null;
+                    $stmt = $this->connect()->prepare("INSERT INTO candidate_links VALUES (?, ?, ?);");
+
+                    if(!$stmt->execute(array($id, $i+1, $portfolioLinks[$i])))
+                    {
+                        $stmt = null;
+                        return 0;
+                    }
+                }
+            }
+        }
+
         return 1;
     }
 

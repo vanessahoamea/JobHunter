@@ -30,20 +30,34 @@ class CandidateController extends CandidateModel
         return $this->updateCandidate($this->id, $fname, $lname, $email, $phone, $location, $newPassword, $currentPassword);
     }
 
-    public function addAbout($text)
+    public function addAbout($text, $link1, $link2, $link3)
     {
-        return $this->createUpdateAbout($this->id, $text);
+        return $this->createUpdateAbout($this->id, $text, $link1, $link2, $link3);
     }
 
     public function getAbout()
     {
-        $data = $this->getAllRows($this->id, "candidate_about", "candidate_id");
+        $about = $this->getAllRows($this->id, "candidate_about", "candidate_id");
 
-        if($data < 1)
+        if($about < 1)
+            return $about;
+
+        $data = array(
+            "text" => $about[0]["text"],
+            "links" => array()
+        );
+        
+        $links = $this->getAllRows($this->id, "candidate_links", "candidate_id");
+
+        if($links == 0)
+            return 0;
+        if($links == -1)
             return $data;
 
-        $data = $data[0];
-        unset($data["candidate_id"]);
+        for($i=0; $i<count($links); $i+=1)
+            if($links[$i]["link"] != null)
+                $data["links"]["link" . $links[$i]["link_number"]] = $links[$i]["link"];
+
         return $data;
     }
 

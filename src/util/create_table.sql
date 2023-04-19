@@ -68,6 +68,13 @@ CREATE TABLE candidate_projects (
     FOREIGN KEY (candidate_id) REFERENCES candidates(id)
 );
 
+CREATE TABLE candidate_links (
+    candidate_id int(11) NOT NULL,
+    link_number int(11) NOT NULL,
+    link varchar(200),
+    FOREIGN KEY (candidate_id) REFERENCES candidates(id)
+);
+
 --job-related data
 CREATE TABLE jobs (
     id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL,

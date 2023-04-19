@@ -31,9 +31,12 @@ else
 
         $data = json_decode(file_get_contents("php://input"));
         $text = isset($data->text) ? trim($data->text) : '';
+        $link1 = isset($data->link1) ? trim($data->link1) : '';
+        $link2 = isset($data->link2) ? trim($data->link2) : '';
+        $link3 = isset($data->link3) ? trim($data->link3) : '';
 
         $candidate = new CandidateController($id);
-        $response = $candidate->addAbout($text);
+        $response = $candidate->addAbout($text, $link1, $link2, $link3);
 
         if($response == 1)
         {
