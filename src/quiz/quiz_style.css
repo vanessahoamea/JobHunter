@@ -1,0 +1,55 @@
+#form {
+    background-color: white;
+    border-radius: 10px;
+    border-width: 4px;
+    margin: 0 auto;
+    max-width: 100%;
+    width: 60vw;
+    padding: 25px 15px;
+}
+
+.question, #results {
+    display: none;
+}
+
+.question label {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.options {
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.options input[type="radio"] {
+    display: none;
+}
+
+input[type="radio"]:checked+div {
+    background-color: #A443DA;
+    color: white;
+}
+
+.option {
+    background-color: gainsboro;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.form-button {
+    background-color: #E87461;
+    border: none;
+    border-radius: 3px;
+    padding: 10px;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.form-button:hover {
+    background-color: #ea5f4a;
+}

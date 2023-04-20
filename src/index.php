@@ -81,6 +81,9 @@ if(isset($_COOKIE["jwt"]))
 
             <input id="search" class="search" type="text" placeholder="Enter keywords"/>
             <button class="search-button">Search</button>
+
+            <p style="margin-top: 15vh; margin-bottom: 0;">Haven't decided on a career path yet?</p>
+            <p style="margin-top: 0;"><a href="quiz">Try taking our quiz!</a></p>
         </div>
         
         <!-- fontawesome icons -->
