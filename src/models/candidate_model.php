@@ -235,11 +235,15 @@ class CandidateModel extends DBHandler
         return 1;
     }
 
-    protected function applySaveHide($candidateId, $jobId, $table)
+    protected function applySaveHide($candidateId, $jobId, $question1Answer, $question2Answer, $question3Answer, $table)
     {
         $data = $this->getAllRows($jobId, "jobs", "id");
         if($data < 1)
             return $data;
+        
+        $hasQuestions = false;
+        if($data[0]["question1"] != null || $data[0]["question2"] != null || $data[0]["question3"] != null)
+            $hasQuestions = true;
         
         $data = $this->getAllPairRows(array($candidateId, $jobId), $table, array("candidate_id", "job_id"));
         if($data == 0)
@@ -250,9 +254,33 @@ class CandidateModel extends DBHandler
             return -2;
         }
 
-        $stmt = $this->connect()->prepare("INSERT INTO " . $table . " VALUES (?, ?);");
+        if($table != "applicants" || !$hasQuestions)
+        {
+            $query = "INSERT INTO " . $table . " (candidate_id, job_id) VALUES (?, ?);";
+            $params = array($candidateId, $jobId);
+        }
+        else
+        {
+            $query = "INSERT INTO applicants (candidate_id, job_id";
+            $placeholders = "?, ?";
+            $params = array($candidateId, $jobId);
 
-        if(!$stmt->execute(array($candidateId, $jobId)))
+            $answers = array($question1Answer, $question2Answer, $question3Answer);
+            for($i=0; $i<3; $i+=1)
+            {
+                if(!empty($answers[$i]))
+                {
+                    $query .= ", question" . ($i+1) . "_answer";
+                    $placeholders .= ", ?";
+                    array_push($params, $answers[$i]);
+                }
+            }
+            $query .= ") VALUES (" . $placeholders . ")";
+        }
+
+        $stmt = $this->connect()->prepare($query);
+
+        if(!$stmt->execute($params))
         {
             $stmt = null;
             return 0;

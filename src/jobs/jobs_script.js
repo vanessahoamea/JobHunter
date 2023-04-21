@@ -25,19 +25,28 @@ $(document).ready(function() {
             $(".job-data-lower").append("<p><i class='fa-solid fa-location-dot fa-fw'></i>in " + response["location_name"] + "</p>");
 
             $("#skills-section").children("div").remove();
-            const jobRequirements = $("<div class='job-requirements'></div>");
-            JSON.parse(response["skills"]).forEach(skill => {
-                jobRequirements.append("<div class='skill-tag'>" + skill + "</div>");
-            })
-            $("#skills-section").append(jobRequirements);
+            if(response["skills"] != "[]")
+            {
+                const jobRequirements = $("<div class='job-requirements'></div>");
+                JSON.parse(response["skills"]).forEach(skill => {
+                    jobRequirements.append("<div class='skill-tag'>" + skill + "</div>");
+                })
+                $("#skills-section").append(jobRequirements);
+            }
+            else
+                $("#skills-section").remove();
 
             $("#description-section").children("div").remove();
             $("#description-section").append(response["description"]);
+
+            for(let i=1; i<=3; i++)
+                questions.push(response["question" + i]);
         }
     });
 });
 
 let currentJobId = -1;
+let questions = [];
 
 //apply for job
 $(window).click(function(event) {
@@ -47,6 +56,35 @@ $(window).click(function(event) {
 
 function toggleModal(index)
 {
+    if(index == 1 && questions.filter((question) => question != null).length > 0)
+    {
+        if($(".modal").eq(0).css("display") == "none")
+        {
+            $(".modal-wrapper").empty();
+            questions.forEach((question, index) => {
+                if(question == null)
+                    return;
+
+                const div = $("<div style='text-align: left;'></div>");
+                div.append(`<label for='question${index + 1}'>${question}</label>`);
+                div.append(` <span class='warning-text'>(this field is required)</span>`);
+                $(".modal-wrapper").append(div);
+                $(".modal-wrapper").append(`<textarea name='question${index + 1}' id='question${index + 1}' class='input' rows=3>`);
+            });
+            $(".modal-wrapper").append(`<button class='search-button' onclick='checkAnswers()'>Apply</button>`);
+
+            $(".modal").eq(0).css("display", "block");
+            $(".modal-wrapper").css("display", "block");
+        }
+        else
+        {
+            $(".modal").eq(0).css("display", "none");
+            $(".modal-wrapper").css("display", "none");
+        }
+
+        return;
+    }
+
     let text = (index == 1) ? "<p>Would you like to send an application for this job?</p>"
                : (index == 2) ? "<p>Would you like to save this job for later?</p>"
                : "<p>Would you like to hide this job posting?</p>";
@@ -77,12 +115,24 @@ function postRequest(index)
     }
 
     let endpoint = "../api/";
-    endpoint += (index == 1) ? "apply.php" : (index == 2) ? "save_job.php" : "hide_job.php";
+    let data = {"job_id": currentJobId};
+    if(index == 1)
+    {
+        endpoint += "apply.php";
+        
+        for(let i=1; i<=3; i++)
+            if($(`#question${i}`).length > 0)
+                data[`question${i}_answer`] = $(`#question${i}`).val();
+    }
+    else if(index == 2)
+        endpoint += "save_job.php";
+    else
+        endpoint += "hide_job.php";
 
     $.ajax({
         url: endpoint,
         method: "POST",
-        data: JSON.stringify({"job_id": currentJobId}),
+        data: JSON.stringify(data),
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
         beforeSend: function(xmlhttp) {
@@ -101,6 +151,20 @@ function postRequest(index)
             $(".modal-wrapper").append("<button class='search-button' onclick='toggleModal(null)'>Close</button>");
         }
     });
+}
+
+function checkAnswers()
+{
+    for(let i=0; i<questions.length; i++)
+        if($(`#question${i + 1}`).val() == "")
+        {
+            $(".warning-text").eq(i).css("display", "inline");
+            return;
+        }
+        else
+            $(".warning-text").eq(i).css("display", "none");
+
+    postRequest(1);
 }
 
 //helper function

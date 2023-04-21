@@ -49,6 +49,9 @@ function checkValues()
     const salary = $("#salary").val();
     const physical = $("input[name=physical]:checked").eq(0).val();
     const description = $("#description").html();
+    const question1 = $("#question1").val();
+    const question2 = $("#question2").val();
+    const question3 = $("#question3").val();
 
     if(checkEmtpyValues(title, locationCoords, description))
         return;
@@ -64,7 +67,10 @@ function checkValues()
         "location_coords": locationCoords,
         "salary": salary,
         "physical": physical,
-        "description": encodeURIComponent(description).replace(/%20/g, "+")
+        "description": encodeURIComponent(description).replace(/%20/g, "+"),
+        "question1": question1,
+        "question2": question2,
+        "question3": question3,
     };
 
     if($("#edit-mode").length > 0)
@@ -104,6 +110,9 @@ function fillData()
             $("#location-lon").val(JSON.parse(response["location_coords"])[1]);
             $("input[name=physical][value=" + response["physical"] + "]").prop("checked", true);
             $("#description").html(response["description"]);
+            $("#question1").val(response["question1"]);
+            $("#question2").val(response["question2"]);
+            $("#question3").val(response["question3"]);
 
             skillsArray = JSON.parse(response["skills"]);
             skillsArray.forEach(skill => {

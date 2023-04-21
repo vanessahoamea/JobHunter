@@ -38,9 +38,12 @@ else
         }
 
         $jobId = isset($data->job_id) ? trim($data->job_id) : '';
+        $question1Answer = isset($data->question1_answer) ? trim($data->question1_answer) : '';
+        $question2Answer = isset($data->question2_answer) ? trim($data->question2_answer) : '';
+        $question3Answer = isset($data->question3_answer) ? trim($data->question3_answer) : '';
 
         $candidate = new CandidateController($id);
-        $response = $candidate->applyToJob($jobId);
+        $response = $candidate->applyToJob($jobId, $question1Answer, $question2Answer, $question3Answer);
 
         if($response == 1)
         {

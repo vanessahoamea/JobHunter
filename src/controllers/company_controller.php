@@ -35,12 +35,12 @@ class CompanyController extends CompanyModel
         return $this->getAllCompanyNames($companyName);
     }
 
-    public function addJob($title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $description, $datePosted)
+    public function addJob($title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $description, $question1, $question2, $question3, $datePosted)
     {
         if($this->emptyInput(array($title, $type, $level, $locationName, $locationCoords, $physical, $description, $datePosted)))
             return -1;
             
-        return $this->createJob($this->id, $title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $datePosted);
+        return $this->createJob($this->id, $title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $question1, $question2, $question3, $datePosted);
     }
 
     public function getJob($jobId)
@@ -53,9 +53,9 @@ class CompanyController extends CompanyModel
         return $this->getRecentJobs($this->id, $page, $limit, $keywords, $locationLat, $locationLon, $skills, $type, $level, $salary, $candidateId);
     }
 
-    public function editJob($jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical)
+    public function editJob($jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical, $question1, $question2, $question3)
     {
-        return $this->updateJob($this->id, $jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical);
+        return $this->updateJob($this->id, $jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical, $question1, $question2, $question3);
     }
 
     public function removeJob($jobId)

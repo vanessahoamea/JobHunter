@@ -87,6 +87,9 @@ CREATE TABLE jobs (
     location_coords json NOT NULL,
     physical varchar(10) NOT NULL,
     salary varchar(30),
+    question1 varchar(100),
+    question2 varchar(100),
+    question3 varchar(100),
     date_posted date NOT NULL,
     FOREIGN KEY (company_id) REFERENCES companies(id)
 );
@@ -94,6 +97,9 @@ CREATE TABLE jobs (
 CREATE TABLE applicants (
     candidate_id int(11) NOT NULL,
     job_id int(11) NOT NULL,
+    question1_answer varchar(500) CHARSET utf8,
+    question2_answer varchar(500) CHARSET utf8,
+    question3_answer varchar(500) CHARSET utf8,
     FOREIGN KEY (candidate_id) REFERENCES candidates(id),
     FOREIGN KEY (job_id) REFERENCES jobs(id)
 );

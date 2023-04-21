@@ -82,7 +82,7 @@ class CompanyModel extends DBHandler
         return $names;
     }
 
-    protected function createJob($id, $title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $datePosted)
+    protected function createJob($id, $title, $skills, $type, $level, $locationName, $locationCoords, $physical, $salary, $question1, $question2, $question3, $datePosted)
     {
         $params = array($id, $title, $type, $level, $locationName, $locationCoords, $physical, $datePosted);
         $paramsString = array("company_id", "title", "type", "level", "location_name", "location_coords", "physical", "date_posted");
@@ -97,6 +97,14 @@ class CompanyModel extends DBHandler
             array_push($params, $salary);
             array_push($paramsString, "salary");
         }
+
+        $questions = array($question1, $question2, $question3);
+        for($i=0; $i<3; $i+=1)
+            if(!empty($questions[$i]))
+            {
+                array_push($params, $questions[$i]);
+                array_push($paramsString, "question" . ($i+1));
+            }
 
         $queryParams = implode(", ", $paramsString);
         $placeholders = implode(", ", array_fill(0, count($params), "?"));
@@ -241,7 +249,7 @@ class CompanyModel extends DBHandler
         return $result;
     }
 
-    protected function updateJob($companyId, $jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical)
+    protected function updateJob($companyId, $jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical, $question1, $question2, $question3)
     {
         $job = $this->getAllPairRows(array($companyId, $jobId), "jobs", array("company_id", "id"));
         
@@ -252,9 +260,9 @@ class CompanyModel extends DBHandler
             return -2;
 
         //handling parameters
-        $params = array($title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical);
-        $paramsString = array("title", "skills", "type", "level", "location_name", "location_coords", "salary", "physical");
-        $emptyArray = array('', '', '', '', '', '', '', '');
+        $params = array($title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical, $question1, $question2, $question3);
+        $paramsString = array("title", "skills", "type", "level", "location_name", "location_coords", "salary", "physical", "question1", "question2", "question3");
+        $emptyArray = array('', '', '', '', '', '', '', '', '', '', '');
         
         $params = array_diff($params, $emptyArray);
         $paramsString = array_diff_key($paramsString, array_diff_key($paramsString, $params));
@@ -292,6 +300,17 @@ class CompanyModel extends DBHandler
             if($response < 1)
                 return $response;
         }
+
+        $questions = array($question1, $question2, $question3);
+        for($i=0; $i<3; $i+=1)
+            if($questions[$i] == "")
+            {
+                $stmt = null;
+                $response = $this->setNullValue("jobs", "question" . ($i+1), $jobId);
+
+                if($response < 1)
+                    return $response;
+            }
 
         $stmt = null;
         return 1;
@@ -334,7 +353,7 @@ class CompanyModel extends DBHandler
         if($job < 1)
             return $job;
 
-        $stmt = $this->connect()->prepare("SELECT candidates.id, candidates.first_name, candidates.last_name FROM applicants JOIN candidates ON applicants.candidate_id = candidates.id WHERE job_id = ?;");
+        $stmt = $this->connect()->prepare("SELECT candidates.id, candidates.first_name, candidates.last_name, applicants.question1_answer, applicants.question2_answer, applicants.question3_answer FROM applicants JOIN candidates ON applicants.candidate_id = candidates.id WHERE job_id = ?;");
 
         if(!$stmt->execute(array($jobId)))
         {

@@ -143,6 +143,9 @@ function buildJobCard(data)
     cardInformation.append(jobRequirements);
 
     card.append("<div class='job-id' style='display: none;'>" + data["id"] + "</div>");
+    for(let i=1; i<=3; i++)
+        if(data[`question${i}`] != null)
+            card.append("<div class='job-" + data["id"] + "-question question" + i + "' style='display: none;'>" + data[`question${i}`] + "</div>");
     card.append(topRow);
     card.append(cardInformation);
 
@@ -265,17 +268,45 @@ function getId(id, action)
         window.location.href = `../views/jobs.php?id=${currentJobId}`;
     else
     {
+        const questions = $(`.job-${id}-question`);
+        if(action == 1 && questions.length > 0)
+        {
+            if($(".modal").eq(0).css("display") == "none")
+            {
+                $(".modal-wrapper").empty();
+                questions.each((index) => {
+                    const question = questions.eq(index);
+                    const questionNumber = question.attr("class").split(" ")[1];
+
+                    const div = $("<div style='text-align: left;'></div>");
+                    div.append(`<label for='${questionNumber}'>${question.text()}</label>`);
+                    div.append(` <span class='warning-text'>(this field is required)</span>`);
+                    $(".modal-wrapper").append(div);
+                    $(".modal-wrapper").append(`<textarea name='${questionNumber}' id='${questionNumber}' class='question-input' rows=3>`);
+                })
+
+                $(".modal-wrapper").append("<button class='search-button' onclick='checkAnswers()'>Apply</button>");
+
+                $(".modal").eq(0).css("display", "block");
+                $(".modal-wrapper").css("display", "block");
+            }
+            else
+            {
+                $(".modal").eq(0).css("display", "none");
+                $(".modal-wrapper").css("display", "none");
+            }
+
+            return;
+        }
+        
+        let text = (action == 1) ? "<p>Would you like to send an application for this job?</p>"
+                   : (action == 2) ? "<p>Would you like to save this job for later?</p>"
+                   : "<p>Would you like to hide this job posting?</p>";
+        
         if($(".modal").eq(0).css("display") == "none")
         {
             $(".modal-wrapper").empty();
-
-            if(action == 1)
-                $(".modal-wrapper").append("<p>Would you like to send an application for this job?</p>");
-            else if(action == 2)
-                $(".modal-wrapper").append("<p>Would you like to save this job for later?</p>");
-            else
-                $(".modal-wrapper").append("<p>Would you like to hide this job posting?</p>");
-
+            $(".modal-wrapper").append(text);
             $(".modal-wrapper").append("<button class='search-button' onclick='selectJob(" + action + ")'>Confirm</button>");
 
             $(".modal").eq(0).css("display", "block");
@@ -299,12 +330,24 @@ function selectJob(action)
     }
 
     let endpoint = "../api/";
-    endpoint += (action == 1) ? "apply.php" : (action == 2) ? "save_job.php" : "hide_job.php";
-
+    let data = {"job_id": currentJobId};
+    if(action == 1)
+    {
+        endpoint += "apply.php";
+        
+        for(let i=1; i<=3; i++)
+            if($(`#question${i}`).length > 0)
+                data[`question${i}_answer`] = $(`#question${i}`).val();
+    }
+    else if(action == 2)
+        endpoint += "save_job.php";
+    else
+        endpoint += "hide_job.php";
+    
     $.ajax({
         url: endpoint,
         method: "POST",
-        data: JSON.stringify({"job_id": currentJobId}),
+        data: JSON.stringify(data),
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
         beforeSend: function(xmlhttp) {
@@ -326,4 +369,28 @@ function selectJob(action)
                 $(".modal-wrapper").append("<button class='search-button' onclick='getId(null, 1)'>Close</button>");
         }
     });
+}
+
+function checkAnswers()
+{
+    let isValid = true;
+
+    const questions = $(`.job-${currentJobId}-question`);
+    questions.each((index) => {
+        const question = questions.eq(index);
+        const questionNumber = question.attr("class").split(" ")[1];
+
+        if($(`#${questionNumber}`).val() == "")
+        {
+            $(".warning-text").eq(index).css("display", "inline");
+            isValid = false;
+        }
+        else
+            $(".warning-text").eq(index).css("display", "none");
+    });
+
+    if(!isValid)
+        return;
+    else
+        selectJob(1);
 }

@@ -9,6 +9,8 @@ $(document).ready(function() {
     const jobHoppers = params.hide_job_hoppers != "" ? (params.hide_job_hoppers == "true") : false;
     const descriptions = params.hide_no_descriptions != "" ? (params.hide_no_descriptions == "true") : false;
 
+    jobId = params.id;
+
     $("#minimum-years").val(years);
     $("input[name='sort']").prop("checked", sort);
     $("input[name='job-hoppers']").prop("checked", jobHoppers);
@@ -45,11 +47,15 @@ $(document).ready(function() {
     
                     const buttons = $("<div class='buttons'></div>");
                     buttons.append(`<button class='search-button' onclick='redirect(${candidate["id"]}, 0)'><i class='fa-regular fa-address-card fa-fw'></i>CV</button>`);
-                    buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]})'><i class='fa-solid fa-magnifying-glass fa-fw'></i>More data</button>`);
+                    buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]}, 0)'><i class='fa-solid fa-magnifying-glass fa-fw'></i>More data</button>`);
+                    buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]}, 1)'><i class='fa-solid fa-pencil fa-fw'></i>Answers</button>`);
     
                     const candidateCard = $("<div class='candidate-card'></div>");
                     candidateCard.append(candidateData);
                     candidateCard.append(buttons);
+
+                    const candidateAnswers = [candidate["question1_answer"], candidate["question2_answer"], candidate["question3_answer"]];
+                    answers[candidate["id"]] = candidateAnswers;
     
                     $.ajax({
                         url: "../api/get_experience_data.php",
@@ -88,6 +94,9 @@ $(document).ready(function() {
     });
 });
 
+let jobId = -1;
+let answers = {};
+
 function getExperienceData(id)
 {
     return new Promise((resolve, reject) => {
@@ -113,6 +122,35 @@ function getExperienceData(id)
                     string += "Provides descriptions</b> for most of their previous roles</p>";
                 else
                     string += "Doesn't provide descriptions</b> for most of their previous roles</p>";
+
+                resolve(string);
+            },
+            error: function() {
+                reject();
+            }
+        });
+    });
+}
+
+function getJobQuestions(id)
+{
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: "../api/get_job.php",
+            method: "GET",
+            data: {"id": jobId},
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "json",
+            success: function(response) {
+                let string = "";
+                for(let i=1; i<=3; i++)
+                    if(response["question" + i] != null)
+                    {
+                        string += "<div>";
+                        string += "<p><b>" + response["question" + i] + "</b></p>";
+                        string += "<p>" + answers[id][i - 1] + "</p>";
+                        string += "</div>";
+                    }
 
                 resolve(string);
             },
@@ -152,12 +190,16 @@ function applyFilters(id)
     window.location.href = "index.php?id=" + id + "&" + params.toString();
 }
 
-async function toggleModal(id)
+async function toggleModal(id, action)
 {
     if($(".modal").eq(0).css("display") == "none")
     {
-        const data = await getExperienceData(id);
-
+        let data = null;
+        if(action == 0)
+            data = await getExperienceData(id);
+        else
+            data = await getJobQuestions(id);
+        
         $(".modal-wrapper").empty();
         $(".modal-wrapper").append($(data));
         $(".modal-wrapper").append("<button class='search-button' onclick='toggleModal(null)'>Close</button>");

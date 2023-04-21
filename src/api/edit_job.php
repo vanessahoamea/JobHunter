@@ -47,9 +47,12 @@ else
         $salary = isset($data->salary) ? trim($data->salary) : null;
         $physical = isset($data->physical) ? trim($data->physical) : '';
         $description = isset($data->description) ? urldecode($data->description) : '';
+        $question1 = isset($data->question1) ? trim($data->question1) : null;
+        $question2 = isset($data->question2) ? trim($data->question2) : null;
+        $question3 = isset($data->question3) ? trim($data->question3) : null;
 
         $company = new CompanyController($id);
-        $response = $company->editJob($jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical);
+        $response = $company->editJob($jobId, $title, $skills, $type, $level, $locationName, $locationCoords, $salary, $physical, $question1, $question2, $question3);
 
         if($response == 1)
         {

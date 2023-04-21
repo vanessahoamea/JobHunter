@@ -199,6 +199,22 @@ else
                             <div id="description" name="description" class="input" contenteditable="true"></div>
                         </div>
                     </div>
+
+                    <p class="extra-text">Extra: pre-application interview questions</p>
+                    <div class="pair">
+                        <label for="question1">Question 1 (optional)</label>
+                        <input type="text" id="question1" name="question1" class="input">
+                    </div>
+
+                    <div class="pair">
+                        <label for="question2">Question 2 (optional)</label>
+                        <input type="text" id="question2" name="question2" class="input">
+                    </div>
+
+                    <div class="pair">
+                        <label for="question3">Question 3 (optional)</label>
+                        <input type="text" id="question3" name="question3" class="input">
+                    </div>
                 </form>
 
                 <div class="button-container">

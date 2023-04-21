@@ -217,6 +217,27 @@ i.fa-xmark {
     width: auto !important;
 }
 
+.question-input {
+    width: 100%;
+    padding: 12px 20px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+textarea.question-input {
+    resize: none;
+}
+
+.warning-text {
+    display: none;
+    color: red;
+}
+
 /* responsiveness */
 @media screen and (max-width: 1140px) {
     .lower-content {

@@ -60,8 +60,12 @@
     background-color: #9c1de0;
 }
 
-.buttons button:first-child {
+.buttons button {
     margin-right: 5px;
+}
+
+.buttons button:last-child {
+    margin-right: 0;
 }
 
 .modal-content {
@@ -130,9 +134,12 @@
     .buttons button {
         width: 100%;
     }
-    .buttons button:first-child {
+    .buttons button {
         margin-right: 0;
         margin-bottom: 5px;
+    }
+    .buttons button:last-child {
+        margin-bottom: 0;
     }
     .candidate-data {
         flex-direction: column;

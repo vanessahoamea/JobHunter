@@ -214,19 +214,19 @@ class CandidateController extends CandidateModel
         return $this->deleteItem($this->id, $projectId, "candidate_projects");
     }
 
-    public function applyToJob($jobId)
+    public function applyToJob($jobId, $question1Answer, $question2Answer, $question3Answer)
     {
-        return $this->applySaveHide($this->id, $jobId, "applicants");
+        return $this->applySaveHide($this->id, $jobId, $question1Answer, $question2Answer, $question3Answer, "applicants");
     }
 
     public function saveJob($jobId)
     {
-        return $this->applySaveHide($this->id, $jobId, "bookmarks");
+        return $this->applySaveHide($this->id, $jobId, null, null, null, "bookmarks");
     }
 
     public function hideJob($jobId)
     {
-        return $this->applySaveHide($this->id, $jobId, "hidden");
+        return $this->applySaveHide($this->id, $jobId, null, null, null, "hidden");
     }
 
     public function getCandidateJobs($type)
