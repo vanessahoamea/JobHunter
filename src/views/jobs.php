@@ -16,6 +16,8 @@ if($response == 0 || $response == -1)
     include("page_not_found.html");
     exit();
 }
+else
+    $title = $response["title"];
 
 require_once("../controllers/jwt_controller.php");
 
@@ -48,7 +50,7 @@ if(isset($_COOKIE["jwt"]))
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Post job</title>
+        <title><?php echo $title; ?></title>
         <link rel="stylesheet" type="text/css" href="../style.css" />
         <link rel="stylesheet" type="text/css" href="../jobs/jobs_style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">

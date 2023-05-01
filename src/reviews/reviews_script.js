@@ -54,6 +54,17 @@ $(document).ready(function() {
 
     //showing graph in modal
     $("#company-rating").children(".fa-star").on("click", () => toggleModal());
+
+    //get company name
+    $.ajax({
+        url: "../views/companies.php?id=" + companyId,
+        async: true,
+        success: function(data) {
+            const matches = data.match(/<title>(.*?)<\/title>/);
+            const title = matches[0].split(">")[1].split("<")[0];
+            $("#main").prepend(`<h1>Reviews for <a href="../views/companies.php?id=${companyId}">${title}</a></h1>`);
+        }
+    });
 });
 
 $(window).click(function(event) {
@@ -206,9 +217,4 @@ function toggleModal()
             chart = null;
         }
     }
-}
-
-function redirect(id)
-{
-    window.location.href = "../views/companies.php?id=" + id;
 }

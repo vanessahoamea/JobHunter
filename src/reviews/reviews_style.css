@@ -76,17 +76,6 @@
     margin: 0;
 }
 
-.return-button {
-    min-height: 8vh;
-    min-width: 10vw;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: black;
-    color: white;
-    margin-bottom: 20px;
-}
-
 /* responsiveness */
 @media screen and (max-width: 540px) {
     .top-row {

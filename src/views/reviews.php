@@ -87,7 +87,6 @@ if(isset($_COOKIE["jwt"]))
         </nav>
 
         <div id="main">
-            <button class="return-button" onclick="redirect(<?php echo $_GET['id'] ?>)">Back to company page</button>
             <div class="stars-container">
                 <div id="company-rating">
                     <i class="fa-solid fa-star"></i>

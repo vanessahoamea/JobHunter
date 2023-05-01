@@ -70,7 +70,6 @@ else
         </nav>
 
         <div id="main">
-            <button class="return-button" onclick="redirect(<?php echo $_GET['id'] ?>, 1)">Back to job page</button>
             <div class="filters">
                 <h2>Filter candidates</h2>
 

@@ -97,6 +97,7 @@ class CandidateController extends CandidateModel
 
         $totalMonths = 0;
         $hasDescription = 0;
+        $allExperience = array();
         for($i=0; $i<count($experience); $i+=1)
         {
             $dateString = $experience[$i]["start_month"] . " 01 " . $experience[$i]["start_year"];
@@ -115,6 +116,13 @@ class CandidateController extends CandidateModel
 
             if(isset($experience[$i]["description"]))
                 $hasDescription += 1;
+            
+            array_push($allExperience, array(
+                "title" => $experience[$i]["title"],
+                "company_name" => $experience[$i]["company_name"],
+                "company_id" => $experience[$i]["company_id"],
+                "work_period" => ($interval->y) * 12 + $interval->m,
+            ));
         }
 
         $result = array(
@@ -122,7 +130,8 @@ class CandidateController extends CandidateModel
             "years" => floor($totalMonths / 12),
             "months" => $totalMonths % 12,
             "average_employment_period" => round($totalMonths / count($experience), 2),
-            "adds_descriptions" => $hasDescription >= count($experience) / 2
+            "adds_descriptions" => $hasDescription >= count($experience) / 2,
+            "all_experience" => $allExperience
         );
 
         return $result;
@@ -288,7 +297,7 @@ class CandidateController extends CandidateModel
 
     private function sortByDate(&$array)
     {
-        $months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+        $months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
         usort($array, function($a, $b) use ($months) {
             $years = $b["start_year"] - $a["start_year"];

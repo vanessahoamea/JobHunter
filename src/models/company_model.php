@@ -324,9 +324,9 @@ class CompanyModel extends DBHandler
             return $job;
 
         //delete entries that reference this job
-        $stmt = $this->connect()->prepare("DELETE FROM applicants WHERE job_id = ?; DELETE FROM bookmarks WHERE job_id = ?; DELETE FROM hidden WHERE job_id = ?;");
+        $stmt = $this->connect()->prepare("DELETE FROM applicants WHERE job_id = ?; DELETE FROM bookmarks WHERE job_id = ?; DELETE FROM hidden WHERE job_id = ?; DELETE FROM notifications WHERE job_id = ?;");
 
-        if(!$stmt->execute(array($jobId, $jobId, $jobId)))
+        if(!$stmt->execute(array($jobId, $jobId, $jobId, $jobId)))
         {
             $stmt = null;
             return 0;

@@ -36,27 +36,32 @@ $(document).ready(function() {
             }
             
             let allCandidateCards = [];
-            new Promise((resolve) => {
-                response["data"].forEach((candidate, index) => {
-                    const candidatePicture = $("<div class='candidate-picture'></div>");
-                    candidatePicture.append(`<img class='candidate-picture skeleton' src='${candidate["profile_picture"]}' alt='Candidate picture'>`);
-                    
-                    const candidateData = $("<div class='candidate-data'></div>");
-                    candidateData.append(candidatePicture);
-                    candidateData.append(`<h2><a href='../views/candidates.php?id=${candidate["id"]}'>${candidate["first_name"]} ${candidate["last_name"]}</a></h2>`);
-    
-                    const buttons = $("<div class='buttons'></div>");
-                    buttons.append(`<button class='search-button' onclick='redirect(${candidate["id"]}, 0)'><i class='fa-regular fa-address-card fa-fw'></i>CV</button>`);
-                    buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]}, 0)'><i class='fa-solid fa-magnifying-glass fa-fw'></i>More data</button>`);
-                    buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]}, 1)'><i class='fa-solid fa-pencil fa-fw'></i>Answers</button>`);
-    
-                    const candidateCard = $("<div class='candidate-card'></div>");
-                    candidateCard.append(candidateData);
-                    candidateCard.append(buttons);
+            let loadedProfiles = 0;
+            response["data"].forEach((candidate, _) => {
+                const candidatePicture = $("<div class='candidate-picture'></div>");
+                candidatePicture.append(`<img class='candidate-picture skeleton' src='${candidate["profile_picture"]}' alt='Candidate picture'>`);
+                
+                const candidateData = $("<div class='candidate-data'></div>");
+                candidateData.append(candidatePicture);
+                candidateData.append(`<h2><a href='../views/candidates.php?id=${candidate["id"]}'>${candidate["first_name"]} ${candidate["last_name"]}</a></h2>`);
 
-                    const candidateAnswers = [candidate["question1_answer"], candidate["question2_answer"], candidate["question3_answer"]];
-                    answers[candidate["id"]] = candidateAnswers;
-    
+                const candidateExperience = $("<div class='candidate-experience'></div>");
+
+                const buttons = $("<div class='buttons'></div>");
+                buttons.append(`<button class='search-button' onclick='redirect(${candidate["id"]})'><i class='fa-regular fa-address-card fa-fw'></i>CV</button>`);
+                buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]}, 0)'><i class='fa-solid fa-magnifying-glass fa-fw'></i>More data</button>`);
+                if(candidate["question1_answer"] || candidate["question2_answer"] || candidate["question3_answer"])
+                    buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]}, 1)'><i class='fa-solid fa-pencil fa-fw'></i>Answers</button>`);
+
+                const candidateCard = $("<div class='candidate-card'></div>");
+                candidateCard.append(candidateData);
+                candidateCard.append(candidateExperience);
+                candidateCard.append(buttons);
+
+                const candidateAnswers = [candidate["question1_answer"], candidate["question2_answer"], candidate["question3_answer"]];
+                answers[candidate["id"]] = candidateAnswers;
+
+                new Promise((resolve) => {
                     $.ajax({
                         url: "../api/get_experience_data.php",
                         method: "GET",
@@ -64,32 +69,59 @@ $(document).ready(function() {
                         contentType: "application/x-www-form-urlencoded",
                         dataType: "json",
                         success: function(experience) {
+                            loadedProfiles++;
+
                             if(experience["years"] < years)
                                 return;
                             if(jobHoppers && experience["average_employment_period"] < 6)
                                 return;
                             if(descriptions && !experience["adds_descriptions"])
                                 return;
+
+                            experience["all_experience"].forEach((job) => {
+                                const years = Math.floor(job["work_period"] / 12);
+                                const months = job["work_period"] % 12;
+                                const company = job["company_id"] != null ? `<a href='../views/companies.php?id=${job["company_id"]}'>${job["company_name"]}</a></p>` : job["company_name"];
+                                
+                                let text = "<p><b>";
+                                if(years > 0)
+                                    text += years + " years ";
+                                if(years > 0 && months > 0)
+                                    text += "and "
+                                if(months > 0)
+                                    text += months + " months ";
+                                text += `</b> as ${job["title"]} @ ${company}`;
+                                candidateExperience.append(text);
+                            });
                             
                             allCandidateCards.push({card: candidateCard, total_months: experience["total_months"]});
-                        },
-                        complete: function() {
-                            if(index == response["data"].length - 1)
-                            {
-                                if(sort)
-                                    allCandidateCards.sort((a, b) => b.total_months - a.total_months);
-                                resolve(allCandidateCards);
-                            }
+
+                            resolve(allCandidateCards);
                         }
                     });
+                }).then((result) => {
+                    if(loadedProfiles == response["data"].length)
+                    {
+                        if(sort)
+                            result.sort((a, b) => b.total_months - a.total_months);
+
+                        if(result.length == 0)
+                            $(".candidates").append("<i>Nobody has applied to this job yet.</i>");
+                        result.forEach((object) => $(".candidates").append(object.card));
+                    }
                 });
-            }).then(
-                (result) => {
-                    if(result.length == 0)
-                        $(".candidates").append("<i>Nobody has applied to this job yet.</i>");
-                    result.forEach((object) => $(".candidates").append(object.card));
-                }
-            );
+            });
+        }
+    });
+
+    //get job title
+    $.ajax({
+        url: "../views/jobs.php?id=" + jobId,
+        async: true,
+        success: function(data) {
+            const matches = data.match(/<title>(.*?)<\/title>/);
+            const title = matches[0].split(">")[1].split("<")[0];
+            $("#main").prepend(`<h1>Applicants for <a href="../views/jobs.php?id=${jobId}">${title}</a></h1>`);
         }
     });
 });
@@ -162,12 +194,9 @@ function getJobQuestions(id)
 }
 
 //helper functions
-function redirect(id, action)
+function redirect(id)
 {
-    if(action == 0)
-        window.location.href = `../views/candidates.php?id=${id}`;
-    else
-        window.location.href = `../views/jobs.php?id=${id}`;
+    window.location.href = `../views/candidates.php?id=${id}`;
 }
 
 function applyFilters(id)
