@@ -125,6 +125,12 @@ class CandidateController extends CandidateModel
             ));
         }
 
+        //extracting 3 longest positions
+        usort($allExperience, function($a, $b) {
+            return $b["work_period"] - $a["work_period"];
+        });
+        $allExperience = array_slice($allExperience, 0, 3);
+
         $result = array(
             "total_months" => $totalMonths,
             "years" => floor($totalMonths / 12),

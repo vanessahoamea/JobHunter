@@ -132,7 +132,10 @@ function buildJobCard(data)
     {
         data["skills"] = JSON.parse(data["skills"]);
         for(let i=0; i<data["skills"].length; i++)
-            jobRequirements.append("<div class='skill-tag'>" + data["skills"][i] + "</div>");
+        {
+            const link = `<a style='color: white;' href='./?skills=${data["skills"][i]}'>${data["skills"][i]}</a>`;
+            jobRequirements.append(`<div class='skill-tag'>${link}</div>`);
+        }
     }
 
     cardInformation.append("<i class='fa-solid fa-building-user fa-fw'></i><a href='../views/companies.php?id=" + data["company_id"] + "' style='font-weight: bold;'>" + data["company_name"] + "</a>");

@@ -353,7 +353,7 @@ class CompanyModel extends DBHandler
         if($job < 1)
             return $job;
 
-        $stmt = $this->connect()->prepare("SELECT candidates.id, candidates.first_name, candidates.last_name, applicants.question1_answer, applicants.question2_answer, applicants.question3_answer FROM applicants JOIN candidates ON applicants.candidate_id = candidates.id WHERE job_id = ?;");
+        $stmt = $this->connect()->prepare("SELECT candidates.id, candidates.first_name, candidates.last_name, applicants.question1_answer, applicants.question2_answer, applicants.question3_answer, applicants.hidden FROM applicants JOIN candidates ON applicants.candidate_id = candidates.id WHERE job_id = ?;");
 
         if(!$stmt->execute(array($jobId)))
         {

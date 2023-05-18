@@ -100,6 +100,7 @@ CREATE TABLE applicants (
     question1_answer varchar(500) CHARSET utf8,
     question2_answer varchar(500) CHARSET utf8,
     question3_answer varchar(500) CHARSET utf8,
+    hidden boolean,
     FOREIGN KEY (candidate_id) REFERENCES candidates(id),
     FOREIGN KEY (job_id) REFERENCES jobs(id)
 );

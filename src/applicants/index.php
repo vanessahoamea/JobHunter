@@ -88,57 +88,44 @@ else
                 <label for="descriptions">
                     <input type="checkbox" id="descriptions" name="descriptions"> Hide candidates that don't provide descriptions for previous roles
                 </label>
+                <label for="show-ignored">
+                    <input type="checkbox" id="show-ignored" name="show-ignored"> Show ignored candidates
+                </label>
 
-                <div class="buttons">
+                <div class="buttons" style="margin-top: 10px;">
                     <button class="search-button" onclick="applyFilters(<?php echo $_GET['id'] ?>)">Apply</button>
                 </div>
             </div>
 
             <div id="wrapper">
-                <div class="candidates">
-                    <div class="candidate-card">
-                        <div class="candidate-data">
-                            <div class="candidate-picture">
-                                <img class="candidate-picture skeleton" src="../assets/default.jpg" alt="Candidate picture">
-                            </div>
-                            <div style="width: 100%;">
-                                <div class="skeleton skeleton-text"></div>
-                                <div class="skeleton skeleton-text"></div>
-                                <div class="skeleton skeleton-text"></div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="candidates-list">
+                    <table>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Longest held positions</th>
+                            <th>Insights</th>
+                            <th>Actions</th>
+                        </tr>
 
-                    <div class="candidate-card">
-                        <div class="candidate-data">
-                            <div class="candidate-picture">
-                                <img class="candidate-picture skeleton" src="../assets/default.jpg" alt="Candidate picture">
-                            </div>
-                            <div style="width: 100%;">
+                        <tr class="filler-row">
+                            <td colspan="4">
                                 <div class="skeleton skeleton-text"></div>
                                 <div class="skeleton skeleton-text"></div>
-                                <div class="skeleton skeleton-text"></div>
-                            </div>
-                        </div>
-                    </div>
+                            </td>
+                        </tr>
 
-                    <div class="candidate-card">
-                        <div class="candidate-data">
-                            <div class="candidate-picture">
-                                <img class="candidate-picture skeleton" src="../assets/default.jpg" alt="Candidate picture">
-                            </div>
-                            <div style="width: 100%;">
+                        <tr class="filler-row">
+                            <td colspan="4">
                                 <div class="skeleton skeleton-text"></div>
                                 <div class="skeleton skeleton-text"></div>
-                                <div class="skeleton skeleton-text"></div>
-                            </div>
-                        </div>
-                    </div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <!-- candidate information modal -->
+        <!-- modal -->
         <div class="modal">
             <div class="modal-content">
                 <span class="close" onclick="toggleModal(null)">&times;</span>

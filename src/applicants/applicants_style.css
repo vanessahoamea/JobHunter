@@ -8,75 +8,56 @@
     justify-content: center;
 }
 
-.candidates {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.candidate-card {
+table {
+    width: 70vw;
+    margin-top: 20px;
+    border: 1px solid black;
+    border-collapse: collapse;
     background-color: white;
-    width: 25vw;
-    padding: 15px;
-    box-sizing: border-box;
-    text-align: left;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
-.candidate-picture {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+tr {
+    border-bottom: 1px solid black;
 }
 
-.candidate-card h2 {
-    padding: 0;
-    margin: 0;
-}
-
-.candidate-data {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
-}
-
-.candidate-experience {
-    margin: 10px 0;
-    padding: 0;
-    text-align: center;
-}
-
-.candidate-experience p {
-    margin: 5px;
-    padding: 5px;
+th {
     border: 1px solid black;
 }
 
+td {
+    text-align: left;
+    padding: 3px;
+}
+
+td:last-child {
+    text-align: center;
+}
+
+.candidate-profile {
+    text-align: center;
+    font-weight: bold;
+}
+
+.candidate-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
 .buttons {
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
 
 .buttons button {
+    width: 100%;
     padding: 7px;
     background-color: #A443DA;
 }
 
 .buttons button:hover, .modal-wrapper button:hover {
     background-color: #9c1de0;
-}
-
-.buttons button {
-    margin-right: 5px;
-}
-
-.buttons button:last-child {
-    margin-right: 0;
 }
 
 .modal-content {
@@ -130,28 +111,16 @@
 }
 
 /* responsiveness */
-@media screen and (max-width: 845px) {
-    .buttons button {
-        width: 100%;
+@media screen and (max-width: 650px) {
+    .filters {
+        width: 60vw;
     }
-    .buttons button {
-        margin-right: 0;
-        margin-bottom: 5px;
-    }
-    .buttons button:last-child {
-        margin-bottom: 0;
-    }
-    .candidate-data {
+    tr {
+        display: flex;
         flex-direction: column;
     }
-    .candidate-card h2 {
-        text-align: center;
-    }
-}
-
-@media screen and (max-width: 650px) {
-    .candidate-card, .filters {
-        width: 60vw;
+    tr:first-child {
+        display: none;
     }
 }
 
