@@ -155,16 +155,19 @@ function postRequest(index)
 
 function checkAnswers()
 {
+    let isEmpty = false;
+
     for(let i=0; i<questions.length; i++)
         if($(`#question${i + 1}`).val() == "")
         {
             $(".warning-text").eq(i).css("display", "inline");
-            return;
+            isEmpty = true;
         }
         else
             $(".warning-text").eq(i).css("display", "none");
 
-    postRequest(1);
+    if(!isEmpty)
+        postRequest(1);
 }
 
 //helper function

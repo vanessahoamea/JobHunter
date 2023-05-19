@@ -353,7 +353,7 @@ class CompanyModel extends DBHandler
         if($job < 1)
             return $job;
 
-        $stmt = $this->connect()->prepare("SELECT candidates.id, candidates.first_name, candidates.last_name, applicants.question1_answer, applicants.question2_answer, applicants.question3_answer, applicants.hidden FROM applicants JOIN candidates ON applicants.candidate_id = candidates.id WHERE job_id = ?;");
+        $stmt = $this->connect()->prepare("SELECT candidates.id, candidates.first_name, candidates.last_name, applicants.question1_answer, applicants.question2_answer, applicants.question3_answer, applicants.hidden, applicants.emailed FROM applicants JOIN candidates ON applicants.candidate_id = candidates.id WHERE job_id = ?;");
 
         if(!$stmt->execute(array($jobId)))
         {
@@ -433,6 +433,50 @@ class CompanyModel extends DBHandler
         }
 
         $stmt = null;
+        return 1;
+    }
+
+    protected function updateApplicantVisbility($jobId, $candidateId)
+    {
+        $stmt = $this->connect()->prepare("SELECT hidden FROM applicants WHERE job_id = ? AND candidate_id = ?;");
+
+        if(!$stmt->execute(array($jobId, $candidateId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        if($stmt->rowCount() == 0)
+        {
+            $stmt = null;
+            return -1;
+        }
+
+        $previousValue = $stmt->fetch()["hidden"];
+        $newValue = $previousValue == 1 ? 0 : 1;
+        $stmt = null;
+
+        $stmt = $this->connect()->prepare("UPDATE applicants SET hidden = ? WHERE job_id = ? AND candidate_id = ?;");
+
+        if(!$stmt->execute(array($newValue, $jobId, $candidateId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
+        return 1;
+    }
+
+    protected function updateEmailStatus($jobId, $candidateId)
+    {
+        $stmt = $this->connect()->prepare("UPDATE applicants SET emailed = 1 WHERE job_id = ? AND candidate_id = ?;");
+
+        if(!$stmt->execute(array($jobId, $candidateId)))
+        {
+            $stmt = null;
+            return 0;
+        }
+
         return 1;
     }
 }

@@ -111,6 +111,49 @@ class CompanyController extends CompanyModel
         return $this->deleteNotifications($this->id);
     }
 
+    public function editApplicantVisibility($jobId, $candidateId)
+    {
+        return $this->updateApplicantVisbility($jobId, $candidateId);
+    }
+
+    public function getEmailData($jobId, $candidateId)
+    {
+        //getting candidate data
+        $candidate = $this->getAllRows($candidateId, "candidates", "id");
+        if($candidate < 1)
+            return $candidate;
+        
+        $candidateName = $candidate[0]["first_name"] . " " . $candidate[0]["last_name"];
+        $candidateEmail = $candidate[0]["email"];
+
+        //getting job data
+        $job = $this->getAllRows($jobId, "jobs", "id");
+        if($job < 1)
+            return $job;
+        
+        $jobTitle = $job[0]["title"];
+
+        //getting company data
+        $company = $this->getAllRows($this->id, "companies", "id");
+        if($company < 1)
+            return $company;
+        
+        $companyName = $company[0]["company_name"];
+
+        //configuring email
+        return array(
+            "candidate_name" => $candidateName,
+            "candidate_email" => $candidateEmail,
+            "job_title" => $jobTitle,
+            "company_name" => $companyName,
+        );
+    }
+
+    public function confirmEmailSent($jobId, $candidateId)
+    {
+        return $this->updateEmailStatus($jobId, $candidateId);
+    }
+
     public function validate($itemId, $candidateId, $table)
     {
         if($table == "jobs")

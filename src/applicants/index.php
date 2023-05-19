@@ -128,7 +128,7 @@ else
         <!-- modal -->
         <div class="modal">
             <div class="modal-content">
-                <span class="close" onclick="toggleModal(null)">&times;</span>
+                <span class="close" onclick="toggleModal(null, null, null)">&times;</span>
 
                 <div class="modal-wrapper" style="text-align: center;"></div>
             </div>

@@ -18,7 +18,6 @@ $(document).ready(function() {
     $("input[name='descriptions']").prop("checked", descriptions);
     $("input[name='show-ignored']").prop("checked", showIgnored);
 
-    const bearerToken = getCookie("jwt");
     $.ajax({
         url: "../api/get_applicants.php",
         method: "GET",
@@ -26,14 +25,14 @@ $(document).ready(function() {
         contentType: "application/x-www-form-urlencoded",
         dataType: "json",
         beforeSend: function(xmlhttp) {
-            xmlhttp.setRequestHeader("Authorization", "Bearer " + bearerToken);
+            xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
         },
         success: function(response) {
             $(".filler-row").remove();
 
             if(response["data"].length == 0)
             {
-                $(".candidates-list").remove();
+                $(".candidates-list").empty();
                 $(".candidates-list").append("<i>Nobody has applied to this job yet.</i>");
                 return;
             }
@@ -44,16 +43,12 @@ $(document).ready(function() {
                 let candidateRow = $("<tr></tr>");
                 let buttonText = candidate["hidden"] ? "Unignore" : "Hide";
 
-                if(!showIgnored && candidate["hidden"] == 1)
-                {
-                    loadedProfiles++;
-                    return;
-                }
-                else if(showIgnored && candidate["hidden"] == 1)
-                {
-                    candidateRow.css("background-color", "#f48b86");
-                }
+                candidateRow.append(`<div style='display: none;'>${candidate["hidden"]}</div>`);
 
+                if(candidate["emailed"] == 1)
+                    candidateRow.css("background-color", "#add8e6");
+
+                //name and picture
                 candidateRow.append(`<td class='candidate-profile'>
                     <img class='candidate-picture' src='${candidate["profile_picture"]}' alt='Candidate picture'><br/>
                     <a href='../views/candidates.php?id=${candidate["id"]}'>${candidate["first_name"]} ${candidate["last_name"]}</a>
@@ -62,11 +57,11 @@ $(document).ready(function() {
                 //buttons
                 let buttonsCell = $("<td></td>");
                 let buttons = $("<div class='buttons'></div>");
-                buttons.append(`<button class='search-button'>${buttonText}</button>`);
-                buttons.append("<button class='search-button'>E-mail</button>");
+                buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]}, 0, "${buttonText}")'>${buttonText}</button>`);
+                buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]}, 1, null)'>E-mail</button>`);
                 
                 if(candidate["question1_answer"] || candidate["question2_answer"] || candidate["question3_answer"])
-                    buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]}, 3)'>Answers</button>`);
+                    buttons.append(`<button class='search-button' onclick='toggleModal(${candidate["id"]}, 2, null)'>Answers</button>`);
 
                 buttonsCell.append(buttons);
 
@@ -116,7 +111,7 @@ $(document).ready(function() {
                             of work experience</li>`;
 
                             text += "<li><i class='fa-solid fa-business-time fa-fw'></i><b>";
-                            if(experience["average_employment_period"] >= 6)
+                            if(experience["average_employment_period"] >= 12)
                                 text += "Is likely to stay</b> at one workplace for a longer period of time</li>";
                             else
                                 text += "Not likely to stay</b> at one workplace for long periods of time, might be a job hopper</li>";
@@ -141,7 +136,21 @@ $(document).ready(function() {
                         if(sort)
                             result.sort((a, b) => b.total_months - a.total_months);
 
-                        result.forEach((object) => $("table").append(object.row));
+                        if(result.length == 0)
+                        {
+                            $(".candidates-list").empty();
+                            $(".candidates-list").append("<i>Nobody has applied to this job yet.</i>");
+                        }
+                        result.forEach((object) => {
+                            if($(object.row).children().eq(0).text() == "1")
+                            {
+                                if(!showIgnored)
+                                    return;
+                                else
+                                    $(object.row).css("background-color", "#f48b86");
+                            }
+                            $("table").append(object.row);
+                        });
                     }
                 });
             });
@@ -162,6 +171,38 @@ $(document).ready(function() {
 
 let jobId = -1;
 let answers = {};
+
+//functions for API requests
+function apiRequest(action, candidateId)
+{
+    const endpoint = action == 0 ? "edit_applicant_visibility.php" : "email_candidate.php";
+
+    $.ajax({
+        url: "../api/" + endpoint,
+        method: "POST",
+        data: JSON.stringify({
+            "job_id": jobId,
+            "candidate_id": candidateId,
+            "when": $("#when").val(),
+            "where": $("#where").val()
+        }),
+        contentType: "application/x-www-form-urlencoded",
+        dataType: "json",
+        beforeSend: function(xmlhttp) {
+            xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
+
+            if(action == 1)
+            {
+                $(".modal-wrapper").empty();
+                $(".modal-wrapper").append("<p>Sending e-mail...</p>");
+                $(".modal-wrapper").append("<button class='search-button' onclick='toggleModal(null, null, null)'>Close</button>");
+            }
+        },
+        success: function() {
+            window.location.reload();
+        }
+    });
+}
 
 function getJobQuestions(id)
 {
@@ -220,23 +261,41 @@ function applyFilters(id)
     window.location.href = "index.php?id=" + id + "&" + params.toString();
 }
 
-async function toggleModal(id, action)
+async function toggleModal(id, action, actionText)
 {
     if($(".modal").eq(0).css("display") == "none")
     {
-        let data = null;
-        if(action == 0)
-            data = null; //hide applicant popup
-        else if(action == 1)
-            data = null; //unignore applicant popup
-        else if(action == 2)
-            data = null; //send email popup
-        else
-            data = await getJobQuestions(id);
-        
         $(".modal-wrapper").empty();
-        $(".modal-wrapper").append($(data));
-        $(".modal-wrapper").append("<button class='search-button' onclick='toggleModal(null)'>Close</button>");
+
+        if(action == 0)
+        {
+            $(".modal-wrapper").append(`<p>Are you sure you want to ${actionText.toLowerCase()} this candidate?</p>`);
+            $(".modal-wrapper").append(`<button class='search-button' onclick='apiRequest(0, ${id})'>Confirm</button>`);
+        }
+        else if(action == 1)
+        {
+            $(".modal-wrapper").append("<p>We will send this candidate an email telling them they have earned an interview. Please provide a detailed time and place for your meeting.</p>");
+
+            let div = $("<div style='text-align: left; margin-top: 15px;'></div>");
+            div.append(`<label for='when'>Time of the interview (include the date, hour, etc.)</label>`);
+            div.append(` <span class='warning-text'>(this field is required)</span>`);
+            $(".modal-wrapper").append(div);
+            $(".modal-wrapper").append(`<textarea name='when' id='when' class='input' rows=2>`);
+            
+            div = $("<div style='text-align: left;'></div>");
+            div.append(`<label for='where'>Where the interview will take place (e.g. the company headquarters, a Zoom meeting, etc.)</label>`);
+            div.append(` <span class='warning-text'>(this field is required)</span>`);
+            $(".modal-wrapper").append(div);
+            $(".modal-wrapper").append(`<textarea name='where' id='where' class='input' rows=2>`);
+
+            $(".modal-wrapper").append(`<button class='search-button' onclick='checkAnswers(${id})'>Send</button>`);
+        }
+        else
+        {
+            data = await getJobQuestions(id);
+            $(".modal-wrapper").append(data);
+            $(".modal-wrapper").append(`<button class='search-button' onclick='toggleModal(null, null, null)'>Close</button>`);
+        }
 
         $(".modal").eq(0).css("display", "block");
         $(".modal-wrapper").css("display", "block");
@@ -248,7 +307,25 @@ async function toggleModal(id, action)
     }
 }
 
+function checkAnswers(id)
+{
+    const inputs = [$("#when"), $("#where")];
+    let isEmpty = false;
+
+    for(let i=0; i<inputs.length; i++)
+        if(inputs[i].val() == "")
+        {
+            $(".warning-text").eq(i).css("display", "inline");
+            isEmpty = true;
+        }
+        else
+            $(".warning-text").eq(i).css("display", "none");
+
+    if(!isEmpty)
+        apiRequest(1, id);
+}
+
 $(window).click(function(event) {
     if(event.target == $(".modal")[0])
-        toggleModal(null);
+        toggleModal(null, null, null);
 });
