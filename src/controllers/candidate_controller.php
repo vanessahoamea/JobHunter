@@ -137,7 +137,7 @@ class CandidateController extends CandidateModel
             "months" => $totalMonths % 12,
             "average_employment_period" => round($totalMonths / count($experience), 2),
             "adds_descriptions" => $hasDescription >= count($experience) / 2,
-            "all_experience" => $allExperience
+            "all_experience" => $allExperience,
         );
 
         return $result;

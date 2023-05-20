@@ -5,7 +5,8 @@ $(document).ready(function() {
     });
     const id = params.id;
     const years = params.minimum_years != "" ? params.minimum_years : "0";
-    const sort = params.sort != "" ? (params.sort == "true") : false;
+    const sortExperience = params.sort_experience != "" ? (params.sort_experience == "true") : false;
+    const sortRelevance = params.sort_relevance != "" ? (params.sort_relevance == "true") : false;
     const jobHoppers = params.hide_job_hoppers != "" ? (params.hide_job_hoppers == "true") : false;
     const descriptions = params.hide_no_descriptions != "" ? (params.hide_no_descriptions == "true") : false;
     const showIgnored = params.show_ignored != "" ? (params.show_ignored == "true") : false;
@@ -13,11 +14,24 @@ $(document).ready(function() {
     jobId = params.id;
 
     $("#minimum-years").val(years);
-    $("input[name='sort']").prop("checked", sort);
+    $("input[name='sort-experience']").prop("checked", sortExperience);
+    $("input[name='sort-relevance']").prop("checked", sortRelevance);
     $("input[name='job-hoppers']").prop("checked", jobHoppers);
     $("input[name='descriptions']").prop("checked", descriptions);
     $("input[name='show-ignored']").prop("checked", showIgnored);
 
+    //get job title
+    $.ajax({
+        url: "../views/jobs.php?id=" + jobId,
+        async: true,
+        success: function(data) {
+            const matches = data.match(/<title>(.*?)<\/title>/);
+            const title = matches[0].split(">")[1].split("<")[0];
+            $("#main").prepend(`<h1>Applicants for <a href="../views/jobs.php?id=${jobId}">${title}</a></h1>`);
+        }
+    });
+
+    //get candidates
     $.ajax({
         url: "../api/get_applicants.php",
         method: "GET",
@@ -28,8 +42,6 @@ $(document).ready(function() {
             xmlhttp.setRequestHeader("Authorization", "Bearer " + getCookie("jwt"));
         },
         success: function(response) {
-            $(".filler-row").remove();
-
             if(response["data"].length == 0)
             {
                 $(".candidates-list").empty();
@@ -75,7 +87,7 @@ $(document).ready(function() {
                         data: {"id": candidate["id"]},
                         contentType: "application/x-www-form-urlencoded",
                         dataType: "json",
-                        success: function(experience) {
+                        success: async function(experience) {
                             loadedProfiles++;
 
                             if(experience["years"] < years)
@@ -124,8 +136,18 @@ $(document).ready(function() {
                             
                             candidateRow.append("<td>" + text + "</ul></td>");
                             candidateRow.append(buttonsCell);
+
+                            //candidate relevancy for this position
+                            let similarity = 0;
+                            if(sortRelevance)
+                            {
+                                for(let i=0; i<experience["all_experience"].length; i++)
+                                {
+                                    similarity += await getRelevanceScore(experience["all_experience"][i]["title"], $("h1").eq(0).text());
+                                }
+                            }
                             
-                            allCandidateRows.push({row: candidateRow, total_months: experience["total_months"]});
+                            allCandidateRows.push({row: candidateRow, total_months: experience["total_months"], similarity: similarity});
 
                             resolve(allCandidateRows);
                         }
@@ -133,8 +155,12 @@ $(document).ready(function() {
                 }).then((result) => {
                     if(loadedProfiles == response["data"].length)
                     {
-                        if(sort)
+                        $(".filler-row").remove();
+                        
+                        if(sortExperience)
                             result.sort((a, b) => b.total_months - a.total_months);
+                        if(sortRelevance)
+                            result.sort((a, b) => b.similarity - a.similarity);
 
                         if(result.length == 0)
                         {
@@ -154,17 +180,6 @@ $(document).ready(function() {
                     }
                 });
             });
-        }
-    });
-
-    //get job title
-    $.ajax({
-        url: "../views/jobs.php?id=" + jobId,
-        async: true,
-        success: function(data) {
-            const matches = data.match(/<title>(.*?)<\/title>/);
-            const title = matches[0].split(">")[1].split("<")[0];
-            $("#main").prepend(`<h1>Applicants for <a href="../views/jobs.php?id=${jobId}">${title}</a></h1>`);
         }
     });
 });
@@ -201,6 +216,24 @@ function apiRequest(action, candidateId)
         success: function() {
             window.location.reload();
         }
+    });
+}
+
+function getRelevanceScore(jobTitle, candidateJobTitle)
+{
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            method: "POST",
+            url: "https://api.api-ninjas.com/v1/textsimilarity",
+            headers: {"X-Api-Key": "8RVj7K1XiXrRkqTJvpgL2A==Li6Rsi4mVRW7Z0iX"},
+            data: JSON.stringify({"text_1": jobTitle, "text_2": candidateJobTitle}),
+            success: function(result) {
+                resolve(result["similarity"]);
+            },
+            error: function() {
+                reject();
+            }
+        });        
     });
 }
 
@@ -242,14 +275,16 @@ function redirect(id)
 function applyFilters(id)
 {
     const minimumYears = $("#minimum-years").val();
-    const sort = $("#sort").prop("checked");
+    const sortExperience = $("#sort-experience").prop("checked");
+    const sortRelevance = $("#sort-relevance").prop("checked");
     const jobHoppers = $("#job-hoppers").prop("checked");
     const descriptions = $("#descriptions").prop("checked");
     const showIgnored = $("#show-ignored").prop("checked");
     
     let params = {
         minimum_years: minimumYears,
-        sort: sort,
+        sort_experience: sortExperience,
+        sort_relevance: sortRelevance,
         hide_job_hoppers: jobHoppers,
         hide_no_descriptions: descriptions,
         show_ignored: showIgnored

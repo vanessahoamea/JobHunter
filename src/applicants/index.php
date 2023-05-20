@@ -79,8 +79,11 @@ else
                 </label>
 
                 <h3>Others</h3>
-                <label for="sort">
-                    <input type="checkbox" id="sort" name="sort"> Sort by amount of experience
+                <label for="sort-experience">
+                    <input type="checkbox" id="sort-experience" name="sort-experience"> Sort by amount of experience
+                </label>
+                <label for="sort-relevance">
+                    <input type="checkbox" id="sort-relevance" name="sort-relevance"> Sort by amount of experience relevant to this position
                 </label>
                 <label for="job-hoppers">
                     <input type="checkbox" id="job-hoppers" name="job-hoppers"> Hide candidates that might be job hoppers
